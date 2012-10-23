@@ -1,0 +1,9 @@
+.DS_Store
+*.sdf
+ipch
+Debug
+*.ncb
+Win32Debug
+GestureDetection4D.vcxproj.user
+*.suo
+*.opensdf

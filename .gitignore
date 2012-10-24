@@ -7,3 +7,4 @@ Win32Debug
 GestureDetection4D.vcxproj.user
 *.suo
 *.opensdf
+*.user

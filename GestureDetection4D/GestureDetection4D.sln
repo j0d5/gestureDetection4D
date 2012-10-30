@@ -1,18 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GestureDetection4D", "GestureDetection4D.vcxproj", "{B60D7909-503B-4067-A13D-6BF9FE8DC51F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GestureDetection4D", "GestureDetection4D.vcxproj", "{98122DD2-BFE1-4CA8-0147-E4168A7368C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
 		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B60D7909-503B-4067-A13D-6BF9FE8DC51F}.Debug|Win32.ActiveCfg = Debug|Win32
-		{B60D7909-503B-4067-A13D-6BF9FE8DC51F}.Debug|Win32.Build.0 = Debug|Win32
-		{B60D7909-503B-4067-A13D-6BF9FE8DC51F}.Release|Win32.ActiveCfg = Release|Win32
-		{B60D7909-503B-4067-A13D-6BF9FE8DC51F}.Release|Win32.Build.0 = Release|Win32
+		{98122DD2-BFE1-4CA8-0147-E4168A7368C8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{98122DD2-BFE1-4CA8-0147-E4168A7368C8}.Debug|Win32.Build.0 = Debug|Win32
+		{98122DD2-BFE1-4CA8-0147-E4168A7368C8}.Debug|x64.ActiveCfg = Debug|x64
+		{98122DD2-BFE1-4CA8-0147-E4168A7368C8}.Debug|x64.Build.0 = Debug|x64
+		{98122DD2-BFE1-4CA8-0147-E4168A7368C8}.Release|Win32.ActiveCfg = Release|Win32
+		{98122DD2-BFE1-4CA8-0147-E4168A7368C8}.Release|Win32.Build.0 = Release|Win32
+		{98122DD2-BFE1-4CA8-0147-E4168A7368C8}.Release|x64.ActiveCfg = Release|x64
+		{98122DD2-BFE1-4CA8-0147-E4168A7368C8}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

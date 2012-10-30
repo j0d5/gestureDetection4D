@@ -227,6 +227,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MouseInput.cpp" />
     <ClCompile Include="GestureDetection4D.cpp" />
+    <ClCompile Include="SimpleFeatureExtractor.cpp" />
     <ClCompile Include="Statistics.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -234,10 +235,12 @@
     <ClInclude Include="Capture.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="Draw.h" />
+    <ClInclude Include="IFeatureExtractor4D.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MouseInput.h" />
     <ClInclude Include="Res\Resource-OpenNI.h" />
+    <ClInclude Include="SimpleFeatureExtractor.h" />
     <ClInclude Include="Statistics.h" />
   </ItemGroup>
   <ItemGroup>

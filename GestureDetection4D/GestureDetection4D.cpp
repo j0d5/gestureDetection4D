@@ -566,56 +566,7 @@ int changeDirectory(char* arg0)
 	return 0;
 }
 
-int main(int argc, char **argv)
-{
-	XnBool bChooseDevice = false;
-	const char* csRecordingName = NULL;
-
-	// choose a device or filename
-	if (argc > 1) {
-		if (strcmp(argv[1], "-devices") == 0) {
-			bChooseDevice = TRUE;
-		} else {
-			csRecordingName = argv[1];
-		}
-	}
-
-	if (csRecordingName != NULL) {	
-		// check if running from a different directory. If so, we need to change directory
-		// to the real one, so that path to INI file will be OK (for log initialization, for example)
-		if (0 != changeDirectory(argv[0])) {
-			return(ERR_DEVICE);
-		}
-	}
-
-	// Xiron Init
-	XnStatus rc = XN_STATUS_OK;
-	EnumerationErrors errors;
-
-	if (csRecordingName != NULL) {	
-		xnLogInitFromXmlFile(SAMPLE_XML_PATH);
-		rc = openDeviceFile(argv[1]);
-	} else if (bChooseDevice) {
-		rc = openDeviceFromXmlWithChoice(SAMPLE_XML_PATH, errors);
-	} else {
-		rc = openDeviceFromXml(SAMPLE_XML_PATH, errors);
-	}
-
-	if (rc == XN_STATUS_NO_NODE_PRESENT) {
-		XnChar strError[1024];
-		errors.ToString(strError, 1024);
-		printf("%s\n", strError);
-		closeSample(ERR_DEVICE);
-		return (rc);
-	} else if (rc != XN_STATUS_OK) {
-		printf("Open failed: %s\n", xnGetStatusString(rc));
-		closeSample(ERR_DEVICE);
-	}
-
-	audioInit();
-	captureInit();
-	statisticsInit();
-
+void glutInitRoutine(int argc, char** argv) {
 	reshaper.zNear = 1;
 	reshaper.zFar = 100;
 	glut_add_interactor(&reshaper);
@@ -633,7 +584,7 @@ int main(int argc, char **argv)
 	glutCreateWindow("OpenNI Viewer");
 	glutFullScreen();
 	glutSetCursor(GLUT_CURSOR_NONE);
-
+	
 	init_opengl();
 
 	glut_helpers_initialize();
@@ -666,7 +617,85 @@ int main(int argc, char **argv)
 	light.translator.t = vec3f (0, 1.13, -2.41);
 	light.trackball.r = rotationf(vec3f(0.6038, -0.1955, -0.4391), to_radians(102));
 
+}
+
+XnStatus xtionInitRoutine(int argc, char** argv) {
+	XnBool bChooseDevice = false;
+	const char* csRecordingName = NULL;
+
+	// choose a device or file
+	if (argc > 1)
+	{
+		if (strcmp(argv[1], "-devices") == 0)
+		{
+			bChooseDevice = TRUE;
+		}
+		else
+		{
+			csRecordingName = argv[1];
+		}
+	}
+
+	if (csRecordingName != NULL)
+	{	
+		// check if running from a different directory. If so, we need to change directory
+		// to the real one, so that path to INI file will be OK (for log initialization, for example)
+		if (0 != changeDirectory(argv[0]))
+		{
+			return(ERR_DEVICE);
+		}
+	}
+
+	// Xiron Init
+	XnStatus rc = XN_STATUS_OK;
+	EnumerationErrors errors;
+
+	if (csRecordingName != NULL)
+	{	
+		xnLogInitFromXmlFile(SAMPLE_XML_PATH);
+		rc = openDeviceFile(argv[1]);
+	}
+	else if (bChooseDevice)
+	{
+		rc = openDeviceFromXmlWithChoice(SAMPLE_XML_PATH, errors);
+	}
+	else
+	{
+		rc = openDeviceFromXml(SAMPLE_XML_PATH, errors);
+	}
+
+	// error handling
+	if (rc == XN_STATUS_NO_NODE_PRESENT)
+	{
+		XnChar strError[1024];
+		errors.ToString(strError, 1024);
+		printf("%s\n", strError);
+		closeSample(ERR_DEVICE);
+		return (rc);
+	}
+	else if (rc != XN_STATUS_OK)
+	{
+		printf("Open failed: %s\n", xnGetStatusString(rc));
+		closeSample(ERR_DEVICE);
+	}
+
+	return XN_STATUS_OK;
+}
+
+int main(int argc, char **argv)
+{
+	// return XnStatus if there is an error
+	XnStatus rc = xtionInitRoutine(argc, argv);
+	if (rc != XN_STATUS_OK)
+		return (rc);
+
+	// audioInit();
+	captureInit(); // sets some formats for depth, image, IR and audio
+	statisticsInit(); // ...
+	glutInitRoutine(argc, argv); // init routine for glut
+
 	glutIdleFunc(IdleCallback);
+	// draw statistics and else
 	glutDisplayFunc(drawFrame);
 
 	drawInit();

@@ -61,7 +61,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../Bin/$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    </OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
@@ -225,7 +226,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MouseInput.cpp" />
-    <ClCompile Include="NiViewer.cpp" />
+    <ClCompile Include="GestureDetection4D.cpp" />
     <ClCompile Include="Statistics.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -236,14 +237,14 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MouseInput.h" />
+    <ClInclude Include="Res\Resource-OpenNI.h" />
     <ClInclude Include="Statistics.h" />
-    <ClInclude Include="..\Res\Resource-OpenNI.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Res\mainicon.ico" />
+    <None Include="Res\mainicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\Res\OpenNI.rc" />
+    <ResourceCompile Include="Res\OpenNI.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

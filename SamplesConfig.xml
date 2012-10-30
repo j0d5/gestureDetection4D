@@ -15,7 +15,7 @@
 	</Log>
 	<ProductionNodes>
 		<!-- Uncomment following line, in order to run from a recording 
-		<Recording file="sampleRec.oni" />
+		<Recording file="C:\Users\latadmin\Documents\GestureDetection4D\OniFiles\20120911-125041.oni" />
 		-->
 	
 		<!-- Set global mirror -->

@@ -1,6 +1,6 @@
 #pragma once
 class SimpleFeatureExtractor :
-	public IFeatureExtrator
+	public IFeatureExtrator4D
 {
 public:
 	SimpleFeatureExtractor(void);

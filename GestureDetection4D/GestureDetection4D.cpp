@@ -571,24 +571,19 @@ int main(int argc, char **argv)
 	XnBool bChooseDevice = false;
 	const char* csRecordingName = NULL;
 
-	if (argc > 1)
-	{
-		if (strcmp(argv[1], "-devices") == 0)
-		{
+	// choose a device or filename
+	if (argc > 1) {
+		if (strcmp(argv[1], "-devices") == 0) {
 			bChooseDevice = TRUE;
-		}
-		else
-		{
+		} else {
 			csRecordingName = argv[1];
 		}
 	}
 
-	if (csRecordingName != NULL)
-	{	
+	if (csRecordingName != NULL) {	
 		// check if running from a different directory. If so, we need to change directory
 		// to the real one, so that path to INI file will be OK (for log initialization, for example)
-		if (0 != changeDirectory(argv[0]))
-		{
+		if (0 != changeDirectory(argv[0])) {
 			return(ERR_DEVICE);
 		}
 	}
@@ -597,30 +592,22 @@ int main(int argc, char **argv)
 	XnStatus rc = XN_STATUS_OK;
 	EnumerationErrors errors;
 
-	if (csRecordingName != NULL)
-	{	
+	if (csRecordingName != NULL) {	
 		xnLogInitFromXmlFile(SAMPLE_XML_PATH);
 		rc = openDeviceFile(argv[1]);
-	}
-	else if (bChooseDevice)
-	{
+	} else if (bChooseDevice) {
 		rc = openDeviceFromXmlWithChoice(SAMPLE_XML_PATH, errors);
-	}
-	else
-	{
+	} else {
 		rc = openDeviceFromXml(SAMPLE_XML_PATH, errors);
 	}
 
-	if (rc == XN_STATUS_NO_NODE_PRESENT)
-	{
+	if (rc == XN_STATUS_NO_NODE_PRESENT) {
 		XnChar strError[1024];
 		errors.ToString(strError, 1024);
 		printf("%s\n", strError);
 		closeSample(ERR_DEVICE);
 		return (rc);
-	}
-	else if (rc != XN_STATUS_OK)
-	{
+	} else if (rc != XN_STATUS_OK) {
 		printf("Open failed: %s\n", xnGetStatusString(rc));
 		closeSample(ERR_DEVICE);
 	}

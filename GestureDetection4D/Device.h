@@ -53,9 +53,9 @@ SessionState g_SessionState = NOT_IN_SESSION;
 XnStatus openDeviceFile(const char* csFile)
 {
 	XnStatus rc;
-	// rc = g_Context.Init();
-	// CHECK_RC(rc, "Context.Init()");
-	rc = g_Context.OpenFileRecording(csFile, g_Player);
+	rc = g_Context.Init();
+	CHECK_RC(rc, "Context.Init()");
+	rc = g_Context.OpenFileRecording(csFile);
 	CHECK_RC(rc, "OpenOpenFileRecording");
 	
 	// g_Player = new Player(g_Context, "oni");

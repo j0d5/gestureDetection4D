@@ -189,28 +189,23 @@ int main(int argc, char ** argv)
 {
 	XnStatus rc = XN_STATUS_OK;
 	xn::EnumerationErrors errors;
-	// Create NITE objects
-	g_pSessionManager = new XnVSessionManager;
-	
-	rc = g_Context.InitFromXmlFile(SAMPLE_XML_PATH, g_ScriptNode, &errors);
-	CHECK_ERRORS(rc, errors, "InitFromXmlFile");
-	CHECK_RC(rc, "InitFromXmlFile");
 
 	if (argc > 1) {
 		rc = openDeviceFile(argv[1]);
 		CHECK_RC(rc, "openDeviceFile");
-		// exit(0);
-		rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, g_Player);
-		CHECK_RC(rc, "Find player generator");
 	} else {
 		// Initialize OpenNI
-		rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
-		CHECK_RC(rc, "Find depth generator");
-		rc = g_Context.FindExistingNode(XN_NODE_TYPE_HANDS, g_HandsGenerator);
-		CHECK_RC(rc, "Find hands generator");
-		rc = g_Context.FindExistingNode(XN_NODE_TYPE_GESTURE, g_GestureGenerator);
-		CHECK_RC(rc, "Find gesture generator");
+		rc = g_Context.InitFromXmlFile(SAMPLE_XML_PATH, g_ScriptNode, &errors);
+		CHECK_ERRORS(rc, errors, "InitFromXmlFile");
+		CHECK_RC(rc, "InitFromXmlFile");
 	}
+
+	rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
+	CHECK_RC(rc, "Find depth generator");
+	rc = g_Context.FindExistingNode(XN_NODE_TYPE_HANDS, g_HandsGenerator);
+	CHECK_RC(rc, "Find hands generator");
+	rc = g_Context.FindExistingNode(XN_NODE_TYPE_GESTURE, g_GestureGenerator);
+	CHECK_RC(rc, "Find gesture generator");
 
 	XnCallbackHandle h;
 	if (g_HandsGenerator.IsCapabilitySupported(XN_CAPABILITY_HAND_TOUCHING_FOV_EDGE))
@@ -225,7 +220,7 @@ int main(int argc, char ** argv)
 
 
 	// Create NITE objects
-	// g_pSessionManager = new XnVSessionManager;
+	g_pSessionManager = new XnVSessionManager;
 	rc = g_pSessionManager->Initialize(&g_Context, "Click,Wave", "RaiseHand");
 	CHECK_RC(rc, "SessionManager::Initialize");
 

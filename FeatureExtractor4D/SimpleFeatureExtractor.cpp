@@ -1,14 +1,6 @@
 #include "StdAfx.h"
 #include "SimpleFeatureExtractor.h"
-/*
-const Point3D operator-(Point3D const& v1, Point3D const& v2)
-{
-	Point3D result;
-	result.X = v1.X - v2.X;
-	result.Y = v1.Y - v2.Y;
-	result.Z = v1.Z - v2.Z;
-	return result;
-};*/
+
 SimpleFeatureExtractor::SimpleFeatureExtractor(void)
 {
 }

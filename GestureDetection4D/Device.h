@@ -1,113 +1,64 @@
-/****************************************************************************
-*                                                                           *
-*  OpenNI 1.x Alpha                                                         *
-*  Copyright (C) 2011 PrimeSense Ltd.                                       *
-*                                                                           *
-*  This file is part of OpenNI.                                             *
-*                                                                           *
-*  OpenNI is free software: you can redistribute it and/or modify           *
-*  it under the terms of the GNU Lesser General Public License as published *
-*  by the Free Software Foundation, either version 3 of the License, or     *
-*  (at your option) any later version.                                      *
-*                                                                           *
-*  OpenNI is distributed in the hope that it will be useful,                *
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of           *
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
-*  GNU Lesser General Public License for more details.                      *
-*                                                                           *
-*  You should have received a copy of the GNU Lesser General Public License *
-*  along with OpenNI. If not, see <http://www.gnu.org/licenses/>.           *
-*                                                                           *
-****************************************************************************/
-#ifndef __DEVICE_H__
-#define __DEVICE_H__
+#ifndef DEVICE_H_
+#define DEVICE_H_
 
-// --------------------------------
-// Includes
-// --------------------------------
+#define CHECK_RC(rc, what)											\
+	if (rc != XN_STATUS_OK)											\
+	{																\
+		printf("%s failed: %s\n", what, xnGetStatusString(rc));		\
+		return rc;													\
+	}
+
+#define CHECK_ERRORS(rc, errors, what)		\
+	if (rc == XN_STATUS_NO_NODE_PRESENT)	\
+	{										\
+		XnChar strError[1024];				\
+		errors.ToString(strError, 1024);	\
+		printf("%s\n", strError);			\
+		return (rc);						\
+	}
+
 #include <XnCppWrapper.h>
 #include <XnTypes.h>
 using namespace xn;
 
-// --------------------------------
-// Defines
-// --------------------------------
-#define MAX_STRINGS 20
 
-// --------------------------------
-// Types
-// --------------------------------
-typedef struct
+// OpenNI objects
+Context g_Context;
+ScriptNode g_ScriptNode;
+DepthGenerator g_DepthGenerator;
+HandsGenerator g_HandsGenerator;
+GestureGenerator g_GestureGenerator;
+Player g_Player;
+
+// NITE objects
+XnVSessionManager* g_pSessionManager;
+XnVFlowRouter* g_pFlowRouter;
+
+// the drawer
+XnVPointDrawer* g_pDrawer;
+
+#define GL_WIN_SIZE_X 640
+#define GL_WIN_SIZE_Y 480
+
+// Draw the depth map?
+XnBool g_bDrawDepthMap = true;
+XnBool g_bPrintFrameID = false;
+// Use smoothing?
+XnFloat g_fSmoothing = 0.0f;
+XnBool g_bPause = false;
+XnBool g_bQuit = false;
+
+SessionState g_SessionState = NOT_IN_SESSION;
+
+XnStatus openDeviceFile(const char* csFile)
 {
-	int nValuesCount;
-	unsigned int pValues[MAX_STRINGS];
-	const char* pValueToName[MAX_STRINGS];
-} DeviceParameter;
+	XnStatus nRetVal = g_Context.Init();
+	CHECK_RC(nRetVal, "Context.Init()");
+	nRetVal = g_Context.OpenFileRecording(csFile, g_Player);
+	CHECK_RC(nRetVal, "OpenOpenFileRecording");
+	// openCommon();
 
-typedef struct
-{
-	int nValuesCount;
-	XnCodecID pValues[MAX_STRINGS];
-	const char* pIndexToName[MAX_STRINGS];
-} NodeCodec;
+	return XN_STATUS_OK;
+}
 
-typedef struct
-{
-	int nValuesCount;
-	const char* pValues[MAX_STRINGS];
-} DeviceStringProperty;
-
-// --------------------------------
-// Global Variables
-// --------------------------------
-extern Context g_Context;
-
-extern DeviceStringProperty g_PrimaryStream;
-extern DeviceParameter g_Registration;
-
-// --------------------------------
-// Function Declarations
-// --------------------------------
-XnStatus openDeviceFile(const char* csFile);
-XnStatus openDeviceFromXml(const char* csXmlFile, EnumerationErrors& errors);
-XnStatus openDeviceFromXmlWithChoice(const char* csXmlFile, EnumerationErrors& errors);
-void closeDevice();
-void readFrame();
-void changeRegistration(int nValue);
-void changePrimaryStream(int nValue);
-void toggleMirror(int);
-void seekFrame(int nDiff);
-void toggleDepthState(int nDummy);
-void toggleImageState(int nDummy);
-void toggleIRState(int nDummy);
-void toggleAudioState(int nDummy);
-void getDepthFormats(const char** pNames, unsigned int* pValues, int* pCount);
-void getImageFormats(const char** pNames, unsigned int* pValues, int* pCount);
-void getAudioFormats(const char** pNames, unsigned int* pValues, int* pCount);
-void getPrimaryStreams(const char** pNames, unsigned int* pValues, int* pCount);
-bool isDepthOn();
-bool isImageOn();
-bool isIROn();
-bool isAudioOn();
-bool isPlayerOn();
-void setDepthResolution(int res);
-void setDepthFPS(int fps);
-void setImageResolution(int res);
-void setImageFPS(int fps);
-void setIRResolution(int res);
-void setIRFPS(int fps);
-void setStreamCropping(MapGenerator* pGenerator, XnCropping* pCropping);
-void setPlaybackSpeed(int ratioDiff);
-XnDouble getPlaybackSpeed();
-Device* getDevice();
-DepthGenerator* getDepthGenerator();
-ImageGenerator* getImageGenerator();
-IRGenerator* getIRGenerator();
-AudioGenerator* getAudioGenerator();
-
-const DepthMetaData* getDepthMetaData();
-const ImageMetaData* getImageMetaData();
-const IRMetaData* getIRMetaData();
-const AudioMetaData* getAudioMetaData();
-
-#endif //__DEVICE_H__
+#endif

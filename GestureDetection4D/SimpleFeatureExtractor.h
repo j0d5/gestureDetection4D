@@ -1,6 +1,6 @@
-#pragma once
+#include "IFeatureExtractor4D.h"
 class SimpleFeatureExtractor :
-	public IFeatureExtrator4D
+	public IFeatureExtractor4D
 {
 public:
 	SimpleFeatureExtractor(void);

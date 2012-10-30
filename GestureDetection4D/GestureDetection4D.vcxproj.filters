@@ -31,10 +31,10 @@
     <ClCompile Include="MouseInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NiViewer.cpp">
+    <ClCompile Include="Statistics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Statistics.cpp">
+    <ClCompile Include="GestureDetection4D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -63,17 +63,17 @@
     <ClInclude Include="Statistics.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Res\Resource-OpenNI.h">
+    <ClInclude Include="Res\Resource-OpenNI.h">
       <Filter>Res</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Res\mainicon.ico">
+    <None Include="Res\mainicon.ico">
       <Filter>Res</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\Res\OpenNI.rc">
+    <ResourceCompile Include="Res\OpenNI.rc">
       <Filter>Res</Filter>
     </ResourceCompile>
   </ItemGroup>

@@ -166,7 +166,7 @@ namespace glh
 		
 		// convenience methods
 
-#ifdef __MACOS_DISABLED__
+#ifdef MACOS
 		void parameter(GLenum pname, int i)
 		{ glTexParameteri(target, pname, i); }
 #endif

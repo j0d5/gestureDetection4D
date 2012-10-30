@@ -1,6 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "Resource-OpenNI.h"
+#include "Resource-OpenNIModule.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -8,7 +8,6 @@
 // Generated from the TEXTINCLUDE 2 resource.
 //
 #include "afxres.h"
-#include <XnVersion.h>
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -30,7 +29,7 @@ LANGUAGE LANG_SWEDISH, SUBLANG_DEFAULT
 
 1 TEXTINCLUDE 
 BEGIN
-    "Resource-OpenNI.h\0"
+    "Resource-OpenNIModule.h\0"
 END
 
 2 TEXTINCLUDE 
@@ -75,13 +74,13 @@ IDI_MAINICON            ICON                    "mainicon.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION XN_MAJOR_VERSION,XN_MINOR_VERSION,XN_MAINTENANCE_VERSION,XN_BUILD_VERSION
- PRODUCTVERSION XN_MAJOR_VERSION,XN_MINOR_VERSION,XN_MAINTENANCE_VERSION,XN_BUILD_VERSION
- FILEFLAGSMASK 0x17L
+ FILEVERSION 1,5,2,21
+ PRODUCTVERSION 1,5,2,21
+ FILEFLAGSMASK 0x1fL
 #ifdef _DEBUG
- FILEFLAGS 0x1L
+ FILEFLAGS 0x9L
 #else
- FILEFLAGS 0x0L
+ FILEFLAGS 0x8L
 #endif
  FILEOS 0x4L
  FILETYPE 0x0L
@@ -92,12 +91,13 @@ BEGIN
         BLOCK "000904b0"
         BEGIN
             VALUE "CompanyName", "PrimeSense Ltd."
-            VALUE "FileDescription", "OpenNI"
-            VALUE "FileVersion", XN_BRIEF_VERSION_STRING
-            VALUE "InternalName", "OpenNI"
-            VALUE "LegalCopyright", "Copyright (C) 2010"
-            VALUE "ProductName", "OpenNI"
-            VALUE "ProductVersion", XN_BRIEF_VERSION_STRING
+            VALUE "FileDescription", "PrimeSense OpenNI Module"
+            VALUE "FileVersion", "1, 5, 2, 21"
+            VALUE "InternalName", "OpenNI Module"
+            VALUE "LegalCopyright", "Copyright (C) 2007"
+            VALUE "PrivateBuild", "1.5.2.21"
+            VALUE "ProductName", "PrimeSense OpenNI Module"
+            VALUE "ProductVersion", "1, 5, 2, 21"
         END
     END
     BLOCK "VarFileInfo"

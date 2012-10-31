@@ -40,7 +40,7 @@ void CleanupExit()
 // Callback for when the focus is in progress
 void XN_CALLBACK_TYPE FocusProgress(const XnChar* strFocus, const XnPoint3D& ptPosition, XnFloat fProgress, void* UserCxt)
 {
-//	printf("Focus progress: %s @(%f,%f,%f): %f\n", strFocus, ptPosition.X, ptPosition.Y, ptPosition.Z, fProgress);
+	printf("Focus progress: %s @(%f,%f,%f): %f\n", strFocus, ptPosition.X, ptPosition.Y, ptPosition.Z, fProgress);
 }
 // callback for session start
 void XN_CALLBACK_TYPE SessionStarting(const XnPoint3D& ptPosition, void* UserCxt)
@@ -188,16 +188,18 @@ void XN_CALLBACK_TYPE GestureProgressHandler(xn::GestureGenerator& generator, co
 int main(int argc, char ** argv)
 {
 	XnStatus rc = XN_STATUS_OK;
-	xn::EnumerationErrors errors;
+	EnumerationErrors errors;
+
+	rc = g_Context.InitFromXmlFile(SAMPLE_XML_PATH, g_ScriptNode, &errors);
+	CHECK_ERRORS(rc, errors, "InitFromXmlFile");
+	CHECK_RC(rc, "InitFromXmlFile");
 
 	if (argc > 1) {
 		rc = openDeviceFile(argv[1]);
-		CHECK_RC(rc, "openDeviceFile");
-	} else {
-		// Initialize OpenNI
-		rc = g_Context.InitFromXmlFile(SAMPLE_XML_PATH, g_ScriptNode, &errors);
-		CHECK_ERRORS(rc, errors, "InitFromXmlFile");
-		CHECK_RC(rc, "InitFromXmlFile");
+		CHECK_RC(rc, "OpenDeviceFile");
+		printf("File loaded.\n");
+		g_HandsGenerator.Create(g_Context);
+		g_GestureGenerator.Create(g_Context);
 	}
 
 	rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
@@ -221,9 +223,8 @@ int main(int argc, char ** argv)
 
 	// Create NITE objects
 	g_pSessionManager = new XnVSessionManager;
-	rc = g_pSessionManager->Initialize(&g_Context, "Click,Wave", "RaiseHand");
+	rc = g_pSessionManager->Initialize(&g_Context, "RaiseHand", "RaiseHand");
 	CHECK_RC(rc, "SessionManager::Initialize");
-
 	g_pSessionManager->RegisterSession(NULL, SessionStarting, SessionEnding, FocusProgress);
 
 	g_pDrawer = new XnVPointDrawer(20, g_DepthGenerator); 
@@ -244,4 +245,6 @@ int main(int argc, char ** argv)
 	glInit(&argc, argv);
 	glutMainLoop();
 
+	getchar();
+	return 0;
 }

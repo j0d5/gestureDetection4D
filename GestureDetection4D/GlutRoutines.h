@@ -6,6 +6,7 @@
 #else
 #include "GL/glut.h"
 #endif
+
 #include "Device.h"
 
 void CleanupExit()
@@ -44,13 +45,6 @@ void glutDisplay (void)
 		g_pSessionManager->Update(&g_Context);
 		PrintSessionState(g_SessionState);
 	}
-
-	// TODO
-	XnPoint3D p;
-	p.X = 0;
-	p.Y = 0;
-	p.Z = 0;
-	pointBuffer.push(p);
 
 	glutSwapBuffers();
 }

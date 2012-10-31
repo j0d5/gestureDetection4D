@@ -68,7 +68,8 @@ int main(int argc, char ** argv)
 	g_GestureGenerator.RegisterToGestureReadyForNextIntermediateStage(GestureReadyForNextIntermediateStageHandler, NULL, hGestureReadyForNextIntermediateStage);
 	g_GestureGenerator.RegisterGestureCallbacks(NULL, GestureProgressHandler, NULL, hGestureProgress);
 
-	
+	// register handupdate callback for getting the point
+	g_HandsGenerator.RegisterHandCallbacks(HandCreate, HandUpdate, HandDestroy, NULL, h);
 
 	// Create NITE objects
 	g_pSessionManager = new XnVSessionManager;

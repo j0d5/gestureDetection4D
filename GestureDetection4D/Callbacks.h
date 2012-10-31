@@ -2,6 +2,8 @@
 #define CALLBACKS_H_
 
 #include "XnVNite.h"
+#include <XnCppWrapper.h>
+#include <XnTypes.h>
 #include "Device.h"
 
 // Callback for when the focus is in progress
@@ -55,6 +57,20 @@ void XN_CALLBACK_TYPE GestureReadyForNextIntermediateStageHandler(xn::GestureGen
 void XN_CALLBACK_TYPE GestureProgressHandler(xn::GestureGenerator& generator, const XnChar* strGesture, const XnPoint3D* pPosition, XnFloat fProgress, void* pCookie)
 {
 	printf("Gesture %s progress: %f (%f,%f,%f)\n", strGesture, fProgress, pPosition->X, pPosition->Y, pPosition->Z);
+}
+
+void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
+	printf("Hand detected!\n");
+}
+
+void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
+	printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
+	pointBuffer.push(*pPosition);
+}
+
+void XN_CALLBACK_TYPE HandDestroy(HandsGenerator &generator, XnUserID user, XnFloat fTime, void *pCookie) {
+	printf("Hand destroyed!\n");
+	// pointBuffer.flush();
 }
 
 #endif

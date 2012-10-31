@@ -1,6 +1,10 @@
 #ifndef DEVICE_H_
 #define DEVICE_H_
 
+#include <XnCppWrapper.h>
+#include <XnTypes.h>
+#include "CyclicBuffer.h"
+
 #define CHECK_RC(rc, what)											\
 	if (rc != XN_STATUS_OK)											\
 	{																\
@@ -17,10 +21,10 @@
 		return (rc);						\
 	}
 
-#include <XnCppWrapper.h>
-#include <XnTypes.h>
 using namespace xn;
 
+// global cyclic buffer
+CyclicBuffer<XnPoint3D> pointBuffer(200);
 
 // OpenNI objects
 Context g_Context;

@@ -1,7 +1,8 @@
+#ifndef SIMPLEFEATUREEXTRACTOR_H_
+#define SIMPLEFEATUREEXTRACTOR_H_
 
 #include "IFeatureExtractor4D.h"
 
-#pragma once
 class SimpleFeatureExtractor :
 	public IFeatureExtractor4D
 {
@@ -11,3 +12,4 @@ public:
 	virtual ~SimpleFeatureExtractor(void);
 };
 
+#endif

@@ -70,7 +70,8 @@ void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const
 
 void XN_CALLBACK_TYPE HandDestroy(HandsGenerator &generator, XnUserID user, XnFloat fTime, void *pCookie) {
 	printf("Hand destroyed!\n");
-	// pointBuffer.flush();
+	pointBuffer.flush();
+	// printf("%.2f\n", ((XnPoint3D) *pointBuffer.next()).X);
 }
 
 #endif

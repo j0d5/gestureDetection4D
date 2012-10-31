@@ -12,13 +12,13 @@
 		</Dumps>
 	</Log>
 	<ProductionNodes>
-		<Node type="Depth">
+		<Node type="Depth"  stopOnError="false">
 			<Configuration>
 				<Mirror on="true"/>
 			</Configuration>
 		</Node>
-		<Node type="Gesture" />
-		<Node type="Hands" />
-		<Node type="Image" />
+		<Node type="Gesture" stopOnError="false"/>
+		<Node type="Hands"  stopOnError="false"/>
+		<Node type="Image"  stopOnError="false"/>
 	</ProductionNodes>
 </OpenNI>

@@ -18,6 +18,9 @@
     <ClInclude Include="Res\Resource-NITE.h">
       <Filter>Res</Filter>
     </ClInclude>
+    <ClInclude Include="CyclicBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

@@ -25,6 +25,15 @@ private:
     T* iterator;
     bool isBufferFull; // is buffer completly full
 	int size;
+	
+	/// allocating memory for buffer
+	void allocateBuffer() {
+		startInMemoryElement = (T*)(malloc(size * sizeof(T)));
+		if (startInMemoryElement == NULL) {
+			printf("\n\nCouldn't allocate memory!\n\n");
+			exit(-1);
+		}
+	}
     
 public:
     
@@ -72,7 +81,7 @@ public:
             ++firstElement;
         }
     }
-    
+
 	/// checks if the buffer is empty
     bool isEmpty(){
         return firstElement == lastElement;
@@ -107,15 +116,6 @@ public:
         lastElement = firstElement; //buffer is empty
         endInMemoryElement = startInMemoryElement + size-1;
         iterator = startInMemoryElement;
-	}
-
-	/// allocating memory for buffer
-	void allocateBuffer() {
-		startInMemoryElement = (T*)(malloc(size * sizeof(T)));
-		if (startInMemoryElement == NULL) {
-			printf("\n\nCouldn't allocate memory!\n\n");
-			exit(-1);
-		}
 	}
 };
 

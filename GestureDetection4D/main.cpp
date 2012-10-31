@@ -1,9 +1,7 @@
-/*******************************************************************************
-*                                                                              *
-*   PrimeSense NITE 1.3 - Point Viewer Sample                                  *
-*   Copyright (C) 2010 PrimeSense Ltd.                                         *
-*                                                                              *
-*******************************************************************************/
+/**
+ * 
+ * @author Marcel Vielsack, Johannes Wetzel, Johannes Steudle
+*/
 
 #include <iostream>
 // Headers for OpenNI
@@ -19,9 +17,10 @@
 #include "Device.h"
 #include "Callbacks.h"
 #include "GlutRoutines.h"
+#include "CyclicBuffer.h"
 #include "../FeatureExtractor4D/IFeatureExtractor4D.h"
 
-#include "signal_catch.h"
+// #include "signal_catch.h"
 
 // xml to initialize OpenNI
 #define SAMPLE_XML_PATH "../../Sample-Tracking.xml"
@@ -69,6 +68,7 @@ int main(int argc, char ** argv)
 	g_GestureGenerator.RegisterToGestureReadyForNextIntermediateStage(GestureReadyForNextIntermediateStageHandler, NULL, hGestureReadyForNextIntermediateStage);
 	g_GestureGenerator.RegisterGestureCallbacks(NULL, GestureProgressHandler, NULL, hGestureProgress);
 
+	
 
 	// Create NITE objects
 	g_pSessionManager = new XnVSessionManager;
@@ -90,7 +90,6 @@ int main(int argc, char ** argv)
 	CHECK_RC(rc, "StartGenerating");
 
 	// Mainloop
-
 	glInit(&argc, argv);
 	glutMainLoop();
 

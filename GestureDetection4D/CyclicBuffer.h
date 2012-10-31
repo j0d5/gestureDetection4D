@@ -21,12 +21,13 @@ private:
     T* firstElement; // first valid element
     T* lastElement;  // last valid element
     T* iterator;
-    bool isBufferFull = false; // is buffer completly full
+    bool isBufferFull; // is buffer completly full
     
 public:
     
     //constructor
     CyclicBuffer(int size) {
+		isBufferFull = false;
         startInMemoryElement = (T*)(malloc(size * sizeof(T)));
         firstElement = startInMemoryElement;
         lastElement = firstElement; //buffer is empty

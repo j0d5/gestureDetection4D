@@ -306,8 +306,10 @@
     <ClCompile Include="PointDrawer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Callbacks.h" />
     <ClInclude Include="CyclicBuffer.h" />
     <ClInclude Include="Device.h" />
+    <ClInclude Include="GlutRoutines.h" />
     <ClInclude Include="PointDrawer.h" />
     <ClInclude Include="Res\Resource-NITE.h" />
   </ItemGroup>

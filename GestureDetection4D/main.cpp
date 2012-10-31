@@ -5,6 +5,7 @@
 *                                                                              *
 *******************************************************************************/
 
+#include <iostream>
 // Headers for OpenNI
 #include <XnOpenNI.h>
 #include <XnCppWrapper.h>
@@ -16,171 +17,11 @@
 // local header
 #include "PointDrawer.h"
 #include "Device.h"
+#include "Callbacks.h"
+#include "GlutRoutines.h"
 #include "../FeatureExtractor4D/IFeatureExtractor4D.h"
 
-	#if (XN_PLATFORM == XN_PLATFORM_MACOSX)
-		#include <GLUT/glut.h>
-	#else
-		#include "GL/glut.h"
-	#endif
 #include "signal_catch.h"
-
-
-void CleanupExit()
-{
-	g_ScriptNode.Release();
-	g_DepthGenerator.Release();
-	g_HandsGenerator.Release();
-	g_GestureGenerator.Release();
-	g_Context.Release();
-
-	exit (1);
-}
-
-// Callback for when the focus is in progress
-void XN_CALLBACK_TYPE FocusProgress(const XnChar* strFocus, const XnPoint3D& ptPosition, XnFloat fProgress, void* UserCxt)
-{
-	printf("Focus progress: %s @(%f,%f,%f): %f\n", strFocus, ptPosition.X, ptPosition.Y, ptPosition.Z, fProgress);
-}
-// callback for session start
-void XN_CALLBACK_TYPE SessionStarting(const XnPoint3D& ptPosition, void* UserCxt)
-{
-	printf("Session start: (%f,%f,%f)\n", ptPosition.X, ptPosition.Y, ptPosition.Z);
-	g_SessionState = IN_SESSION;
-}
-// Callback for session end
-void XN_CALLBACK_TYPE SessionEnding(void* UserCxt)
-{
-	printf("Session end\n");
-	g_SessionState = NOT_IN_SESSION;
-}
-void XN_CALLBACK_TYPE NoHands(void* UserCxt)
-{
-	if (g_SessionState != NOT_IN_SESSION)
-	{
-		printf("Quick refocus\n");
-		g_SessionState = QUICK_REFOCUS;
-	}
-}
-void XN_CALLBACK_TYPE TouchingCallback(xn::HandTouchingFOVEdgeCapability& generator, XnUserID id, const XnPoint3D* pPosition, XnFloat fTime, XnDirection eDir, void* pCookie)
-{
-	g_pDrawer->SetTouchingFOVEdge(id);
-}
-/*
-void XN_CALLBACK_TYPE MyGestureInProgress(xn::GestureGenerator& generator, const XnChar* strGesture, const XnPoint3D* pPosition, void* pCookie)
-{
-	printf("Gesture %s in progress\n", strGesture);
-}
-void XN_CALLBACK_TYPE MyGestureReady(xn::GestureGenerator& generator, const XnChar* strGesture, const XnPoint3D* pPosition, void* pCookie)
-{
-	printf("Gesture %s ready for next stage\n", strGesture);
-}
-*/
-
-// this function is called each frame
-void glutDisplay (void)
-{
-	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Setup the OpenGL viewpoint
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-
-	XnMapOutputMode mode;
-	g_DepthGenerator.GetMapOutputMode(mode);
-	glOrtho(0, mode.nXRes, mode.nYRes, 0, -1.0, 1.0);
-
-
-	glDisable(GL_TEXTURE_2D);
-
-	if (!g_bPause)
-	{
-		// Read next available data
-		g_Context.WaitOneUpdateAll(g_DepthGenerator);
-		// Update NITE tree
-		g_pSessionManager->Update(&g_Context);
-		PrintSessionState(g_SessionState);
-	}
-
-	glutSwapBuffers();
-}
-void glutIdle (void)
-{
-	if (g_bQuit) {
-		CleanupExit();
-	}
-
-	// Display the frame
-	glutPostRedisplay();
-}
-void glutKeyboard (unsigned char key, int x, int y)
-{
-	switch (key)
-	{
-	case 27:
-		// Exit
-		CleanupExit();
-	case'p':
-		// Toggle pause
-		g_bPause = !g_bPause;
-		break;
-	case 'd':
-		// Toggle drawing of the depth map
-		g_bDrawDepthMap = !g_bDrawDepthMap;
-		g_pDrawer->SetDepthMap(g_bDrawDepthMap);
-		break;
-	case 'f':
-		g_bPrintFrameID = !g_bPrintFrameID;
-		g_pDrawer->SetFrameID(g_bPrintFrameID);
-		break;
-	case 's':
-		// Toggle smoothing
-		if (g_fSmoothing == 0)
-			g_fSmoothing = 0.1;
-		else 
-			g_fSmoothing = 0;
-		g_HandsGenerator.SetSmoothing(g_fSmoothing);
-		break;
-	case 'e':
-		// end current session
-		g_pSessionManager->EndSession();
-		break;
-	}
-}
-void glInit (int * pargc, char ** argv)
-{
-	glutInit(pargc, argv);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutInitWindowSize(GL_WIN_SIZE_X, GL_WIN_SIZE_Y);
-	glutCreateWindow ("PrimeSense Nite Point Viewer");
-	//glutFullScreen();
-	glutSetCursor(GLUT_CURSOR_NONE);
-
-	glutKeyboardFunc(glutKeyboard);
-	glutDisplayFunc(glutDisplay);
-	glutIdleFunc(glutIdle);
-
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-}
-
-void XN_CALLBACK_TYPE GestureIntermediateStageCompletedHandler(xn::GestureGenerator& generator, const XnChar* strGesture, const XnPoint3D* pPosition, void* pCookie)
-{
-	printf("Gesture %s: Intermediate stage complete (%f,%f,%f)\n", strGesture, pPosition->X, pPosition->Y, pPosition->Z);
-}
-void XN_CALLBACK_TYPE GestureReadyForNextIntermediateStageHandler(xn::GestureGenerator& generator, const XnChar* strGesture, const XnPoint3D* pPosition, void* pCookie)
-{
-	printf("Gesture %s: Ready for next intermediate stage (%f,%f,%f)\n", strGesture, pPosition->X, pPosition->Y, pPosition->Z);
-}
-void XN_CALLBACK_TYPE GestureProgressHandler(xn::GestureGenerator& generator, const XnChar* strGesture, const XnPoint3D* pPosition, XnFloat fProgress, void* pCookie)
-{
-	printf("Gesture %s progress: %f (%f,%f,%f)\n", strGesture, fProgress, pPosition->X, pPosition->Y, pPosition->Z);
-}
-
 
 // xml to initialize OpenNI
 #define SAMPLE_XML_PATH "../../Sample-Tracking.xml"
@@ -195,11 +36,19 @@ int main(int argc, char ** argv)
 	CHECK_RC(rc, "InitFromXmlFile");
 
 	if (argc > 1) {
-		rc = openDeviceFile(argv[1]);
-		CHECK_RC(rc, "OpenDeviceFile");
-		printf("File loaded.\n");
-		g_HandsGenerator.Create(g_Context);
-		g_GestureGenerator.Create(g_Context);
+		if (!strcmp(argv[1], "-t")) {
+			std::cout << "Starting Trainingsmode" << std::endl;
+			exit(0);
+		} else if (!strcmp(argv[1], "-d")) {
+			std::cout << "Starting Detectionmode" << std::endl;
+			exit(0);
+		} else {
+			rc = openDeviceFile(argv[1]);
+			CHECK_RC(rc, "OpenDeviceFile");
+			printf("File loaded.\n");
+			g_HandsGenerator.Create(g_Context);
+			g_GestureGenerator.Create(g_Context);
+		}
 	}
 
 	rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);

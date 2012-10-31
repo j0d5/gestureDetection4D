@@ -28,7 +28,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>GestureDetection4D</ProjectName>
-    <ProjectGuid>{00000000-0000-0000-0000-000000000004}</ProjectGuid>
+    <ProjectGuid>{98122DD2-BFE1-4CA8-0147-E4168A7368C8}</ProjectGuid>
     <RootNamespace>PointViewer</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

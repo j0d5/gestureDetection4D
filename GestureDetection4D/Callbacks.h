@@ -5,6 +5,8 @@
 #include <XnCppWrapper.h>
 #include <XnTypes.h>
 #include "Device.h"
+#include "../FeatureExtractor4D/SimpleFeatureExtractor.h"
+
 
 // Callback for when the focus is in progress
 void XN_CALLBACK_TYPE FocusProgress(const XnChar* strFocus, const XnPoint3D& ptPosition, XnFloat fProgress, void* UserCxt)
@@ -66,6 +68,8 @@ void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const
 void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
 	printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
 	pointBuffer.push(*pPosition);
+	IFeatureExtractor4D* fe = new SimpleFeatureExtractor();
+	delete fe;
 }
 
 void XN_CALLBACK_TYPE HandDestroy(HandsGenerator &generator, XnUserID user, XnFloat fTime, void *pCookie) {

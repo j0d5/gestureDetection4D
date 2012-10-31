@@ -45,6 +45,13 @@ void glutDisplay (void)
 		PrintSessionState(g_SessionState);
 	}
 
+	// TODO
+	XnPoint3D p;
+	p.X = 0;
+	p.Y = 0;
+	p.Z = 0;
+	pointBuffer.push(p);
+
 	glutSwapBuffers();
 }
 void glutIdle (void)

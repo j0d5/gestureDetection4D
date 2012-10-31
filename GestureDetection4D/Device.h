@@ -5,7 +5,7 @@
 #include <XnTypes.h>
 #include "CyclicBuffer.h"
 #include "../FeatureExtractor4D/SimpleFeatureExtractor.h"
-// #include "../SVM/svm.h"
+#include "../SVM/GestureSVM.h"
 
 #define BUFFER_SIZE 30
 #define FEATURE_VECTOR_FREQUENCY 3
@@ -31,8 +31,9 @@ using namespace xn;
 // global cyclic buffer
 CyclicBuffer<XnPoint3D> pointBuffer(BUFFER_SIZE);
 SimpleFeatureExtractor featureExtractor;
+GestureSVM gestureSVM;
 int frequencyCounter = FEATURE_VECTOR_FREQUENCY;
-// SVM
+
 
 // OpenNI objects
 Context g_Context;
@@ -93,11 +94,12 @@ void extractFeatureFromBuffer() {
 	}
 	std::vector<float> fVector = featureExtractor.getFeatureVector(pVector);
 
-	for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3)
-	{
+	for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
 		printf("X: %.2f, Y: %.2f, Z: %.2f\n",*iter,*(iter+1),*(iter+2));
-		
 	}
+
+	gestureSVM.train(fVector, 0);
+	// gestureSVM.generateModel(); // this has to be done after collecting feature vectors
 }
 
 #endif

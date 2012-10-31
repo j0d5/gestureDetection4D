@@ -79,11 +79,13 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GestureSVM.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="svm.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GestureSVM.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="svm.cpp" />

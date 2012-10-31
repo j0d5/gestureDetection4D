@@ -1,3 +1,6 @@
+#ifndef IFEATUREEXTRATOR4D_H_
+#define IFEATUREEXTRATOR4D_H_
+
 #include <vector>
 
 struct Point3D
@@ -23,3 +26,4 @@ public:
 	virtual std::vector<float> getFeatureVector(std::vector<Point3D> points) = 0;
 };
 
+#endif

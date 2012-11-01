@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define NULL 0
 
 void convertToSVMVec(const std::vector<float>& vec, svm_node* destination)
 {

@@ -9,21 +9,23 @@
 #define BUFFER_SIZE 30
 #define FEATURE_VECTOR_FREQUENCY 3
 #define WINDOW_NAME "GestureDetection4D"
+#define SVM_MODEL_FILE "SVM_Model.txt"
+#define DEBUG_FLAG
 
 #define CHECK_RC(rc, what)											\
 	if (rc != XN_STATUS_OK)											\
 	{																\
-		printf("%s failed: %s\n", what, xnGetStatusString(rc));		\
-		return rc;													\
+	printf("%s failed: %s\n", what, xnGetStatusString(rc));		\
+	return rc;													\
 	}
 
 #define CHECK_ERRORS(rc, errors, what)		\
 	if (rc == XN_STATUS_NO_NODE_PRESENT)	\
 	{										\
-		XnChar strError[1024];				\
-		errors.ToString(strError, 1024);	\
-		printf("%s\n", strError);			\
-		return (rc);						\
+	XnChar strError[1024];				\
+	errors.ToString(strError, 1024);	\
+	printf("%s\n", strError);			\
+	return (rc);						\
 	}
 
 using namespace xn;
@@ -33,7 +35,7 @@ CyclicBuffer<XnPoint3D> pointBuffer(BUFFER_SIZE);
 SimpleFeatureExtractor featureExtractor;
 GestureSVM gestureSVM;
 int frequencyCounter = FEATURE_VECTOR_FREQUENCY;
-
+int trainingClass = 0;
 
 // OpenNI objects
 Context g_Context;
@@ -92,14 +94,18 @@ void extractFeatureFromBuffer() {
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 		pVector.push_back(convertPoint(pointBuffer.next()));
 	}
+	gestureSVM.train(featureExtractor.getFeatureVector(pVector), trainingClass);
+
+#ifdef DEBUG_FLAG
 	std::vector<float> fVector = featureExtractor.getFeatureVector(pVector);
 
 	for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
-		printf("X: %.2f, Y: %.2f, Z: %.2f\n",*iter,*(iter+1),*(iter+2));
+		printf("FeatureVector X: %.2f, Y: %.2f, Z: %.2f\n",*iter,*(iter+1),*(iter+2));
 	}
+#endif
 
-	gestureSVM.train(fVector, 0);
-	// gestureSVM.generateModel(); // this has to be done after collecting feature vectors
+	printf("Training class %d\n", trainingClass);
+
 }
 
 #endif

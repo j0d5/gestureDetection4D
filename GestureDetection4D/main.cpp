@@ -6,6 +6,8 @@
 #include <boost/filesystem.hpp>
 
 #include <iostream>
+#include <stdio.h>
+#include <string>
 // Headers for OpenNI
 #include <XnOpenNI.h>
 #include <XnCppWrapper.h>
@@ -38,14 +40,24 @@ int main(int argc, char ** argv)
 	CHECK_RC(rc, "InitFromXmlFile");
 
 	if (argc > 1) {
-		if (argc > 2 && !strcmp(argv[1], "-t") && fs::exists(argv[2])) {
-			std::cout << "Starting Trainingsmode with folder: " << argv[2] << std::endl;
-
+		if (argc > 3 && !strcmp(argv[1], "-t") && fs::exists(argv[2])) {
+			trainingClass = atoi(argv[3]);
+			std::cout << "Starting Trainingmode with folder: " << argv[2] << "and class: " << trainingClass << std::endl;
+			
+			// iterates throug the given directory and loads the files for training
 			fs::directory_iterator end_iter;
 			for (fs::directory_iterator dir_itr( argv[2] ); dir_itr != end_iter; ++dir_itr ) {
 				try {
-					if (fs::is_regular_file(dir_itr->status()))	{
+					if (fs::is_regular_file(dir_itr->status()) 
+						&& !strcmp(dir_itr->path().extension().string().c_str(), ".oni"))
+					{
 						std::cout << "Loading file: " << dir_itr->path() << std::endl;
+						std::string filename = dir_itr->path().filename().string();
+
+						trainingClass = atoi(&filename.at(filename.length() - 5));
+						std::cout << "Training class: " << trainingClass << std::endl;
+
+						// opens the oni file
 						rc = openDeviceFile(dir_itr->path().string().c_str());
 						CHECK_RC(rc, "OpenDeviceFile");
 						std::cout << "File loaded." << std::endl;
@@ -57,6 +69,7 @@ int main(int argc, char ** argv)
 						rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p);
 						CHECK_RC(rc, "Get Player");
 
+						// play file and generate feature vectors, train svm
 						while(!p.IsEOF()) {
 							XnMapOutputMode mode;
 							g_DepthGenerator.GetMapOutputMode(mode);
@@ -67,6 +80,8 @@ int main(int argc, char ** argv)
 							g_pSessionManager->Update(&g_Context);
 							PrintSessionState(g_SessionState);
 						}
+						gestureSVM.generateModel(); // this has to be done after collecting feature vectors
+						gestureSVM.saveModel(SVM_MODEL_FILE);
 
 					}
 				} catch (const std::exception & ex)	{

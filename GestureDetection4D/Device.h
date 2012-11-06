@@ -1,6 +1,12 @@
 #ifndef DEVICE_H_
 #define DEVICE_H_
 
+
+// Headers for OpenNI
+#include <XnCppWrapper.h>
+// Header for NITE
+#include "XnVNite.h"
+
 // local header
 #include "CyclicBuffer.h"
 #include "../FeatureExtractor4D/SimpleFeatureExtractor.h"

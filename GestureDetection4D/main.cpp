@@ -8,21 +8,12 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
-// Headers for OpenNI
-#include <XnOpenNI.h>
-#include <XnCppWrapper.h>
-#include <XnHash.h>
-#include <XnLog.h>
-// Header for NITE
-#include "XnVNite.h"
 
 // local header
 #include "PointDrawer.h"
 #include "Device.h"
 #include "Callbacks.h"
 #include "GlutRoutines.h"
-#include "CyclicBuffer.h"
-#include "../FeatureExtractor4D/IFeatureExtractor4D.h"
 
 // #include "signal_catch.h"
 
@@ -41,8 +32,7 @@ int main(int argc, char ** argv)
 
 	if (argc > 1) {
 		if (argc > 2 && !strcmp(argv[1], "-t") && fs::exists(argv[2])) {
-			std::cout << "Starting Trainingmode with folder: " << argv[2] << "and class: " << trainingClass << std::endl;
-			
+			std::cout << "Starting Trainingmode with folder: " << argv[2] << std::endl;
 			// iterates throug the given directory and loads the files for training
 			fs::directory_iterator end_iter;
 			for (fs::directory_iterator dir_itr( argv[2] ); dir_itr != end_iter; ++dir_itr ) {
@@ -59,7 +49,8 @@ int main(int argc, char ** argv)
 						// opens the oni file
 						rc = openDeviceFile(dir_itr->path().string().c_str());
 						CHECK_RC(rc, "OpenDeviceFile");
-						std::cout << "File loaded." << std::endl;
+						std::cout << "File loaded..." << std::endl;
+						std::cout << "Start learning..." << std::endl;
 						g_HandsGenerator.Create(g_Context);
 						g_GestureGenerator.Create(g_Context);
 						initializeNiteKomponents();
@@ -79,14 +70,13 @@ int main(int argc, char ** argv)
 							g_pSessionManager->Update(&g_Context);
 							PrintSessionState(g_SessionState);
 						}
-						gestureSVM.generateModel(); // this has to be done after collecting feature vectors
-						gestureSVM.saveModel(SVM_MODEL_FILE);
-
 					}
 				} catch (const std::exception & ex)	{
 					std::cout << dir_itr->path() << " " << ex.what() << std::endl;
 				}
 			}
+			gestureSVM.generateModel(); // this has to be done after collecting feature vectors
+			gestureSVM.saveModel(SVM_MODEL_FILE);
 			exit(0);
 		} else if (!strcmp(argv[1], "-d")) {
 			std::cout << "Starting Detectionmode" << std::endl;

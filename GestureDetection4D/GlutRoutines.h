@@ -96,7 +96,7 @@ void glInit (int * pargc, char ** argv)
 	glutInit(pargc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowSize(GL_WIN_SIZE_X, GL_WIN_SIZE_Y);
-	glutCreateWindow ("PrimeSense Nite Point Viewer");
+	glutCreateWindow (WINDOW_NAME);
 	//glutFullScreen();
 	glutSetCursor(GLUT_CURSOR_NONE);
 
@@ -110,6 +110,5 @@ void glInit (int * pargc, char ** argv)
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 }
-
 
 #endif

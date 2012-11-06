@@ -42,23 +42,34 @@ int main(int argc, char ** argv)
 			std::cout << "Starting Trainingsmode with folder: " << argv[2] << std::endl;
 
 			fs::directory_iterator end_iter;
-			for ( fs::directory_iterator dir_itr( argv[2] ); dir_itr != end_iter; ++dir_itr )
-			{
-				try
-				{
-					if ( fs::is_regular_file( dir_itr->status() ) )
-					{
-						std::cout << "Loading file: " << dir_itr->path().string() << "\n";
+			for (fs::directory_iterator dir_itr( argv[2] ); dir_itr != end_iter; ++dir_itr ) {
+				try {
+					if (fs::is_regular_file(dir_itr->status()))	{
+						std::cout << "Loading file: " << dir_itr->path() << std::endl;
 						rc = openDeviceFile(dir_itr->path().string().c_str());
 						CHECK_RC(rc, "OpenDeviceFile");
-						printf("File loaded.\n");
+						std::cout << "File loaded." << std::endl;
 						g_HandsGenerator.Create(g_Context);
 						g_GestureGenerator.Create(g_Context);
 						initializeNiteKomponents();
+
+						Player p;
+						rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p);
+						CHECK_RC(rc, "Get Player");
+
+						while(!p.IsEOF()) {
+							XnMapOutputMode mode;
+							g_DepthGenerator.GetMapOutputMode(mode);
+
+							// Read next available data
+							g_Context.WaitOneUpdateAll(g_DepthGenerator);
+							// Update NITE tree
+							g_pSessionManager->Update(&g_Context);
+							PrintSessionState(g_SessionState);
+						}
+
 					}
-				}
-				catch ( const std::exception & ex )
-				{
+				} catch (const std::exception & ex)	{
 					std::cout << dir_itr->path() << " " << ex.what() << std::endl;
 				}
 			}

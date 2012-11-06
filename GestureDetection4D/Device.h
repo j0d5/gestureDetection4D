@@ -8,6 +8,7 @@
 
 #define BUFFER_SIZE 30
 #define FEATURE_VECTOR_FREQUENCY 3
+#define WINDOW_NAME "GestureDetection4D"
 
 #define CHECK_RC(rc, what)											\
 	if (rc != XN_STATUS_OK)											\

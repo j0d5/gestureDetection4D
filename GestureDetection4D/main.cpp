@@ -48,9 +48,8 @@ int main(int argc, char ** argv)
 				{
 					if ( fs::is_regular_file( dir_itr->status() ) )
 					{
-						// ++file_count;
-						std::cout << dir_itr->path().filename().string() << "\n";
-						rc = openDeviceFile(dir_itr->path().filename().string().c_str());
+						std::cout << "Loading file: " << dir_itr->path().string() << "\n";
+						rc = openDeviceFile(dir_itr->path().string().c_str());
 						CHECK_RC(rc, "OpenDeviceFile");
 						printf("File loaded.\n");
 						g_HandsGenerator.Create(g_Context);
@@ -60,8 +59,7 @@ int main(int argc, char ** argv)
 				}
 				catch ( const std::exception & ex )
 				{
-					// ++err_count;
-					std::cout << dir_itr->path().filename() << " " << ex.what() << std::endl;
+					std::cout << dir_itr->path() << " " << ex.what() << std::endl;
 				}
 			}
 			exit(0);

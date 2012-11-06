@@ -1,7 +1,9 @@
 /**
- * 
- * @author Marcel Vielsack, Johannes Wetzel, Johannes Steudle
+* 
+* @author Marcel Vielsack, Johannes Wetzel, Johannes Steudle
 */
+
+#include <boost/filesystem.hpp>
 
 #include <iostream>
 // Headers for OpenNI
@@ -24,6 +26,7 @@
 
 // xml to initialize OpenNI
 #define SAMPLE_XML_PATH "../../Sample-Tracking.xml"
+namespace fs = boost::filesystem;
 
 int main(int argc, char ** argv)
 {
@@ -35,60 +38,50 @@ int main(int argc, char ** argv)
 	CHECK_RC(rc, "InitFromXmlFile");
 
 	if (argc > 1) {
-		if (!strcmp(argv[1], "-t")) {
-			std::cout << "Starting Trainingsmode" << std::endl;
+		if (argc > 2 && !strcmp(argv[1], "-t") && fs::exists(argv[2])) {
+			std::cout << "Starting Trainingsmode with folder: " << argv[2] << std::endl;
+
+			fs::directory_iterator end_iter;
+			for ( fs::directory_iterator dir_itr( argv[2] ); dir_itr != end_iter; ++dir_itr )
+			{
+				try
+				{
+					if ( fs::is_regular_file( dir_itr->status() ) )
+					{
+						// ++file_count;
+						std::cout << dir_itr->path().filename().string() << "\n";
+						rc = openDeviceFile(dir_itr->path().filename().string().c_str());
+						CHECK_RC(rc, "OpenDeviceFile");
+						printf("File loaded.\n");
+						g_HandsGenerator.Create(g_Context);
+						g_GestureGenerator.Create(g_Context);
+						initializeNiteKomponents();
+					}
+				}
+				catch ( const std::exception & ex )
+				{
+					// ++err_count;
+					std::cout << dir_itr->path().filename() << " " << ex.what() << std::endl;
+				}
+			}
 			exit(0);
 		} else if (!strcmp(argv[1], "-d")) {
 			std::cout << "Starting Detectionmode" << std::endl;
 			exit(0);
-		} else {
+		} else if (fs::exists(argv[1])) {
 			rc = openDeviceFile(argv[1]);
 			CHECK_RC(rc, "OpenDeviceFile");
 			printf("File loaded.\n");
 			g_HandsGenerator.Create(g_Context);
 			g_GestureGenerator.Create(g_Context);
+		} else {
+			std::cout << "Something went wrong with the parameters..." << std::endl;
+			exit(-1);
 		}
 	}
 
-	rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
-	CHECK_RC(rc, "Find depth generator");
-	rc = g_Context.FindExistingNode(XN_NODE_TYPE_HANDS, g_HandsGenerator);
-	CHECK_RC(rc, "Find hands generator");
-	rc = g_Context.FindExistingNode(XN_NODE_TYPE_GESTURE, g_GestureGenerator);
-	CHECK_RC(rc, "Find gesture generator");
-
-	XnCallbackHandle h;
-	if (g_HandsGenerator.IsCapabilitySupported(XN_CAPABILITY_HAND_TOUCHING_FOV_EDGE))
-	{
-		g_HandsGenerator.GetHandTouchingFOVEdgeCap().RegisterToHandTouchingFOVEdge(TouchingCallback, NULL, h);
-	}
-
-	XnCallbackHandle hGestureIntermediateStageCompleted, hGestureProgress, hGestureReadyForNextIntermediateStage;
-	g_GestureGenerator.RegisterToGestureIntermediateStageCompleted(GestureIntermediateStageCompletedHandler, NULL, hGestureIntermediateStageCompleted);
-	g_GestureGenerator.RegisterToGestureReadyForNextIntermediateStage(GestureReadyForNextIntermediateStageHandler, NULL, hGestureReadyForNextIntermediateStage);
-	g_GestureGenerator.RegisterGestureCallbacks(NULL, GestureProgressHandler, NULL, hGestureProgress);
-
-	// register handupdate callback for getting the point
-	g_HandsGenerator.RegisterHandCallbacks(HandCreate, HandUpdate, HandDestroy, NULL, h);
-
-	// Create NITE objects
-	g_pSessionManager = new XnVSessionManager;
-	rc = g_pSessionManager->Initialize(&g_Context, "RaiseHand", "RaiseHand");
-	CHECK_RC(rc, "SessionManager::Initialize");
-	g_pSessionManager->RegisterSession(NULL, SessionStarting, SessionEnding, FocusProgress);
-
-	g_pDrawer = new XnVPointDrawer(20, g_DepthGenerator); 
-	g_pFlowRouter = new XnVFlowRouter;
-	g_pFlowRouter->SetActive(g_pDrawer);
-
-	g_pSessionManager->AddListener(g_pFlowRouter);
-
-	g_pDrawer->RegisterNoPoints(NULL, NoHands);
-	g_pDrawer->SetDepthMap(g_bDrawDepthMap);
-
-	// Initialization done. Start generating
-	rc = g_Context.StartGeneratingAll();
-	CHECK_RC(rc, "StartGenerating");
+	//
+	initializeNiteKomponents();
 
 	// Mainloop
 	glInit(&argc, argv);

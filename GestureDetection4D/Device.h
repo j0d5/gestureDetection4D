@@ -1,8 +1,7 @@
 #ifndef DEVICE_H_
 #define DEVICE_H_
 
-#include <XnCppWrapper.h>
-#include <XnTypes.h>
+// local header
 #include "CyclicBuffer.h"
 #include "../FeatureExtractor4D/SimpleFeatureExtractor.h"
 #include "../SVM/GestureSVM.h"

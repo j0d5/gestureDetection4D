@@ -4,6 +4,7 @@
 #include "XnVNite.h"
 #include <XnCppWrapper.h>
 #include <XnTypes.h>
+// local header
 #include "Device.h"
 
 
@@ -80,6 +81,50 @@ void XN_CALLBACK_TYPE HandDestroy(HandsGenerator &generator, XnUserID user, XnFl
 	pointBuffer.flush();
 	frequencyCounter = FEATURE_VECTOR_FREQUENCY;
 	// printf("%.2f\n", ((XnPoint3D) *pointBuffer.next()).X);
+}
+
+XnStatus initializeNiteKomponents () {
+	XnStatus rc;
+	rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
+	CHECK_RC(rc, "Find depth generator");
+	rc = g_Context.FindExistingNode(XN_NODE_TYPE_HANDS, g_HandsGenerator);
+	CHECK_RC(rc, "Find hands generator");
+	rc = g_Context.FindExistingNode(XN_NODE_TYPE_GESTURE, g_GestureGenerator);
+	CHECK_RC(rc, "Find gesture generator");
+
+	XnCallbackHandle h;
+	if (g_HandsGenerator.IsCapabilitySupported(XN_CAPABILITY_HAND_TOUCHING_FOV_EDGE))
+	{
+		g_HandsGenerator.GetHandTouchingFOVEdgeCap().RegisterToHandTouchingFOVEdge(TouchingCallback, NULL, h);
+	}
+
+	XnCallbackHandle hGestureIntermediateStageCompleted, hGestureProgress, hGestureReadyForNextIntermediateStage;
+	g_GestureGenerator.RegisterToGestureIntermediateStageCompleted(GestureIntermediateStageCompletedHandler, NULL, hGestureIntermediateStageCompleted);
+	g_GestureGenerator.RegisterToGestureReadyForNextIntermediateStage(GestureReadyForNextIntermediateStageHandler, NULL, hGestureReadyForNextIntermediateStage);
+	g_GestureGenerator.RegisterGestureCallbacks(NULL, GestureProgressHandler, NULL, hGestureProgress);
+
+	// register handupdate callback for getting the point
+	g_HandsGenerator.RegisterHandCallbacks(HandCreate, HandUpdate, HandDestroy, NULL, h);
+
+	// Create NITE objects
+	g_pSessionManager = new XnVSessionManager;
+	rc = g_pSessionManager->Initialize(&g_Context, "RaiseHand", "RaiseHand");
+	CHECK_RC(rc, "SessionManager::Initialize");
+	g_pSessionManager->RegisterSession(NULL, SessionStarting, SessionEnding, FocusProgress);
+
+	g_pDrawer = new XnVPointDrawer(20, g_DepthGenerator); 
+	g_pFlowRouter = new XnVFlowRouter;
+	g_pFlowRouter->SetActive(g_pDrawer);
+
+	g_pSessionManager->AddListener(g_pFlowRouter);
+
+	g_pDrawer->RegisterNoPoints(NULL, NoHands);
+	g_pDrawer->SetDepthMap(g_bDrawDepthMap);
+
+	// Initialization done. Start generating
+	rc = g_Context.StartGeneratingAll();
+	CHECK_RC(rc, "StartGenerating");
+	return XN_STATUS_OK;
 }
 
 #endif

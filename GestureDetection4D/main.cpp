@@ -40,8 +40,7 @@ int main(int argc, char ** argv)
 	CHECK_RC(rc, "InitFromXmlFile");
 
 	if (argc > 1) {
-		if (argc > 3 && !strcmp(argv[1], "-t") && fs::exists(argv[2])) {
-			trainingClass = atoi(argv[3]);
+		if (argc > 2 && !strcmp(argv[1], "-t") && fs::exists(argv[2])) {
 			std::cout << "Starting Trainingmode with folder: " << argv[2] << "and class: " << trainingClass << std::endl;
 			
 			// iterates throug the given directory and loads the files for training
@@ -91,6 +90,7 @@ int main(int argc, char ** argv)
 			exit(0);
 		} else if (!strcmp(argv[1], "-d")) {
 			std::cout << "Starting Detectionmode" << std::endl;
+			gestureSVM.loadModel(SVM_MODEL_FILE);
 			exit(0);
 		} else if (fs::exists(argv[1])) {
 			rc = openDeviceFile(argv[1]);

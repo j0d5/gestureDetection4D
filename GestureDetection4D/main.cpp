@@ -14,12 +14,95 @@
 #include "Device.h"
 #include "Callbacks.h"
 #include "GlutRoutines.h"
+#include "Datasource.h"
+#include "OniFileDataSet.h"
 
 // #include "signal_catch.h"
 
 // xml to initialize OpenNI
 #define SAMPLE_XML_PATH "../../Sample-Tracking.xml"
 namespace fs = boost::filesystem;
+
+XnStatus loadFiles (int argc, char ** argv) {
+	XnStatus rc = XN_STATUS_OK;
+	// iterates through the given directory, extracts the file and class and loads the files for training
+	fs::directory_iterator end_iter;
+	for (fs::directory_iterator dir_itr( argv[2] ); dir_itr != end_iter; ++dir_itr ) {
+		try {
+			if (fs::is_regular_file(dir_itr->status()) 
+				&& !strcmp(dir_itr->path().extension().string().c_str(), ".oni"))
+			{
+				std::cout << "Loading file: " << dir_itr->path() << std::endl;
+				std::string filename = dir_itr->path().filename().string();
+
+				trainingClass = atoi(&filename.at(filename.length() - 5));
+				std::cout << "Training class: " << trainingClass << std::endl;
+
+				// opens the oni file
+				rc = openDeviceFile(dir_itr->path().string().c_str());
+				CHECK_RC(rc, "OpenDeviceFile");
+				std::cout << "File loaded..." << std::endl;
+				std::cout << "Start learning..." << std::endl;
+				g_HandsGenerator.Create(g_Context);
+				g_GestureGenerator.Create(g_Context);
+				initializeNiteKomponents();
+
+				Player p;
+				rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p);
+				CHECK_RC(rc, "Get Player");
+
+				// play file and generate feature vectors, train svm
+				while(!p.IsEOF()) {
+					XnMapOutputMode mode;
+					g_DepthGenerator.GetMapOutputMode(mode);
+
+					// Read next available data
+					g_Context.WaitOneUpdateAll(g_DepthGenerator);
+					// Update NITE tree
+					g_pSessionManager->Update(&g_Context);
+					PrintSessionState(g_SessionState);
+				}
+			}
+		} catch (const std::exception & ex)	{
+			std::cout << dir_itr->path() << " " << ex.what() << std::endl;
+		}
+	}
+}
+
+XnStatus loadFileFromDB(char* file, int className) {
+	XnStatus rc = XN_STATUS_OK;
+	std::cout << "Loading file: " << file << std::endl;
+	std::string filename = file;
+
+	trainingClass = atoi(&filename.at(filename.length() - 5));
+	std::cout << "Training class: " << trainingClass << std::endl;
+
+	// opens the oni file
+	rc = openDeviceFile(file);
+	CHECK_RC(rc, "OpenDeviceFile");
+	std::cout << "File loaded..." << std::endl;
+	std::cout << "Start learning..." << std::endl;
+	g_HandsGenerator.Create(g_Context);
+	g_GestureGenerator.Create(g_Context);
+	initializeNiteKomponents();
+
+	Player p;
+	rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p);
+	CHECK_RC(rc, "Get Player");
+
+	// play file and generate feature vectors, train svm
+	while(!p.IsEOF()) {
+		XnMapOutputMode mode;
+		g_DepthGenerator.GetMapOutputMode(mode);
+
+		// Read next available data
+		g_Context.WaitOneUpdateAll(g_DepthGenerator);
+		// Update NITE tree
+		g_pSessionManager->Update(&g_Context);
+		PrintSessionState(g_SessionState);
+	}
+	return rc;
+}
 
 int main(int argc, char ** argv)
 {
@@ -31,51 +114,28 @@ int main(int argc, char ** argv)
 	CHECK_RC(rc, "InitFromXmlFile");
 
 	if (argc > 1) {
-		if (argc > 2 && !strcmp(argv[1], "-t") && fs::exists(argv[2])) {
-			std::cout << "Starting Trainingmode with folder: " << argv[2] << std::endl;
+		if (argc > 1 && !strcmp(argv[1], "-t")) {
+			std::cout << "Starting Trainingmode..." << std::endl;
 
-			// iterates through the given directory, extracts the file and class and loads the files for training
-			fs::directory_iterator end_iter;
-			for (fs::directory_iterator dir_itr( argv[2] ); dir_itr != end_iter; ++dir_itr ) {
-				try {
-					if (fs::is_regular_file(dir_itr->status()) 
-						&& !strcmp(dir_itr->path().extension().string().c_str(), ".oni"))
-					{
-						std::cout << "Loading file: " << dir_itr->path() << std::endl;
-						std::string filename = dir_itr->path().filename().string();
+			// loadFiles(argc, argv); // should be from DB
+			
+			// datasource handling has to be extended (get all training files)
+			Datasource d;
+			OniFileDataSet* ds = d.getOniFileDataSetByName("20121031-095158_c1.oni");
 
-						trainingClass = atoi(&filename.at(filename.length() - 5));
-						std::cout << "Training class: " << trainingClass << std::endl;
+			std::cout << "DB-Filename: " << ds->getFilepath() << std::endl;
+			loadFileFromDB(ds->getFilepath(), 1);
 
-						// opens the oni file
-						rc = openDeviceFile(dir_itr->path().string().c_str());
-						CHECK_RC(rc, "OpenDeviceFile");
-						std::cout << "File loaded..." << std::endl;
-						std::cout << "Start learning..." << std::endl;
-						g_HandsGenerator.Create(g_Context);
-						g_GestureGenerator.Create(g_Context);
-						initializeNiteKomponents();
+			delete ds;
+			ds = d.getOniFileDataSetByName("20121031-163059_c2.oni");
+			std::cout << "DB-Filename: " << ds->getFilepath() << std::endl;
+			loadFileFromDB(ds->getFilepath(), 1);
 
-						Player p;
-						rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p);
-						CHECK_RC(rc, "Get Player");
+			delete ds;
+			ds = d.getOniFileDataSetByName("20121031-163115_c3.oni");
+			std::cout << "DB-Filename: " << ds->getFilepath() << std::endl;
+			loadFileFromDB(ds->getFilepath(), 1);
 
-						// play file and generate feature vectors, train svm
-						while(!p.IsEOF()) {
-							XnMapOutputMode mode;
-							g_DepthGenerator.GetMapOutputMode(mode);
-
-							// Read next available data
-							g_Context.WaitOneUpdateAll(g_DepthGenerator);
-							// Update NITE tree
-							g_pSessionManager->Update(&g_Context);
-							PrintSessionState(g_SessionState);
-						}
-					}
-				} catch (const std::exception & ex)	{
-					std::cout << dir_itr->path() << " " << ex.what() << std::endl;
-				}
-			}
 			gestureSVM.generateModel(); // this has to be done after collecting feature vectors
 			gestureSVM.saveModel(SVM_MODEL_FILE);
 			exit(0);

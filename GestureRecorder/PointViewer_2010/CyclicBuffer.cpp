@@ -43,7 +43,7 @@ struct RecConfiguration
     bVerbose = FALSE;
 
     nDumpTime = 1;
-    sprintf(strDirName, "./OniFiles");
+    sprintf(strDirName, LOCAL_SAVEDIR);
   }
   XnMapOutputMode* pDepthMode;
   XnMapOutputMode* pImageMode;
@@ -142,7 +142,7 @@ public:
         time(&rawtime);
         timeinfo = localtime(&rawtime);
         // TODO: Remove hardcoded directory
-        sprintf(strFileName, "%s/%04d%02d%02d-%02d%02d%02d.oni",  "./OniFiles",
+		sprintf(strFileName, "%s/%04d%02d%02d-%02d%02d%02d.oni",  LOCAL_SAVEDIR,
           timeinfo->tm_year+1900, timeinfo->tm_mon+1, timeinfo->tm_mday, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
 
         m_recorder.SetDestination(XN_RECORD_MEDIUM_FILE, strFileName);

@@ -19,6 +19,6 @@
 		</Node>
 		<Node type="Gesture" />
 		<Node type="Hands" />
-		<Node type="Image"/>
+		<Node type="Image" stopOnError="false"/>
 	</ProductionNodes>
 </OpenNI>

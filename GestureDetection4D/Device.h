@@ -9,7 +9,7 @@
 #define BUFFER_SIZE 30
 #define FEATURE_VECTOR_FREQUENCY 3
 #define WINDOW_NAME "GestureDetection4D"
-#define SVM_MODEL_FILE "SVM_Model.txt"
+#define SVM_MODEL_FILE "../../SVM_Model.txt"
 #define DEBUG_FLAG
 
 #define CHECK_RC(rc, what)											\

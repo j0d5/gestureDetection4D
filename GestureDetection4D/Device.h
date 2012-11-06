@@ -100,7 +100,13 @@ void extractFeatureFromBuffer() {
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 		pVector.push_back(convertPoint(pointBuffer.next()));
 	}
-	gestureSVM.train(featureExtractor.getFeatureVector(pVector), trainingClass);
+	if (trainingClass != 0) { // perhaps there should be a mode flag
+		printf("Training class %d\n", trainingClass);
+		gestureSVM.train(featureExtractor.getFeatureVector(pVector), trainingClass);
+	} else {
+		double predictedClass = gestureSVM.predictGesture(featureExtractor.getFeatureVector(pVector));
+		printf("Predicted as Class %f\n",predictedClass);
+	}
 
 #ifdef DEBUG_FLAG
 	std::vector<float> fVector = featureExtractor.getFeatureVector(pVector);
@@ -109,9 +115,6 @@ void extractFeatureFromBuffer() {
 		printf("FeatureVector X: %.2f, Y: %.2f, Z: %.2f\n",*iter,*(iter+1),*(iter+2));
 	}
 #endif
-
-	printf("Training class %d\n", trainingClass);
-
 }
 
 #endif

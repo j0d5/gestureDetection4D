@@ -33,7 +33,8 @@ int main(int argc, char ** argv)
 	if (argc > 1) {
 		if (argc > 2 && !strcmp(argv[1], "-t") && fs::exists(argv[2])) {
 			std::cout << "Starting Trainingmode with folder: " << argv[2] << std::endl;
-			// iterates throug the given directory and loads the files for training
+
+			// iterates through the given directory, extracts the file and class and loads the files for training
 			fs::directory_iterator end_iter;
 			for (fs::directory_iterator dir_itr( argv[2] ); dir_itr != end_iter; ++dir_itr ) {
 				try {
@@ -81,6 +82,14 @@ int main(int argc, char ** argv)
 		} else if (!strcmp(argv[1], "-d")) {
 			std::cout << "Starting Detectionmode" << std::endl;
 			gestureSVM.loadModel(SVM_MODEL_FILE);
+
+			rc = initializeNiteKomponents();
+			CHECK_RC(rc, "initializeNiteKomponents");
+
+			// Mainloop
+			glInit(&argc, argv);
+			glutMainLoop();
+
 			exit(0);
 		} else if (fs::exists(argv[1])) {
 			rc = openDeviceFile(argv[1]);
@@ -89,18 +98,13 @@ int main(int argc, char ** argv)
 			g_HandsGenerator.Create(g_Context);
 			g_GestureGenerator.Create(g_Context);
 		} else {
-			std::cout << "Something went wrong with the parameters..." << std::endl;
+			std::cout << "\n\n---- Something went wrong with the parameters..." << std::endl;
 			exit(-1);
 		}
+	} else {
+		std::cout << "\n\n---- Too less parameters, should be like:" << std::endl;
+		std::cout << "---- GestureDetection4D -t ..\\..\\OniFiles\n\n" << std::endl;
+		exit(-1);
 	}
-
-	//
-	initializeNiteKomponents();
-
-	// Mainloop
-	glInit(&argc, argv);
-	glutMainLoop();
-
-	getchar();
 	return 0;
 }

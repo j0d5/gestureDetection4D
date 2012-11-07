@@ -12,7 +12,7 @@
 * 
 */
 
-#define LOCAL_SAVEDIR "..\\..\\..\\OniFiles"
+#define LOCAL_SAVEDIR "./OniFiles"
 
 class Datasource
 {

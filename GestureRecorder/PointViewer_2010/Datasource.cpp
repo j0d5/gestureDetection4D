@@ -32,7 +32,6 @@ OniFileDataSet* Datasource::getOniFileDataSetByName(char* name){
   return oni;
 }
 void Datasource::createNewFileEntry(char* name,XnPoint3D* start, char* gesture){
-
   OniFileDataSet* dataset= new OniFileDataSet(name,  start, this->conn, gesture);
 }
 

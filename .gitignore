@@ -11,3 +11,5 @@ GestureDetection4D.vcxproj.user
 SVM_Model.txt
 /libs/SVM.lib
 /libs/FeatureExtractor4D.lib
+/libs/FeatureExtractor4D.lib
+/libs/SVM.lib

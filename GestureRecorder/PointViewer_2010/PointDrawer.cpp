@@ -8,21 +8,48 @@
 #include "PointDrawer.h"
 #include "XnVDepthMessage.h"
 #include <XnVHandPointContext.h>
+#include <string>
+
+#define NUMBER_OF_KEYS 18
+
+using namespace std;
 
 #ifdef USE_GLUT
-	#if (XN_PLATFORM == XN_PLATFORM_MACOSX)
-		#include <GLUT/glut.h>
-	#else
-		#include <glut.h>
-	#endif
-#elif defined(USE_GLES)
-	#include "opengles.h"
+#if (XN_PLATFORM == XN_PLATFORM_MACOSX)
+#include <GLUT/glut.h>
+#else
+#include <glut.h>
 #endif
+#elif defined(USE_GLES)
+#include "opengles.h"
+#endif
+
+string keysToMeaning [NUMBER_OF_KEYS][2] = {
+	{"1","gesture 1"},
+	{"2","gesture 2"},
+	{"3","gesture 3"},
+	{"4","gesture 4"},
+	{"5","gesture 5"},
+	{"6","gesture 6"},
+	{"7","gesture 7"},
+	{"8","gesture 8"},
+	{"9","gesture 9"},
+	{"0","gesture 10"},
+	{"o","gesture 11"},
+	{"p","gesture 12"},
+	{"r","start recording"},
+	{"x","stop recording"},
+	{"esc","exit"},
+	{"h","display/hide help"},
+	{"e","end current session"},
+	{"f","display current frame"}
+};
+
 
 // Constructor. Receives the number of previous positions to store per hand,
 // and a source for depth map
 XnVPointDrawer::XnVPointDrawer(XnUInt32 nHistory, xn::DepthGenerator depthGenerator) :
-	XnVPointControl("XnVPointDrawer"),
+XnVPointControl("XnVPointDrawer"),
 	m_nHistorySize(nHistory), m_DepthGenerator(depthGenerator), m_bDrawDM(false), m_bFrameID(false)
 {
 	m_pfPositionBuffer = new XnFloat[nHistory*3];
@@ -54,6 +81,7 @@ void XnVPointDrawer::SetFrameID(XnBool bFrameID)
 
 // Handle creation of a new hand
 static XnBool bShouldPrint = false;
+
 void XnVPointDrawer::OnPointCreate(const XnVHandPointContext* cxt)
 {
 	printf("** %d\n", cxt->nID);
@@ -143,10 +171,10 @@ void DrawDepthMap(const xn::DepthMetaData& dm)
 	static unsigned char* pDepthTexBuf;
 	static int texWidth, texHeight;
 
-	 float topLeftX;
-	 float topLeftY;
-	 float bottomRightY;
-	 float bottomRightX;
+	float topLeftX;
+	float topLeftY;
+	float bottomRightY;
+	float bottomRightX;
 	float texXpos;
 	float texYpos;
 
@@ -326,7 +354,7 @@ void XnVPointDrawer::Draw() const
 			m_pfPositionBuffer[3*i + 1] = pt.Y;
 			m_pfPositionBuffer[3*i + 2] = 0;//pt.Z();
 		}
-		
+
 		// Set color
 		XnUInt32 nColor = Id % nColors;
 		XnUInt32 nSingle = GetPrimaryID();
@@ -334,14 +362,14 @@ void XnVPointDrawer::Draw() const
 			nColor = 6;
 		// Draw buffer:
 		glColor4f(Colors[nColor][0],
-				Colors[nColor][1],
-				Colors[nColor][2],
-				1.0f);
+			Colors[nColor][1],
+			Colors[nColor][2],
+			1.0f);
 		glPointSize(2);
 		glVertexPointer(3, GL_FLOAT, 0, m_pfPositionBuffer);
 		glDrawArrays(GL_LINE_STRIP, 0, i);
 
-		
+
 		if (IsTouching(Id))
 		{
 			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
@@ -410,4 +438,39 @@ void PrintGesture(char* gesture)
 	sprintf(strLabel,gesture);
 	glPrintString(GLUT_BITMAP_HELVETICA_18, strLabel);
 }
+
+void printText(char* text, int colorRed, int colorGreen, int colorBlue, int xPos, int yPos)
+{
+	glColor4f(colorRed,colorGreen,colorBlue,1);
+	glRasterPos2i(xPos,yPos);
+	XnChar strLabel[200];
+	sprintf(strLabel,text);
+	glPrintString(GLUT_BITMAP_HELVETICA_18, strLabel);
+}
+
+
+/*
+* Prints the help menu 
+*/
+void printHelp() {
+
+	int x = 80;
+	int y = 80;
+
+	glRasterPos2i(x,y);
+	glPrintString(GLUT_BITMAP_HELVETICA_18, "KEY");
+	glRasterPos2i(x + 25,y);
+	glPrintString(GLUT_BITMAP_HELVETICA_18, "FUNCTION");
+	glRasterPos2i(x,y+=15);
+
+	for(int i=0; i < NUMBER_OF_KEYS; i++) {
+
+		glPrintString(GLUT_BITMAP_HELVETICA_18, (char*)(keysToMeaning[i][0]).c_str());
+		glRasterPos2i(x + 25,y);
+		glPrintString(GLUT_BITMAP_HELVETICA_18, (char*)(keysToMeaning[i][1]).c_str());
+		glRasterPos2i(x,y+=8);
+	}
+
+}
+
 #endif

@@ -21,7 +21,9 @@ typedef enum
 } SessionState;
 
 void PrintSessionState(SessionState eState);
-	void PrintGesture(char* gesture);
+void PrintGesture(char* gesture);
+void printText(char* text, int colorRed, int colorGreen, int colorBlue, int xPos, int yPos);
+void printHelp();
 /**
  * This is a point control, which stores the history of every point
  * It can draw all the points as well as the depth map.
@@ -67,6 +69,8 @@ public:
 	void SetFrameID(XnBool bFrameID);
 
 	void SetTouchingFOVEdge(XnUInt32 nID);
+
+	
 protected:
 	XnBool IsTouching(XnUInt32 nID) const;
 	// Number of previous position to store for each hand

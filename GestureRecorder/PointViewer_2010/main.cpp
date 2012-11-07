@@ -253,19 +253,19 @@ void glutKeyboard (unsigned char key, int x, int y) {
 		break;
 	case'1':
 		if(!recording)
-		gesture="sos";
+		gesture="LetterL";
 		break;
 	case'2':
 		if(!recording)
-		gesture="hello";
+		gesture="LetterO";
 		break;
 	case'3':
 		if(!recording)
-		gesture="3";
+		gesture="Push";
 		break;
 	case'4':
 		if(!recording)
-		gesture="4";
+		gesture="Wave";
 		break;
 	case'5':
 		if(!recording)

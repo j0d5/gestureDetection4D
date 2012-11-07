@@ -71,11 +71,12 @@ XnStatus loadFiles (int argc, char ** argv) {
 
 XnStatus loadFileFromDB(char* file, int className) {
 	XnStatus rc = XN_STATUS_OK;
+#ifdef DEBUG_FLAG
 	std::cout << "Loading file: " << file << std::endl;
+	std::cout << "Training class: " << className << std::endl;
+#endif
 	std::string filename = file;
-
-	trainingClass = atoi(&filename.at(filename.length() - 5));
-	std::cout << "Training class: " << trainingClass << std::endl;
+	trainingClass = className;
 
 	// opens the oni file
 	rc = openDeviceFile(file);
@@ -118,9 +119,22 @@ int main(int argc, char ** argv)
 			std::cout << "Starting Trainingmode..." << std::endl;
 
 			// loadFiles(argc, argv); // should be from DB
-			
+
 			// datasource handling has to be extended (get all training files)
 			Datasource d;
+			std::vector<OniFileDataSet*> oniFiles = d.getOniFileDatasets();
+
+			std::vector<OniFileDataSet*>::iterator iter;
+
+			for(iter = oniFiles.begin(); iter != oniFiles.end(); iter++)	{
+				std::cout << "DB-Filename: " << (*iter)->getFilepath() << 
+							 " GestureID: " << (*iter)->getGestureId() <<
+							 " GestureName: " << (*iter)->getGestureName() << std::endl;
+				loadFileFromDB((*iter)->getFilepath(), (*iter)->getGestureId());
+			}			
+			
+			
+			/*
 			OniFileDataSet* ds = d.getOniFileDataSetByName("20121031-095158_c1.oni");
 
 			std::cout << "DB-Filename: " << ds->getFilepath() << std::endl;
@@ -135,7 +149,7 @@ int main(int argc, char ** argv)
 			ds = d.getOniFileDataSetByName("20121031-163115_c3.oni");
 			std::cout << "DB-Filename: " << ds->getFilepath() << std::endl;
 			loadFileFromDB(ds->getFilepath(), 1);
-
+			*/
 			gestureSVM.generateModel(); // this has to be done after collecting feature vectors
 			gestureSVM.saveModel(SVM_MODEL_FILE);
 			exit(0);

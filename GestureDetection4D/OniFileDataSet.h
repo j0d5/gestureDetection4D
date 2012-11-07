@@ -29,21 +29,23 @@ struct spl
 class OniFileDataSet
 {
 private:
-  XnPoint3D* start;
+	XnPoint3D* start;
 	int fileId;
+	int gestureId;
 	char* filename;
+	char* gestureName;
 	int size;
 	char* filepath;
-  // writes all attribute to the DB
-  void save(Connection* conn);
-  // looks up the gestureId from DB
-  int getGestureId(char* gestureNamechar, Connection* conn);
-  // looks up the oniFileId from db
-  int getOniFileIdByName(char* fileName, Connection* conn);
-  // fills all attribute from this class with values from the db
-  void readFromDB(char* name, Connection* conn);
-public:
+	// writes all attribute to the DB
+	void save(Connection* conn);
+	// looks up the gestureId from DB
+	int getGestureIdFromDB(char* gestureNamechar, Connection* conn);
+	// looks up the oniFileId from db
+	int getOniFileIdByName(char* fileName, Connection* conn);
+	// fills all attribute from this class with values from the db
+	void readFromDB(char* name, Connection* conn);
 
+public:
 	struct spl split (char *in, char delim);
 	int getFileId();
 	char* getFileName();
@@ -54,10 +56,14 @@ public:
 	void setFileName(char* filename);
 	void setSize(int size);
 	void setFilePath(char* filepath);
-  // Creates a new DataSet with all infos from the db
+	void setGestureId(int id);
+	int getGestureId();
+	void setGestureName(char* name);
+	char* getGestureName();
+	// Creates a new DataSet with all infos from the db
 	OniFileDataSet(char* fileName, Connection* conn);
-  // Creates a DataSet and stores the information to the db
-  OniFileDataSet(char* fileName,XnPoint3D* start, Connection *conn, char* gesture);
+	// Creates a DataSet and stores the information to the db
+	OniFileDataSet(char* fileName,XnPoint3D* start, Connection *conn, char* gesture);
 	~OniFileDataSet(void);
 };
 

@@ -66,16 +66,17 @@ CyclicBuffer* cyclicBuffer;
 bool recording = false;
 bool dump = false;
 bool valid=true;
+bool displayHelp = false;
 char* gesture=NULL;
 int pointCounter=0;
 XnPoint3D* start=NULL;
-	// To count missed frames
-	XnUInt64 nLastDepthTime = 0;
-	XnUInt64 nLastImageTime = 0;
-	XnUInt32 nMissedDepthFrames = 0;
-	XnUInt32 nMissedImageFrames = 0;
-	XnUInt32 nDepthFrames = 0;
-	XnUInt32 nImageFrames = 0;
+// To count missed frames
+XnUInt64 nLastDepthTime = 0;
+XnUInt64 nLastImageTime = 0;
+XnUInt32 nMissedDepthFrames = 0;
+XnUInt32 nMissedImageFrames = 0;
+XnUInt32 nDepthFrames = 0;
+XnUInt32 nImageFrames = 0;
 	
 // NITE objects
 XnVSessionManager* g_pSessionManager;
@@ -113,18 +114,21 @@ void XN_CALLBACK_TYPE FocusProgress(const XnChar* strFocus, const XnPoint3D& ptP
 {
 //	printf("Focus progress: %s @(%f,%f,%f): %f\n", strFocus, ptPosition.X, ptPosition.Y, ptPosition.Z, fProgress);
 }
+
 // callback for session start
 void XN_CALLBACK_TYPE SessionStarting(const XnPoint3D& ptPosition, void* UserCxt)
 {
 	//printf("Session start: (%f,%f,%f)\n", ptPosition.X, ptPosition.Y, ptPosition.Z);
 	g_SessionState = IN_SESSION;
 }
+
 // Callback for session end
 void XN_CALLBACK_TYPE SessionEnding(void* UserCxt)
 {
 	printf("Session end\n");
 	g_SessionState = NOT_IN_SESSION;
 }
+
 void XN_CALLBACK_TYPE NoHands(void* UserCxt)
 {
 	if (g_SessionState != NOT_IN_SESSION)
@@ -133,36 +137,11 @@ void XN_CALLBACK_TYPE NoHands(void* UserCxt)
 		g_SessionState = QUICK_REFOCUS;
 	}
 }
+
 void XN_CALLBACK_TYPE Hand_Update(xn::HandsGenerator& generator, XnUserID nId, const XnPoint3D* pPosition, 
 								  XnFloat fTime, void* pCookie) 
 {
-
 	pointCounter++;
-	/*if(pointCounter==9){
-		valid=true;
-		start = new XnPoint3D();
-		start->X=pPosition->X;
-		start->Y=pPosition->Y;
-		start->Z=pPosition->Z;
-	}
-	if(pointCounter>10){
-		double diff;
-		diff=abs(start->X - pPosition->X);
-	
-		if(diff>30){
-			valid=false;
-		}
-
-		diff=abs(start->Y - pPosition->Y);
-	
-		if(diff>30){
-			valid=false;
-		}
-		printf("valid %d\n",valid);
-	}
-	*/
-	
-	//printf("Punkte: %i \n",pointCounter);
 }
 
 void XN_CALLBACK_TYPE Hand_Create(xn::HandsGenerator& generator, XnUserID nId, const XnPoint3D* pPosition, 
@@ -181,16 +160,6 @@ void XN_CALLBACK_TYPE TouchingCallback(xn::HandTouchingFOVEdgeCapability& genera
 {
 	g_pDrawer->SetTouchingFOVEdge(id);
 }
-/*
-void XN_CALLBACK_TYPE MyGestureInProgress(xn::GestureGenerator& generator, const XnChar* strGesture, const XnPoint3D* pPosition, void* pCookie)
-{
-	printf("Gesture %s in progress\n", strGesture);
-}
-void XN_CALLBACK_TYPE MyGestureReady(xn::GestureGenerator& generator, const XnChar* strGesture, const XnPoint3D* pPosition, void* pCookie)
-{
-	printf("Gesture %s ready for next stage\n", strGesture);
-}
-*/
 
 // this function is called each frame
 void glutDisplay (void)
@@ -213,11 +182,9 @@ void glutDisplay (void)
 
 	glDisable(GL_TEXTURE_2D);
 
-	if (!g_bPause)
-	{
+	if (!g_bPause) {
 	
-		if(dump)
-		{
+		if(dump) {
 			cyclicBuffer->Dump();
 
 			if(valid&&(gesture)){
@@ -230,17 +197,28 @@ void glutDisplay (void)
 		// Get next data
 		g_Context.WaitAndUpdateAll();
 		
-		if(recording)
-		{
+		if(recording) {
 			// Save data
 			cyclicBuffer->Update(g_DepthGenerator,g_imageGenerator);	
 		}
+
 		// Update NITE tree
 		g_pSessionManager->Update(&g_Context);
+
 #ifdef USE_GLUT
 		PrintSessionState(g_SessionState);
-		if(gesture!=NULL)
-		PrintGesture(gesture);
+		
+		if(gesture!=NULL) {
+			PrintGesture(gesture);
+		}
+
+		if(recording) {
+			char test[20] = "recording";
+			printText(test, 1,0,0,275,20);
+		}
+		if(displayHelp) {
+			printHelp();
+		}
 #endif
 	}
 
@@ -250,8 +228,8 @@ void glutDisplay (void)
 }
 
 #ifdef USE_GLUT
-void glutIdle (void)
-{
+void glutIdle (void) {
+
 	if (g_bQuit) {
 		CleanupExit();
 	}
@@ -260,13 +238,19 @@ void glutIdle (void)
 	glutPostRedisplay();
 }
 
-void glutKeyboard (unsigned char key, int x, int y)
-{
+
+//handels the keyboard input
+void glutKeyboard (unsigned char key, int x, int y) {
+	
 	switch (key)
 	{
+	//27 = esc
 	case 27:
 		// Exit
 		CleanupExit();
+	case 'h':
+		displayHelp = !displayHelp;
+		break;
 	case'1':
 		if(!recording)
 		gesture="sos";
@@ -344,7 +328,7 @@ void glutKeyboard (unsigned char key, int x, int y)
 		break;
 	case 'x':
 		recording=false;
-		dump=true;
+		//dump=true;
 		break;
 	}
 }
@@ -355,7 +339,6 @@ void glInit (int * pargc, char ** argv)
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowSize(GL_WIN_SIZE_X, GL_WIN_SIZE_Y);
 	glutCreateWindow ("Gesture Recorder");
-	//glutFullScreen();
 	glutSetCursor(GLUT_CURSOR_NONE);
 
 	glutKeyboardFunc(glutKeyboard);
@@ -538,29 +521,6 @@ XnBool ParseArgs(int argc, char** argv, RecConfiguration& config)
 				++i;
 			}
 		}
-		//Setting the specific gesture index
-		/*else if (xnOSStrCaseCmp(argv[i], "gesture") == 0)
-		{
-			
-			if (argc > i+1)
-			{
-				if (xnOSStrCaseCmp(argv[i+1], "null") == 0)
-				{
-					classIdx = 0;
-					++i;
-				}
-				else if (xnOSStrCaseCmp(argv[i+1], "point") == 0)
-				{
-					classIdx = 1;
-					++i;
-				}
-				else if (xnOSStrCaseCmp(argv[i+1], "wave") == 0)
-				{
-					classIdx = 2;
-					++i;
-				}
-			}
-		} into featureExtraction*/
 		else
 		{
 			printf("Unknown option %s\n", argv[i]);
@@ -586,7 +546,7 @@ XnBool ParseArgs(int argc, char** argv, RecConfiguration& config)
 
 
 // xml to initialize OpenNI
-#define SAMPLE_XML_PATH "../Sample-Tracking.xml"
+#define SAMPLE_XML_PATH "../../Sample-Tracking.xml"
 
 int main(int argc, char ** argv)
 {
@@ -605,6 +565,25 @@ int main(int argc, char ** argv)
 	rc = g_Context.InitFromXmlFile(SAMPLE_XML_PATH, g_ScriptNode, &errors);
 	CHECK_ERRORS(rc, errors, "InitFromXmlFile");
 	CHECK_RC(rc, "InitFromXmlFile");
+
+	//using an ONI file instead of using the live stream 
+		
+	//
+	// UNCOMMENT FOR USING AN ONI FILE
+	//
+	/*
+		rc = g_Context.Init();
+		CHECK_RC(rc, "Context.Init()");
+		rc = g_Context.OpenFileRecording(argv[1]);
+		CHECK_RC(rc, "OpenOpenFileRecording");
+
+		CHECK_RC(rc, "OpenDeviceFile");
+		printf("File loaded.\n");
+		g_HandsGenerator.Create(g_Context);
+		g_GestureGenerator.Create(g_Context);
+		//end of using oni file 
+	*/
+
 	// Create and initialize the cyclic buffer
 	rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
 	CHECK_RC(rc, "Find depth generator");
@@ -614,20 +593,24 @@ int main(int argc, char ** argv)
 	CHECK_RC(rc, "Find gesture generator");
 	rc = g_Context.FindExistingNode(XN_NODE_TYPE_IMAGE, g_imageGenerator);
 	CHECK_RC(rc, "Find image generator");
+
 	if (!ParseArgs(argc, argv, config))
 	{
 		printf("Parse error\n");
 		return 1;
 	}
+
 	ConfigureGenerators(config, g_Context, g_DepthGenerator, g_imageGenerator);
 	cyclicBuffer= new CyclicBuffer(g_Context, g_DepthGenerator, g_imageGenerator, config);
 	cyclicBuffer->Initialize(config.strDirName, 4);
 	XnCallbackHandle h;
 	XnCallbackHandle h2;
+
 	if (g_HandsGenerator.IsCapabilitySupported(XN_CAPABILITY_HAND_TOUCHING_FOV_EDGE))
 	{
 		g_HandsGenerator.GetHandTouchingFOVEdgeCap().RegisterToHandTouchingFOVEdge(TouchingCallback, NULL, h);
 	}
+
 	g_HandsGenerator.RegisterHandCallbacks(Hand_Create,Hand_Update,0,0,h2);
 	XnCallbackHandle hGestureIntermediateStageCompleted, hGestureProgress, hGestureReadyForNextIntermediateStage;
 	g_GestureGenerator.RegisterToGestureIntermediateStageCompleted(GestureIntermediateStageCompletedHandler, NULL, hGestureIntermediateStageCompleted);

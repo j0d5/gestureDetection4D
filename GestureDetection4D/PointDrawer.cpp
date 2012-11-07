@@ -267,6 +267,21 @@ void glPrintString(void *font, char *str)
 		glutBitmapCharacter(font,*str++);
 	}
 }
+
+void printText(char* text, int colorRed, int colorGreen, int colorBlue, int xPos, int yPos)
+{
+	//printf("sogar das mach ich ");
+	glColor4f(colorRed,colorGreen,colorBlue,1);
+	glRasterPos2i(xPos,yPos);
+	
+	XnUInt32 nWritten = 0;
+	XnChar strLabel[XN_FILE_MAX_PATH];
+	sprintf(strLabel,text);
+	xnOSStrFormat(strLabel, XN_FILE_MAX_PATH, &nWritten, text);
+	
+	glPrintString(GLUT_BITMAP_HELVETICA_18, strLabel);
+}
+
 void DrawFrameID(XnUInt32 nFrameID)
 {
 	glColor4f(1,0,0,1);
@@ -402,5 +417,6 @@ void PrintSessionState(SessionState eState)
 	}
 
 	glPrintString(GLUT_BITMAP_HELVETICA_18, strLabel);
+
 }
 #endif

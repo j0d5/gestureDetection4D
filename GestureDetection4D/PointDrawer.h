@@ -21,6 +21,8 @@ typedef enum
 } SessionState;
 
 void PrintSessionState(SessionState eState);
+void printText(char* text, int colorRed, int colorGreen, int colorBlue, int xPos, int yPos);
+
 /**
  * This is a point control, which stores the history of every point
  * It can draw all the points as well as the depth map.

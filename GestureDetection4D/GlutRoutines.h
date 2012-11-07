@@ -9,6 +9,11 @@
 
 #include "Device.h"
 
+#define DISPLAYTIME_IN_FRAMES 30;
+
+double predictedClass = -1;
+int displayTimeInFrames = DISPLAYTIME_IN_FRAMES;
+
 void CleanupExit()
 {
 	g_ScriptNode.Release();
@@ -18,6 +23,14 @@ void CleanupExit()
 	g_Context.Release();
 
 	exit (1);
+}
+
+void resetDisplayTime() {
+	displayTimeInFrames = DISPLAYTIME_IN_FRAMES;
+}
+
+void resetPredictedClass() {
+	predictedClass = -1;
 }
 
 // this function is called each frame
@@ -34,7 +47,6 @@ void glutDisplay (void)
 	g_DepthGenerator.GetMapOutputMode(mode);
 	glOrtho(0, mode.nXRes, mode.nYRes, 0, -1.0, 1.0);
 
-
 	glDisable(GL_TEXTURE_2D);
 
 	if (!g_bPause)
@@ -46,8 +58,25 @@ void glutDisplay (void)
 		PrintSessionState(g_SessionState);
 	}
 
+	if(predictedClass > 0 && displayTimeInFrames > 0) {
+
+		char p_class[30];
+		sprintf(p_class, "%.2f", predictedClass);
+		printText(p_class,0, 1, 0, 30, 40);
+
+		--displayTimeInFrames;
+
+		if(displayTimeInFrames == 0) {
+			resetDisplayTime();
+			resetPredictedClass();
+		}
+	}
+
 	glutSwapBuffers();
+
+
 }
+
 void glutIdle (void)
 {
 	if (g_bQuit) {

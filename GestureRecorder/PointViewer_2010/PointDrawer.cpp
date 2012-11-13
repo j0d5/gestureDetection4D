@@ -10,7 +10,7 @@
 #include <XnVHandPointContext.h>
 #include <string>
 
-#define NUMBER_OF_KEYS 18
+#define NUMBER_OF_KEYS 12
 
 using namespace std;
 
@@ -25,18 +25,12 @@ using namespace std;
 #endif
 
 string keysToMeaning [NUMBER_OF_KEYS][2] = {
-	{"1","gesture 1"},
-	{"2","gesture 2"},
-	{"3","gesture 3"},
-	{"4","gesture 4"},
-	{"5","gesture 5"},
-	{"6","gesture 6"},
-	{"7","gesture 7"},
-	{"8","gesture 8"},
-	{"9","gesture 9"},
-	{"0","gesture 10"},
-	{"o","gesture 11"},
-	{"p","gesture 12"},
+	{"1","Swipe"},
+	{"2","Push"},
+	{"3","Letter L"},
+	{"4","Letter O"},
+	{"5","Letter Z"},
+	{"6","NO_GESTURE"},
 	{"r","start recording"},
 	{"x","stop recording"},
 	{"esc","exit"},

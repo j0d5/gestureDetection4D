@@ -253,53 +253,27 @@ void glutKeyboard (unsigned char key, int x, int y) {
 		break;
 	case'1':
 		if(!recording)
-		gesture="LetterL";
+		gesture="Swipe";
 		break;
 	case'2':
 		if(!recording)
-		gesture="LetterO";
+		gesture="Push";
 		break;
 	case'3':
 		if(!recording)
-		gesture="Push";
+		gesture="Letter L";
 		break;
 	case'4':
 		if(!recording)
-		gesture="Wave";
+		gesture="Letter O";
 		break;
 	case'5':
 		if(!recording)
-		gesture="5";
+		gesture="Letter Z";
 		break;
 	case'6':
 		if(!recording)
-		gesture="6";
-		break;
-	case'7':
-		if(!recording)
-		gesture="7";
-		break;
-	case'8':
-		if(!recording)
-		gesture="8";
-		break;
-	case'9':
-		if(!recording)
-		gesture="9";
-		break;
-	case'0':
-		if(!recording)
-		gesture="10";
-		break;
-	// Key "o" for Swipe Gesture
-	case'o':
-		if(!recording)
-		gesture="11";
-		break;
-	//Key "p" for Push Gesture
-	case'p':
-		if(!recording)
-		gesture="12";
+		gesture="NO_GESTURE";
 		break;
 	case 'd':
 		// Toggle drawing of the depth map

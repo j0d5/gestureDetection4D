@@ -109,7 +109,6 @@ public:
 
 	/// flushing the complete buffer
 	void flush() {
-		printf("Flushing buffer!\n");
 		free(startInMemoryElement);
 		allocateBuffer();
         firstElement = startInMemoryElement;

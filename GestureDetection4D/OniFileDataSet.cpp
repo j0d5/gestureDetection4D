@@ -165,7 +165,7 @@ void OniFileDataSet::readFromDB(char* name, Connection* conn){
 
 	sprintf(query,"SELECT gt.idGesture, gt.name FROM gesture AS gt \
 		WHERE (gt.idGesture = (SELECT g2o.gesture_idGesture FROM gesture2oni AS g2o \
-		WHERE (g2o.idOniData = (SELECT of.idOniFile FROM onifile AS of WHERE of.name='%s'))))",name);
+		WHERE (g2o.oniFile_idOniFile = %d)))",this->getFileId());
 	res= conn->mysql_perform_query(query);
 	if (res==0) {
 		std::cerr << "There is no such gestureID" << std::endl;

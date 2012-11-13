@@ -7,16 +7,6 @@
 // Header for NITE
 #include "XnVNite.h"
 
-// local header
-#include "CyclicBuffer.h"
-#include "../FeatureExtractor4D/SimpleFeatureExtractor.h"
-#include "../SVM/GestureSVM.h"
-
-#define BUFFER_SIZE 30
-#define FEATURE_VECTOR_FREQUENCY 3
-#define WINDOW_NAME "GestureDetection4D"
-#define SVM_MODEL_FILE "../../SVM_Model.txt"
-#define DEBUG_FLAG
 
 #define CHECK_RC(rc, what)											\
 	if (rc != XN_STATUS_OK)											\
@@ -36,12 +26,7 @@
 
 using namespace xn;
 
-// global cyclic buffer
-CyclicBuffer<XnPoint3D> pointBuffer(BUFFER_SIZE);
-SimpleFeatureExtractor featureExtractor;
-GestureSVM gestureSVM;
-int frequencyCounter = FEATURE_VECTOR_FREQUENCY;
-int trainingClass = 0;
+
 
 // OpenNI objects
 Context g_Context;
@@ -84,37 +69,6 @@ XnStatus openDeviceFile(const char* csFile)
 	g_Player.SetRepeat(false);
 
 	return XN_STATUS_OK;
-}
-
-Point3D convertPoint(XnPoint3D* xnPoint) {
-	Point3D p;
-	p.X = xnPoint->X;
-	p.Y = xnPoint->Y;
-	p.Z = xnPoint->Z;
-	return p;
-}
-
-void extractFeatureFromBuffer() {
-	printf("Getting FeatureVector...\n");
-	std::vector<Point3D> pVector;
-	for (int i = 0; i < BUFFER_SIZE; i++) {
-		pVector.push_back(convertPoint(pointBuffer.next()));
-	}
-	if (trainingClass != 0) { // perhaps there should be a mode flag
-		printf("Training class %d\n", trainingClass);
-		gestureSVM.train(featureExtractor.getFeatureVector(pVector), trainingClass);
-	} else {
-		double predictedClass = gestureSVM.predictGesture(featureExtractor.getFeatureVector(pVector));
-		printf("Predicted as Class %f\n",predictedClass);
-	}
-
-#ifdef DEBUG_FLAG
-	std::vector<float> fVector = featureExtractor.getFeatureVector(pVector);
-
-	for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
-		printf("FeatureVector X: %.2f, Y: %.2f, Z: %.2f\n",*iter,*(iter+1),*(iter+2));
-	}
-#endif
 }
 
 #endif

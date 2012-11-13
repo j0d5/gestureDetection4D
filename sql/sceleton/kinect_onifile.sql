@@ -31,8 +31,17 @@ CREATE TABLE `onifile` (
   `filePath` varchar(150) COLLATE latin1_german2_ci DEFAULT NULL,
   PRIMARY KEY (`idOniFile`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=265 DEFAULT CHARSET=latin1 COLLATE=latin1_german2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=266 DEFAULT CHARSET=latin1 COLLATE=latin1_german2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `onifile`
+--
+
+LOCK TABLES `onifile` WRITE;
+/*!40000 ALTER TABLE `onifile` DISABLE KEYS */;
+/*!40000 ALTER TABLE `onifile` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -43,4 +52,4 @@ CREATE TABLE `onifile` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-10-24 10:33:19
+-- Dump completed on 2012-11-13 17:27:32

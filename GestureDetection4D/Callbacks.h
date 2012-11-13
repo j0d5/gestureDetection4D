@@ -6,6 +6,7 @@
 #include <XnTypes.h>
 // local header
 #include "Device.h"
+#include "Detection.h"
 
 
 // Callback for when the focus is in progress
@@ -67,18 +68,27 @@ void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const
 
 void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
 	// printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
-	pointBuffer.push(*pPosition);
+	g_pointBuffer.push(*pPosition);
 
-	if (pointBuffer.isFull() && !frequencyCounter--) {
+	if (g_pointBuffer.isFull() && !frequencyCounter--) {
 		printf("Buffer is full!\n");
-		extractFeatureFromBuffer();
+		std::vector<float> feature  = extractFeatureVectorFromBuffer();
+
+		if (g_IsTrainMode) 
+		{ // perhaps there should be a mode flag
+			printf("Training class %d\n", g_CurrentTrainClassID);
+			g_gestureSVM.train(feature, g_CurrentTrainClassID);
+        } else {
+                double predictedClass = g_gestureSVM.predictGesture(feature);
+                printf("Predicted as Class %f\n",predictedClass);
+        }
 		frequencyCounter = FEATURE_VECTOR_FREQUENCY;
 	}
 }
 
 void XN_CALLBACK_TYPE HandDestroy(HandsGenerator &generator, XnUserID user, XnFloat fTime, void *pCookie) {
 	printf("Hand destroyed!\n");
-	pointBuffer.flush();
+	g_pointBuffer.flush();
 	frequencyCounter = FEATURE_VECTOR_FREQUENCY;
 	// printf("%.2f\n", ((XnPoint3D) *pointBuffer.next()).X);
 }

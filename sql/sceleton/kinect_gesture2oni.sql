@@ -34,8 +34,17 @@ CREATE TABLE `gesture2oni` (
   PRIMARY KEY (`idOniData`,`gesture_idGesture`,`oniFile_idOniFile`),
   KEY `fk_gesture2Oni_gesture` (`gesture_idGesture`),
   KEY `fk_gesture2Oni_oniFile1` (`oniFile_idOniFile`)
-) ENGINE=InnoDB AUTO_INCREMENT=234 DEFAULT CHARSET=latin1 COLLATE=latin1_german2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=235 DEFAULT CHARSET=latin1 COLLATE=latin1_german2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `gesture2oni`
+--
+
+LOCK TABLES `gesture2oni` WRITE;
+/*!40000 ALTER TABLE `gesture2oni` DISABLE KEYS */;
+/*!40000 ALTER TABLE `gesture2oni` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -46,4 +55,4 @@ CREATE TABLE `gesture2oni` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-10-24 10:33:19
+-- Dump completed on 2012-11-13 17:27:32

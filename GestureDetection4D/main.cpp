@@ -16,13 +16,14 @@
 #include "GlutRoutines.h"
 #include "Datasource.h"
 #include "OniFileDataSet.h"
+#include "Detection.h"
 
 // #include "signal_catch.h"
 
 // xml to initialize OpenNI
 #define SAMPLE_XML_PATH "../../Sample-Tracking.xml"
 namespace fs = boost::filesystem;
-
+/*
 XnStatus loadFiles (int argc, char ** argv) {
 	XnStatus rc = XN_STATUS_OK;
 	// iterates through the given directory, extracts the file and class and loads the files for training
@@ -67,12 +68,11 @@ XnStatus loadFiles (int argc, char ** argv) {
 			std::cout << dir_itr->path() << " " << ex.what() << std::endl;
 		}
 	}
-}
+}*/
 
-XnStatus loadFileFromDB(char* file, int className) {
+XnStatus playFileFromDB(char* file) {
 	XnStatus rc = XN_STATUS_OK;
 	std::string filename = file;
-	trainingClass = className;
 
 	// opens the oni file
 	rc = openDeviceFile(file);
@@ -101,6 +101,9 @@ XnStatus loadFileFromDB(char* file, int className) {
 	return rc;
 }
 
+
+
+
 int main(int argc, char ** argv)
 {
 	XnStatus rc = XN_STATUS_OK;
@@ -110,11 +113,14 @@ int main(int argc, char ** argv)
 	CHECK_ERRORS(rc, errors, "InitFromXmlFile");
 	CHECK_RC(rc, "InitFromXmlFile");
 
+	//trainig mode
 	if (argc > 1) {
 		if (argc > 1 && !strcmp(argv[1], "-t")) {
 			std::cout << "Starting Trainingmode..." << std::endl;
+			g_IsTrainMode = true;
 
 			Datasource d;
+			//maybe todo: add flag to oni entrys to mark training data!
 			std::vector<OniFileDataSet*> oniFiles = d.getOniFileDatasets();
 
 			std::vector<OniFileDataSet*>::iterator iter;
@@ -123,17 +129,21 @@ int main(int argc, char ** argv)
 				std::cout << "DB-Filename: " << (*iter)->getFilepath() << std::endl;
 				std::cout << "GestureID: " << (*iter)->getGestureId() << std::endl;
 				std::cout << "GestureName: " << (*iter)->getGestureName() << std::endl;
-
-				loadFileFromDB((*iter)->getFilepath(), (*iter)->getGestureId());
+				
+				g_CurrentTrainClassID = (*iter)->getGestureId();  
+				//replays the current ONI File in trainig mode. 
+				playFileFromDB((*iter)->getFilepath());
 			}			
-			
-			gestureSVM.generateModel(); // this has to be done after collecting feature vectors
-			gestureSVM.saveModel(SVM_MODEL_FILE);
+			//generate and save svm model after after training all oni files
+			g_gestureSVM.generateModel(); // this has to be done after collecting feature vectors
+			g_gestureSVM.saveModel(SVM_MODEL_FILE);
 			exit(0);
 
-		} else if (!strcmp(argv[1], "-d")) {
+		}
+		//live query mode
+		else if (!strcmp(argv[1], "-d")) {
 			std::cout << "Starting Detectionmode" << std::endl;
-			gestureSVM.loadModel(SVM_MODEL_FILE);
+			g_gestureSVM.loadModel(SVM_MODEL_FILE);
 
 			rc = initializeNiteKomponents();
 			CHECK_RC(rc, "initializeNiteKomponents");

@@ -318,6 +318,7 @@
     <ClInclude Include="OniFileDataSet.h" />
     <ClInclude Include="PointDrawer.h" />
     <ClInclude Include="Res\Resource-NITE.h" />
+    <ClInclude Include="Detection.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Res\NITE.rc" />

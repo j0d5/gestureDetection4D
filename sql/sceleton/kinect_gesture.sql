@@ -32,6 +32,16 @@ CREATE TABLE `gesture` (
   UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1 COLLATE=latin1_german2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `gesture`
+--
+
+LOCK TABLES `gesture` WRITE;
+/*!40000 ALTER TABLE `gesture` DISABLE KEYS */;
+INSERT INTO `gesture` VALUES (3,'Letter L'),(4,'Letter O'),(5,'Letter Z'),(6,'NO_GESTURE'),(2,'Push'),(1,'Swipe');
+/*!40000 ALTER TABLE `gesture` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -42,4 +52,4 @@ CREATE TABLE `gesture` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-10-24 10:33:19
+-- Dump completed on 2012-11-13 17:27:32

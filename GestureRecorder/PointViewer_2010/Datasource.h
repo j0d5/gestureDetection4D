@@ -12,7 +12,7 @@
 * 
 */
 
-#define LOCAL_SAVEDIR "./OniFiles"
+#define LOCAL_SAVEDIR "C:/Users/latadmin/Documents/gesturedetection4d/oniFiles"
 
 class Datasource
 {

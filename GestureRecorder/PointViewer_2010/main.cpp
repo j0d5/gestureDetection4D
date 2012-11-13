@@ -328,7 +328,7 @@ void glutKeyboard (unsigned char key, int x, int y) {
 		break;
 	case 'x':
 		recording=false;
-		//dump=true;
+		dump=true;
 		break;
 	}
 }

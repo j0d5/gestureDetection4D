@@ -30,7 +30,7 @@ OniFileDataSet::OniFileDataSet(char* fileName,XnPoint3D* start, Connection *conn
 	// Extract filename and filepath from given filestring
 	
 	spl s=this->split(tmp,'/');
-	this->filename=s.pointers[2];
+	this->filename=s.pointers[s.count-1];
 	
     this->save(conn);
 }

@@ -158,6 +158,7 @@ public:
           rc = m_recorder.AddNodeToRecording(mockDepth, XN_CODEC_16Z_EMB_TABLES);
           CHECK_RC(rc, "Add depth node");
         }
+
         if (m_bImage)
         {
           // Create mock nodes based on the image generator, to save image

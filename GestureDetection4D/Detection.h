@@ -4,20 +4,13 @@
 #include "CyclicBuffer.h"
 #include "../FeatureExtractor4D/SimpleFeatureExtractor.h"
 #include "../SVM/GestureSVM.h"
-
+#include "Datasource.h"
+#include "Device.h"
+#include "Constants.h"
 
 // Header for NITE
 #include "XnVNite.h"
 #include <list>
-
-#define BUFFER_SIZE 30
-//use every n-th hand update
-#define FEATURE_VECTOR_FREQUENCY 3
-#define WINDOW_NAME "GestureDetection4D"
-#define SVM_MODEL_FILE "../../SVM_Model.txt"
-#define DEBUG_FLAG
-
-using namespace std;
 
 bool g_IsTrainMode = false;
 int g_CurrentTrainClassID = -1;
@@ -29,6 +22,7 @@ list<XnPoint3D> g_pointList4Training(BUFFER_SIZE);
 CyclicBuffer<XnPoint3D> g_pointBuffer(BUFFER_SIZE);
 SimpleFeatureExtractor g_featureExtractor;
 GestureSVM g_gestureSVM;
+GestureSVM g_PreGestureSVM;
 int frequencyCounter = FEATURE_VECTOR_FREQUENCY;
 
 
@@ -76,3 +70,43 @@ std::vector<float> extractFeatureVectorFromBuffer() {
 
 
 
+
+void doTraining()
+{
+		g_IsTrainMode = true;
+
+			Datasource d;
+			//maybe todo: add flag to oni entrys to mark training data!
+			std::vector<OniFileDataSet*> oniFiles = d.getOniFileDatasets();
+
+			std::vector<OniFileDataSet*>::iterator iter;
+
+			for(iter = oniFiles.begin(); iter != oniFiles.end(); iter++)	{
+				std::cout << "DB-Filename: " << (*iter)->getFilepath() << std::endl;
+				std::cout << "GestureID: " << (*iter)->getGestureId() << std::endl;
+				std::cout << "GestureName: " << (*iter)->getGestureName() << std::endl;
+				
+				g_CurrentTrainClassID = (*iter)->getGestureId();  
+				
+				//replays the current ONI File in trainig mode. 
+				playFileSilent((*iter)->getFilepath());
+				
+				printf("Training class %d\n", g_CurrentTrainClassID);
+				printf("Extract feature Vector from buffer\n");
+				std::vector<float> feature  = extractFeatureVectorFromBuffer();
+				g_gestureSVM.train(feature, g_CurrentTrainClassID);
+  
+			}
+
+
+			//generate and save svm model after after training all oni files
+			g_gestureSVM.generateModel(); // this has to be done after collecting feature vectors
+			g_gestureSVM.saveModel(SVM_MODEL_FILE);
+}
+
+void doQuery()
+{
+		std::vector<float> feature  = extractFeatureVectorFromBuffer(); 
+		double predictedClass = g_gestureSVM.predictGesture(feature);
+		printf("Predicted as Class %f\n",predictedClass);
+}

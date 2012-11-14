@@ -11,14 +11,13 @@
 
 // local header
 #include "PointDrawer.h"
-#include "Device.h"
 #include "Callbacks.h"
 #include "GlutRoutines.h"
-#include "Datasource.h"
+
 #include "OniFileDataSet.h"
 #include "Detection.h"
 
-// #include "signal_catch.h"
+
 
 // xml to initialize OpenNI
 #define SAMPLE_XML_PATH "../../Sample-Tracking.xml"
@@ -70,38 +69,6 @@ XnStatus loadFiles (int argc, char ** argv) {
 	}
 }*/
 
-XnStatus playFileFromDB(char* file) {
-	XnStatus rc = XN_STATUS_OK;
-	std::string filename = file;
-
-	// opens the oni file
-	rc = openDeviceFile(file);
-	CHECK_RC(rc, "OpenDeviceFile");
-	std::cout << "File loaded..." << std::endl;
-	std::cout << "Start learning..." << std::endl;
-	g_HandsGenerator.Create(g_Context);
-	g_GestureGenerator.Create(g_Context);
-	initializeNiteKomponents();
-
-	Player p;
-	rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p);
-	CHECK_RC(rc, "Get Player");
-
-	// play file and generate feature vectors, train svm
-	while(!p.IsEOF()) {
-		XnMapOutputMode mode;
-		g_DepthGenerator.GetMapOutputMode(mode);
-
-		// Read next available data
-		g_Context.WaitOneUpdateAll(g_DepthGenerator);
-		// Update NITE tree
-		g_pSessionManager->Update(&g_Context);
-		PrintSessionState(g_SessionState);
-	}
-	return rc;
-}
-
-
 
 
 int main(int argc, char ** argv)
@@ -117,32 +84,7 @@ int main(int argc, char ** argv)
 	if (argc > 1) {
 		if (argc > 1 && !strcmp(argv[1], "-t")) {
 			std::cout << "Starting Trainingmode..." << std::endl;
-			g_IsTrainMode = true;
-
-			Datasource d;
-			//maybe todo: add flag to oni entrys to mark training data!
-			std::vector<OniFileDataSet*> oniFiles = d.getOniFileDatasets();
-
-			std::vector<OniFileDataSet*>::iterator iter;
-
-			for(iter = oniFiles.begin(); iter != oniFiles.end(); iter++)	{
-				std::cout << "DB-Filename: " << (*iter)->getFilepath() << std::endl;
-				std::cout << "GestureID: " << (*iter)->getGestureId() << std::endl;
-				std::cout << "GestureName: " << (*iter)->getGestureName() << std::endl;
-				
-				g_CurrentTrainClassID = (*iter)->getGestureId();  
-				//replays the current ONI File in trainig mode. 
-				playFileFromDB((*iter)->getFilepath());
-				
-				printf("Training class %d\n", g_CurrentTrainClassID);
-				printf("Extract feature Vector from buffer\n");
-				std::vector<float> feature  = extractFeatureVectorFromBuffer();
-				g_gestureSVM.train(feature, g_CurrentTrainClassID);
-  
-			}			
-			//generate and save svm model after after training all oni files
-			g_gestureSVM.generateModel(); // this has to be done after collecting feature vectors
-			g_gestureSVM.saveModel(SVM_MODEL_FILE);
+			doTraining();
 			exit(0);
 
 		}

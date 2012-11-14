@@ -65,11 +65,11 @@ XnMapOutputMode VGAMode = { 640, 480, 30 };
 CyclicBuffer* cyclicBuffer;
 bool recording = false;
 bool dump = false;
-bool valid=true;
 bool displayHelp = false;
-char* gesture=NULL;
-int pointCounter=0;
-XnPoint3D* start=NULL;
+char* gesture = NULL;
+int pointCounter = 0;
+XnPoint3D* start = NULL;
+
 // To count missed frames
 XnUInt64 nLastDepthTime = 0;
 XnUInt64 nLastImageTime = 0;
@@ -184,14 +184,10 @@ void glutDisplay (void)
 
 	if (!g_bPause) {
 	
-		if(dump) {
+		if(dump && gesture) {
 			cyclicBuffer->Dump();
-
-			if(valid&&(gesture)){
-				//Write oni file to db !!!
-				cyclicBuffer->writeDumpToDB(start,gesture);
-			}
-			
+			//Write oni file to db !!!
+			cyclicBuffer->writeDumpToDB(start,gesture);
 			dump = false;
 		}
 		// Get next data
@@ -252,28 +248,34 @@ void glutKeyboard (unsigned char key, int x, int y) {
 		displayHelp = !displayHelp;
 		break;
 	case'1':
-		if(!recording)
-		gesture="Swipe";
+		if(!recording) {
+			gesture="Swipe";
+		}
 		break;
 	case'2':
-		if(!recording)
-		gesture="Push";
+		if(!recording) {
+			gesture="Push";
+		}
 		break;
 	case'3':
-		if(!recording)
-		gesture="Letter L";
+		if(!recording) {
+			gesture="Letter L";
+		}
 		break;
 	case'4':
-		if(!recording)
-		gesture="Letter O";
+		if(!recording) {
+			gesture="Letter O";
+		}
 		break;
 	case'5':
-		if(!recording)
-		gesture="Letter Z";
+		if(!recording) {
+			gesture="Letter Z";
+		}
 		break;
 	case'6':
-		if(!recording)
-		gesture="NO_GESTURE";
+		if(!recording) {
+			gesture="NO_GESTURE";
+		}
 		break;
 	case 'd':
 		// Toggle drawing of the depth map
@@ -286,10 +288,12 @@ void glutKeyboard (unsigned char key, int x, int y) {
 		break;
 	case 's':
 		// Toggle smoothing
-		if (g_fSmoothing == 0)
+		if (g_fSmoothing == 0) {
 			g_fSmoothing = 0.1;
-		else 
+		}
+		else { 
 			g_fSmoothing = 0;
+		}
 		g_HandsGenerator.SetSmoothing(g_fSmoothing);
 		break;
 	case 'e':
@@ -301,8 +305,8 @@ void glutKeyboard (unsigned char key, int x, int y) {
 		recording = true;
 		break;
 	case 'x':
-		recording=false;
-		dump=true;
+		recording = false;
+		dump = true;
 		break;
 	}
 }
@@ -545,7 +549,7 @@ int main(int argc, char ** argv)
 	//
 	// UNCOMMENT FOR USING AN ONI FILE
 	//
-	/*
+	
 		rc = g_Context.Init();
 		CHECK_RC(rc, "Context.Init()");
 		rc = g_Context.OpenFileRecording(argv[1]);
@@ -556,7 +560,7 @@ int main(int argc, char ** argv)
 		g_HandsGenerator.Create(g_Context);
 		g_GestureGenerator.Create(g_Context);
 		//end of using oni file 
-	*/
+	
 
 	// Create and initialize the cyclic buffer
 	rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);

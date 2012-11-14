@@ -82,14 +82,14 @@ int main(int argc, char ** argv)
 
 	//trainig mode
 	if (argc > 1) {
-		if (argc > 1 && !strcmp(argv[1], "-t")) {
+		if (!strcmp(argv[1], "-t")) {
 			std::cout << "Starting Trainingmode..." << std::endl;
 			doTraining();
 			exit(0);
 
 		}
 		//detection mode 
-		else if (!strcmp(argv[1], "-d")) {
+		else if (argc > 1 && !strcmp(argv[1], "-d")) {
 			
 			//live stream
 			std::cout << "Starting Detectionmode" << std::endl;
@@ -115,7 +115,8 @@ int main(int argc, char ** argv)
 		}
 	} else {
 		std::cout << "\n\n---- Too less parameters, should be like:" << std::endl;
-		std::cout << "---- GestureDetection4D -t ..\\..\\OniFiles\n\n" << std::endl;
+		std::cout << "---- GestureDetection4D -t\n" << std::endl;
+		std::cout << "---- GestureDetection4D -d\n" << std::endl;
 		exit(-1);
 	}
 	return 0;

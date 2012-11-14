@@ -6,7 +6,9 @@
 #include <XnTypes.h>
 // local header
 #include "Detection.h"
+#include <list>
 
+using namespace std;
 
 // Callback for when the focus is in progress
 void XN_CALLBACK_TYPE FocusProgress(const XnChar* strFocus, const XnPoint3D& ptPosition, XnFloat fProgress, void* UserCxt)
@@ -27,6 +29,9 @@ void XN_CALLBACK_TYPE SessionEnding(void* UserCxt)
 }
 void XN_CALLBACK_TYPE NoHands(void* UserCxt)
 {
+	printf("No Hand!\n");
+	g_pointBuffer.flush();
+
 	if (g_SessionState != NOT_IN_SESSION)
 	{
 		printf("Quick refocus\n");
@@ -60,7 +65,6 @@ void XN_CALLBACK_TYPE GestureProgressHandler(xn::GestureGenerator& generator, co
 {
 	printf("Gesture %s progress: %f (%f,%f,%f)\n", strGesture, fProgress, pPosition->X, pPosition->Y, pPosition->Z);
 }
-
 void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
 	printf("Hand detected!\n");
 	g_pointBuffer.flush();
@@ -69,11 +73,20 @@ void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const
 
 void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
 	// printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
-	g_pointBuffer.push(*pPosition);
+	
+
+	if(!g_IsTrainMode) {
+		g_pointBuffer.push(*pPosition);
+	} else {
+		//if list is full: resize list to double the size
+		if(g_pointList4Training.size() == g_pointList4Training.max_size()) {
+			g_pointList4Training.resize(g_pointList4Training.max_size() * 2);
+		}
+
+		g_pointList4Training.push_back(*pPosition);
+	}
 
 	if (!g_IsTrainMode && g_pointBuffer.isFull() && !frequencyCounter--) {
-
-		//printf("Extract feature Vector from buffer\n");
 		doQuery();
 
 		frequencyCounter = FEATURE_VECTOR_FREQUENCY;
@@ -84,7 +97,6 @@ void XN_CALLBACK_TYPE HandDestroy(HandsGenerator &generator, XnUserID user, XnFl
 	printf("Hand destroyed!\n");
 	g_pointBuffer.flush();
 	frequencyCounter = FEATURE_VECTOR_FREQUENCY;
-	// printf("%.2f\n", ((XnPoint3D) *pointBuffer.next()).X);
 }
 
 XnStatus initializeNiteKomponents () {

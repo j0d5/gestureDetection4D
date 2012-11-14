@@ -7,7 +7,9 @@
 // local header
 #include "Device.h"
 #include "Detection.h"
+#include <list>
 
+using namespace std;
 
 // Callback for when the focus is in progress
 void XN_CALLBACK_TYPE FocusProgress(const XnChar* strFocus, const XnPoint3D& ptPosition, XnFloat fProgress, void* UserCxt)
@@ -70,7 +72,18 @@ void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const
 
 void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
 	// printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
-	g_pointBuffer.push(*pPosition);
+	
+
+	if(!g_IsTrainMode) {
+		g_pointBuffer.push(*pPosition);
+	} else {
+		//if list is full: resize list to double the size
+		if(g_pointList4Training.size() == g_pointList4Training.max_size()) {
+			g_pointList4Training.resize(g_pointList4Training.max_size() * 2);
+		}
+
+		g_pointList4Training.push_back(*pPosition);
+	}
 
 	if (!g_IsTrainMode && g_pointBuffer.isFull() && !frequencyCounter--) {
 

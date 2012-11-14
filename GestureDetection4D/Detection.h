@@ -8,6 +8,7 @@
 
 // Header for NITE
 #include "XnVNite.h"
+#include <list>
 
 #define BUFFER_SIZE 30
 //use every n-th hand update
@@ -16,9 +17,13 @@
 #define SVM_MODEL_FILE "../../SVM_Model.txt"
 #define DEBUG_FLAG
 
+using namespace std;
 
 bool g_IsTrainMode = false;
 int g_CurrentTrainClassID = -1;
+
+//global list for training
+list<XnPoint3D> g_pointList4Training(BUFFER_SIZE);
 
 // global cyclic buffer
 CyclicBuffer<XnPoint3D> g_pointBuffer(BUFFER_SIZE);
@@ -35,27 +40,38 @@ Point3D convertPoint(XnPoint3D* xnPoint) {
 	return p;
 }
 std::vector<float> extractFeatureVectorFromBuffer() {
-        printf("Getting FeatureVector...\n");
-        std::vector<Point3D> pVector;
+	printf("Getting FeatureVector...\n");
+	std::vector<Point3D> pVector;
 
+	//detection Mode
+	if(!g_IsTrainMode) {
 		if(!g_pointBuffer.isFull())
 		{
 			printf("Error: Buffer not full!!!\n");
 			return std::vector<float>();
 		}
 		for (int i = 0; i < BUFFER_SIZE; i++) {
-                pVector.push_back(convertPoint(g_pointBuffer.next()));
-        }
+			pVector.push_back(convertPoint(g_pointBuffer.next()));
+		}
 
-		#ifdef DEBUG_FLAG
-        std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
+	#ifdef DEBUG_FLAG
+		std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
 
-        for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
-                printf("FeatureVector X: %.2f, Y: %.2f, Z: %.2f\n",*iter,*(iter+1),*(iter+2));
-        }
-		#endif
+		for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
+			printf("FeatureVector X: %.2f, Y: %.2f, Z: %.2f\n",*iter,*(iter+1),*(iter+2));
+		}
+	#endif
 
-		return g_featureExtractor.getFeatureVector(pVector);
+	}
+	//training Mode
+	else {
+
+		for(list<XnPoint3D>::iterator it = g_pointList4Training.begin(); it != g_pointList4Training.end(); ++it) {
+			pVector.push_back(convertPoint(&(*it)));
+		}
+	}
+
+	return g_featureExtractor.getFeatureVector(pVector);
 }
 
 

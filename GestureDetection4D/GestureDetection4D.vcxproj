@@ -311,6 +311,7 @@
   <ItemGroup>
     <ClInclude Include="Callbacks.h" />
     <ClInclude Include="Connection.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="CyclicBuffer.h" />
     <ClInclude Include="Datasource.h" />
     <ClInclude Include="Device.h" />

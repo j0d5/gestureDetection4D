@@ -5,7 +5,6 @@
 #include <XnCppWrapper.h>
 #include <XnTypes.h>
 // local header
-#include "Device.h"
 #include "Detection.h"
 
 
@@ -75,9 +74,7 @@ void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const
 	if (!g_IsTrainMode && g_pointBuffer.isFull() && !frequencyCounter--) {
 
 		//printf("Extract feature Vector from buffer\n");
-		std::vector<float> feature  = extractFeatureVectorFromBuffer(); 
-		double predictedClass = g_gestureSVM.predictGesture(feature);
-		printf("Predicted as Class %f\n",predictedClass);
+		doQuery();
 
 		frequencyCounter = FEATURE_VECTOR_FREQUENCY;
 	}
@@ -133,5 +130,6 @@ XnStatus initializeNiteKomponents () {
 	CHECK_RC(rc, "StartGenerating");
 	return XN_STATUS_OK;
 }
+
 
 #endif

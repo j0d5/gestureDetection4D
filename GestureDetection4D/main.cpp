@@ -88,6 +88,7 @@ int main(int argc, char ** argv)
 			exit(0);
 
 		}
+
 		//detection mode 
 		else if (argc > 1 && !strcmp(argv[1], "-d")) {
 			
@@ -95,6 +96,20 @@ int main(int argc, char ** argv)
 			std::cout << "Starting Detectionmode" << std::endl;
 			g_gestureSVM.loadModel(SVM_MODEL_FILE);
 			g_PreGestureSVM.loadModel(SVM_PRE_MODEL_FILE);
+
+			// 
+			if (argc > 2 && fs::exists(argv[2])) {
+				std::cout << "...with file: " << argv[2] << std::endl;
+				rc = openDeviceFile(argv[2]);
+				CHECK_RC(rc, "OpenDeviceFile");
+				printf("File loaded.\n");
+				g_HandsGenerator.Create(g_Context);
+				g_GestureGenerator.Create(g_Context);
+				Player p;
+				rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p);
+				CHECK_RC(rc, "Get Player");
+
+			}
 
 			rc = initializeNiteKomponents();
 			CHECK_RC(rc, "initializeNiteKomponents");

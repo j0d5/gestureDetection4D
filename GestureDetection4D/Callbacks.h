@@ -64,24 +64,21 @@ void XN_CALLBACK_TYPE GestureProgressHandler(xn::GestureGenerator& generator, co
 
 void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
 	printf("Hand detected!\n");
+	g_pointBuffer.flush();
+	frequencyCounter = FEATURE_VECTOR_FREQUENCY;
 }
 
 void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
 	// printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
 	g_pointBuffer.push(*pPosition);
 
-	if (g_pointBuffer.isFull() && !frequencyCounter--) {
-		printf("Buffer is full!\n");
-		std::vector<float> feature  = extractFeatureVectorFromBuffer();
+	if (!g_IsTrainMode && g_pointBuffer.isFull() && !frequencyCounter--) {
 
-		if (g_IsTrainMode) 
-		{ // perhaps there should be a mode flag
-			printf("Training class %d\n", g_CurrentTrainClassID);
-			g_gestureSVM.train(feature, g_CurrentTrainClassID);
-        } else {
-                double predictedClass = g_gestureSVM.predictGesture(feature);
-                printf("Predicted as Class %f\n",predictedClass);
-        }
+		//printf("Extract feature Vector from buffer\n");
+		std::vector<float> feature  = extractFeatureVectorFromBuffer(); 
+		double predictedClass = g_gestureSVM.predictGesture(feature);
+		printf("Predicted as Class %f\n",predictedClass);
+
 		frequencyCounter = FEATURE_VECTOR_FREQUENCY;
 	}
 }

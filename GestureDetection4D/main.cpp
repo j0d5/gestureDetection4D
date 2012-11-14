@@ -133,6 +133,12 @@ int main(int argc, char ** argv)
 				g_CurrentTrainClassID = (*iter)->getGestureId();  
 				//replays the current ONI File in trainig mode. 
 				playFileFromDB((*iter)->getFilepath());
+				
+				printf("Training class %d\n", g_CurrentTrainClassID);
+				printf("Extract feature Vector from buffer\n");
+				std::vector<float> feature  = extractFeatureVectorFromBuffer();
+				g_gestureSVM.train(feature, g_CurrentTrainClassID);
+  
 			}			
 			//generate and save svm model after after training all oni files
 			g_gestureSVM.generateModel(); // this has to be done after collecting feature vectors
@@ -140,8 +146,10 @@ int main(int argc, char ** argv)
 			exit(0);
 
 		}
-		//live query mode
+		//detection mode 
 		else if (!strcmp(argv[1], "-d")) {
+			
+			//live stream
 			std::cout << "Starting Detectionmode" << std::endl;
 			g_gestureSVM.loadModel(SVM_MODEL_FILE);
 

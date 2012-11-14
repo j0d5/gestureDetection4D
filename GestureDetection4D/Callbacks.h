@@ -63,7 +63,6 @@ void XN_CALLBACK_TYPE GestureProgressHandler(xn::GestureGenerator& generator, co
 {
 	printf("Gesture %s progress: %f (%f,%f,%f)\n", strGesture, fProgress, pPosition->X, pPosition->Y, pPosition->Z);
 }
-
 void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
 	printf("Hand detected!\n");
 	g_pointBuffer.flush();
@@ -75,8 +74,6 @@ void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const
 	g_pointBuffer.push(*pPosition);
 
 	if (!g_IsTrainMode && g_pointBuffer.isFull() && !frequencyCounter--) {
-
-		//printf("Extract feature Vector from buffer\n");
 		doQuery();
 
 		frequencyCounter = FEATURE_VECTOR_FREQUENCY;
@@ -87,7 +84,6 @@ void XN_CALLBACK_TYPE HandDestroy(HandsGenerator &generator, XnUserID user, XnFl
 	printf("Hand destroyed!\n");
 	g_pointBuffer.flush();
 	frequencyCounter = FEATURE_VECTOR_FREQUENCY;
-	// printf("%.2f\n", ((XnPoint3D) *pointBuffer.next()).X);
 }
 
 XnStatus initializeNiteKomponents () {

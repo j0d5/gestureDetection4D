@@ -94,6 +94,7 @@ int main(int argc, char ** argv)
 			//live stream
 			std::cout << "Starting Detectionmode" << std::endl;
 			g_gestureSVM.loadModel(SVM_MODEL_FILE);
+			g_PreGestureSVM.loadModel(SVM_PRE_MODEL_FILE);
 
 			rc = initializeNiteKomponents();
 			CHECK_RC(rc, "initializeNiteKomponents");

@@ -70,13 +70,15 @@ void GestureSVM::generateModel()
     mIsModel = true;
 
 }
-GestureSVM::GestureSVM(void)
+GestureSVM::GestureSVM(bool isOneClassSVM)
 {
     mIsModel = false;
     mModel = NULL;
 
     //set default param values
-    mParam.svm_type = C_SVC;
+    
+	mParam.svm_type = isOneClassSVM?ONE_CLASS:C_SVC;
+
     mParam.kernel_type = RBF;
     mParam.degree = 3;
     mParam.gamma = 0;	// 1/num_features if l >0

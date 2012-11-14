@@ -36,7 +36,7 @@ public:
     //load model from file (implies genearteModel!)
     void loadModel(std::string filePath);
 	
-	GestureSVM(void);
+	GestureSVM(bool isOneClassSVM = false);
 	~GestureSVM(void);
 };
 

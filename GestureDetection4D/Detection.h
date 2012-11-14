@@ -18,7 +18,7 @@ int g_CurrentTrainClassID = -1;
 int g_predictedClass = -1;
 
 //global list for training
-list<XnPoint3D> g_pointList4Training(BUFFER_SIZE);
+list<XnPoint3D> g_pointList4Training;
 
 // global cyclic buffer
 CyclicBuffer<XnPoint3D> g_pointBuffer(BUFFER_SIZE);
@@ -136,6 +136,7 @@ void doTraining()
 				
 				//train one class svm 
 				g_PreGestureSVM.train(feature,1);
+
 				//train gesture svm
 				g_gestureSVM.train(feature, g_CurrentTrainClassID);
 				 

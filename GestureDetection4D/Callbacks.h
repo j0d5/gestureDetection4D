@@ -74,23 +74,22 @@ void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const
 void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
 	// printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
 	
-
 	if(g_IsTrainMode) {
 		//if list is full: resize list to double the size
 		if(g_pointList4Training.size() == g_pointList4Training.max_size()) {
 			g_pointList4Training.resize(g_pointList4Training.max_size() * 2);
 		}
-		g_pointList4Training.push_back(*pPosition);
-		
-	} else {
+	}
+	//query mode
+	else {
 		g_pointBuffer.push(*pPosition);
+		if (g_pointBuffer.isFull() && !frequencyCounter--) {
+			doQuery();
+			frequencyCounter = FEATURE_VECTOR_FREQUENCY;
+		}
 	}
 
-	if (!g_IsTrainMode && g_pointBuffer.isFull() && !frequencyCounter--) {
-		doQuery();
-
-		frequencyCounter = FEATURE_VECTOR_FREQUENCY;
-	}
+	
 }
 
 void XN_CALLBACK_TYPE HandDestroy(HandsGenerator &generator, XnUserID user, XnFloat fTime, void *pCookie) {

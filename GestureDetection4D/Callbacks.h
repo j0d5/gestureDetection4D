@@ -27,6 +27,9 @@ void XN_CALLBACK_TYPE SessionEnding(void* UserCxt)
 }
 void XN_CALLBACK_TYPE NoHands(void* UserCxt)
 {
+	printf("No Hand!\n");
+	g_pointBuffer.flush();
+
 	if (g_SessionState != NOT_IN_SESSION)
 	{
 		printf("Quick refocus\n");

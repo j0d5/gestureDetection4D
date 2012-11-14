@@ -139,7 +139,6 @@ void doTraining()
 
 				//train gesture svm
 				g_gestureSVM.train(feature, g_CurrentTrainClassID);
-				 
 			}
 		
 		printf("Training class %d\n", g_CurrentTrainClassID);
@@ -157,22 +156,21 @@ void doTraining()
 
 void doQuery()
 {
+	for(int i = 0; i < sizeof(BUFFER_WINDOWS) / sizeof(double);i++)
+	{
+		std::vector<float> feature  = extractWindowedFeatureVectorFromBuffer(BUFFER_SIZE * BUFFER_WINDOWS[i]);
 
-	//for(int i = 0; i < sizeof(BUFFER_WINDOWS);i++)
-	//{
-
-		std::vector<float> feature  = extractFeatureVectorFromBuffer();
-
-
-		double isGesture = g_PreGestureSVM.predictGesture(feature);
-		printf("Pre-Predicted as: %f\n",isGesture);
-		g_predictedClass = (int) isGesture;
-		
+		double isGesture =1;
+		if(USE_PRE_SVM)
+		{
+			isGesture = g_PreGestureSVM.predictGesture(feature);
+			printf("Pre-Predicted(buffer_window:%f) as: %f\n",BUFFER_WINDOWS[i],isGesture);
+			g_predictedClass = (int) isGesture;
+		}
 		if(isGesture > 0)
 		{
 			g_predictedClass = g_gestureSVM.predictGesture(feature);
-			printf("Predicted as Class: %f\n",g_predictedClass);	
+			printf("Predicted as Class(buffer_window:%f) : %f\n",BUFFER_WINDOWS[i],g_predictedClass);	
 		}
-
-	//}
+	}
 }

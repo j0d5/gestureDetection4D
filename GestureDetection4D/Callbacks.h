@@ -79,6 +79,7 @@ void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const
 		if(g_pointList4Training.size() == g_pointList4Training.max_size()) {
 			g_pointList4Training.resize(g_pointList4Training.max_size() * 2);
 		}
+		g_pointList4Training.push_back(*pPosition);
 	}
 	//query mode
 	else {

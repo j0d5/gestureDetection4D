@@ -157,7 +157,13 @@ void doTraining()
 
 void doQuery()
 {
+
+	//for(int i = 0; i < sizeof(BUFFER_WINDOWS);i++)
+	//{
+
 		std::vector<float> feature  = extractFeatureVectorFromBuffer();
+
+
 		double isGesture = g_PreGestureSVM.predictGesture(feature);
 		printf("Pre-Predicted as: %f\n",isGesture);
 		g_predictedClass = (int) isGesture;
@@ -165,7 +171,8 @@ void doQuery()
 		if(isGesture > 0)
 		{
 			g_predictedClass = g_gestureSVM.predictGesture(feature);
-			printf("Predicted as Class: %f\n",g_predictedClass);
-			
-		}	
+			printf("Predicted as Class: %f\n",g_predictedClass);	
+		}
+
+	//}
 }

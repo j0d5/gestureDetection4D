@@ -156,21 +156,35 @@ void doTraining()
 
 void doQuery()
 {
-	for(int i = 0; i < sizeof(BUFFER_WINDOWS) / sizeof(double);i++)
+    PredictionResult result;
+    int numberWindows = sizeof(BUFFER_WINDOWS) / sizeof(double);
+    float maxProb = 0.0;
+    float maxClass;
+    for(int i = 0; i < numberWindows;i++)
 	{
 		std::vector<float> feature  = extractWindowedFeatureVectorFromBuffer(BUFFER_SIZE * BUFFER_WINDOWS[i]);
 
-		double isGesture =1;
+        //check if gesture is classified as class at all
+        result.classID = 1;
 		if(USE_PRE_SVM)
 		{
-			isGesture = g_PreGestureSVM.predictGesture(feature);
-			printf("Pre-Predicted(buffer_window:%f) as: %f\n",BUFFER_WINDOWS[i],isGesture);
-			g_predictedClass = (int) isGesture;
+            result = g_PreGestureSVM.predictGesture(feature);
+            printf("Pre-Predicted(buffer_window:%f) as: %f\n",BUFFER_WINDOWS[i],result.classID);
+            maxClass = result.classID;
 		}
-		if(isGesture > 0)
+        //if classID > 0 gesture passed pre svm classification, now predicted gesture in multi class svm
+        if(result.classID > 0)
 		{
-			g_predictedClass = g_gestureSVM.predictGesture(feature);
-			printf("Predicted as Class(buffer_window:%f) : %f\n",BUFFER_WINDOWS[i],g_predictedClass);	
+            result = g_gestureSVM.predictGesture(feature);
+            if(result.probabilitie > maxProb)
+            {
+                maxProb = result.probabilitie;
+                maxClass = result.classID;
+            }
+            printf("Predicted as Class(buffer_window:%f) : %d with probabilitie: %f\n",BUFFER_WINDOWS[i],result.classID,result.probabilitie);
+
 		}
 	}
+    //set the class with the highes probabiltie as predictedClass
+    g_predictedClass = maxClass;
 }

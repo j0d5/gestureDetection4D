@@ -169,7 +169,7 @@ void doQuery()
 		if(USE_PRE_SVM)
 		{
             result = g_PreGestureSVM.predictGesture(feature);
-            printf("Pre-Predicted(buffer_window:%f) as: %f\n",BUFFER_WINDOWS[i],result.classID);
+            printf("Pre-Predicted(buffer_window:%f) as: %f\n", BUFFER_WINDOWS[i], result.classID);
             maxClass = result.classID;
 		}
         //if classID > 0 gesture passed pre svm classification, now predicted gesture in multi class svm
@@ -181,10 +181,10 @@ void doQuery()
                 maxProb = result.probabilitie;
                 maxClass = result.classID;
             }
-            printf("Predicted as Class(buffer_window:%f) : %d with probability: %f\n",BUFFER_WINDOWS[i],result.classID,result.probabilitie);
+            printf("Predicted as Class (buffer_window: %f) : %d with probability: %f\n", BUFFER_WINDOWS[i], result.classID, result.probabilitie);
 
 		}
 	}
-    //set the class with the highes probabiltie as predictedClass
+    // set the class with the highes probabiltie as predictedClass
     g_predictedClass = maxClass;
 }

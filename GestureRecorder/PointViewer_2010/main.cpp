@@ -524,7 +524,7 @@ XnBool ParseArgs(int argc, char** argv, RecConfiguration& config)
 
 
 // xml to initialize OpenNI
-#define SAMPLE_XML_PATH "../../Sample-Tracking.xml"
+#define SAMPLE_XML_PATH "../../../Sample-Tracking.xml"
 
 int main(int argc, char ** argv)
 {
@@ -550,6 +550,7 @@ int main(int argc, char ** argv)
 	// UNCOMMENT FOR USING AN ONI FILE
 	//
 	
+	/*
 		rc = g_Context.Init();
 		CHECK_RC(rc, "Context.Init()");
 		rc = g_Context.OpenFileRecording(argv[1]);
@@ -560,8 +561,7 @@ int main(int argc, char ** argv)
 		g_HandsGenerator.Create(g_Context);
 		g_GestureGenerator.Create(g_Context);
 		//end of using oni file 
-	
-
+	*/
 	// Create and initialize the cyclic buffer
 	rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
 	CHECK_RC(rc, "Find depth generator");

@@ -159,7 +159,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	predict.push_back(1.5);
 	predict.push_back(3.2);
 
-	double predictedClass = svm.predictGesture(predict);
+	PredictionResult predictedClass = svm.predictGesture(predict);
 	printf("Predicted as Class %f",predictedClass);
 	
 	getchar();

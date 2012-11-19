@@ -15,8 +15,10 @@
 bool g_IsTrainMode = false;
 int g_CurrentTrainClassID = -1;
 
+int g_predictedClass = -1;
+
 //global list for training
-list<XnPoint3D> g_pointList4Training(BUFFER_SIZE);
+list<XnPoint3D> g_pointList4Training;
 
 // global cyclic buffer
 CyclicBuffer<XnPoint3D> g_pointBuffer(BUFFER_SIZE);
@@ -45,7 +47,13 @@ std::vector<float> extractFeatureVectorFromBuffer() {
 	std::vector<Point3D> pVector;
 
 	//detection Mode
-	if(!g_IsTrainMode) {
+	if(g_IsTrainMode) {
+		for(list<XnPoint3D>::iterator it = g_pointList4Training.begin(); it != g_pointList4Training.end(); ++it) {
+			pVector.push_back(convertPoint(&(*it)));
+		}
+		printf("Training Data Size: %d",pVector.size());
+	}else
+	{
 		if(!g_pointBuffer.isFull())
 		{
 			printf("Error: Buffer not full!!!\n");
@@ -64,13 +72,7 @@ std::vector<float> extractFeatureVectorFromBuffer() {
 	#endif
 
 	}
-	//training Mode
-	else {
-
-		for(list<XnPoint3D>::iterator it = g_pointList4Training.begin(); it != g_pointList4Training.end(); ++it) {
-			pVector.push_back(convertPoint(&(*it)));
-		}
-	}
+	
 
 	return g_featureExtractor.getFeatureVector(pVector);
 }
@@ -134,14 +136,11 @@ void doTraining()
 				
 				//train one class svm 
 				g_PreGestureSVM.train(feature,1);
+
 				//train gesture svm
 				g_gestureSVM.train(feature, g_CurrentTrainClassID);
-				
-  
 			}
-		//replays the current ONI File in trainig mode. 
-		playFileSilent((*iter)->getFilepath());
-
+		
 		printf("Training class %d\n", g_CurrentTrainClassID);
 		printf("Extract feature Vector from buffer\n");
 		std::vector<float> feature  = extractFeatureVectorFromBuffer();
@@ -150,18 +149,42 @@ void doTraining()
 	//generate and save svm model after after training all oni files
 	g_gestureSVM.generateModel(); // this has to be done after collecting feature vectors
 	g_gestureSVM.saveModel(SVM_MODEL_FILE);
-			g_PreGestureSVM.generateModel();
-			g_PreGestureSVM.saveModel(SVM_PRE_MODEL_FILE);
+	g_PreGestureSVM.generateModel();
+	g_PreGestureSVM.saveModel(SVM_PRE_MODEL_FILE);
+
 }
 
 void doQuery()
 {
-		std::vector<float> feature  = extractFeatureVectorFromBuffer();
-		double isGesture = g_PreGestureSVM.predictGesture(feature);
-		printf("Pre-Predicted as: %f\n",isGesture);
-		if(isGesture > 0)
+    PredictionResult result;
+    int numberWindows = sizeof(BUFFER_WINDOWS) / sizeof(double);
+    float maxProb = 0.0;
+    int maxClass = 0;
+    for(int i = 0; i < numberWindows;i++)
+	{
+		std::vector<float> feature  = extractWindowedFeatureVectorFromBuffer(BUFFER_SIZE * BUFFER_WINDOWS[i]);
+
+        //check if gesture is classified as class at all
+        result.classID = 1;
+		if(USE_PRE_SVM)
 		{
-			double predictedClass = g_gestureSVM.predictGesture(feature);
-			printf("Predicted as Class: %f\n",predictedClass);
-		}	
+            result = g_PreGestureSVM.predictGesture(feature);
+            printf("Pre-Predicted(buffer_window:%f) as: %f\n", BUFFER_WINDOWS[i], result.classID);
+            maxClass = result.classID;
+		}
+        //if classID > 0 gesture passed pre svm classification, now predicted gesture in multi class svm
+        if(result.classID > 0)
+		{
+            result = g_gestureSVM.predictGesture(feature);
+            if(result.probabilitie > maxProb)
+            {
+                maxProb = result.probabilitie;
+                maxClass = result.classID;
+            }
+            printf("Predicted as Class (buffer_window: %f) : %d with probability: %f\n", BUFFER_WINDOWS[i], result.classID, result.probabilitie);
+
+		}
+	}
+    // set the class with the highes probabiltie as predictedClass
+    g_predictedClass = maxClass;
 }

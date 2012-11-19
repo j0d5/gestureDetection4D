@@ -11,7 +11,7 @@
 
 #define DISPLAYTIME_IN_FRAMES 30;
 
-double predictedClass = -1;
+
 int displayTimeInFrames = DISPLAYTIME_IN_FRAMES;
 
 void CleanupExit()
@@ -30,7 +30,7 @@ void resetDisplayTime() {
 }
 
 void resetPredictedClass() {
-	predictedClass = -1;
+	g_predictedClass = -1;
 }
 
 // this function is called each frame
@@ -58,10 +58,10 @@ void glutDisplay (void)
 		PrintSessionState(g_SessionState);
 	}
 
-	if(predictedClass > 0 && displayTimeInFrames > 0) {
+	if(g_predictedClass > 0 && displayTimeInFrames > 0) {
 
 		char p_class[30];
-		sprintf(p_class, "%.2f", predictedClass);
+		sprintf_s(p_class, "Predicted Gesture: %.d", g_predictedClass);
 		printText(p_class,0, 1, 0, 30, 40);
 
 		--displayTimeInFrames;

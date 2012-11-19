@@ -3,6 +3,14 @@
 #include <vector>
 #include <string>
 
+struct PredictionResult
+{
+    int classID;
+    float probabilitie;
+    PredictionResult(int classID = -42,float probabilitie = -1):
+        classID(classID),probabilitie(probabilitie) {}
+};
+
 class GestureSVM
 {
 private:
@@ -17,6 +25,7 @@ private:
 
     bool mIsModel;
 
+
 public:
 	//adds one feature vector with given class id to svm model
 	void train(const std::vector<float>& feature,int classId);
@@ -25,10 +34,11 @@ public:
 	void generateModel();
 
     /*
-        classifies a given feature vector, returns classID
+        classifies a given feature vector, returns a PredictionResult
         predeiction is only possible if model is allready generated!
      */
-	int predictGesture(const std::vector<float>& feature);
+    PredictionResult predictGesture(const std::vector<float>& feature);
+
 
     //save model to file
     void saveModel(std::string filePath);

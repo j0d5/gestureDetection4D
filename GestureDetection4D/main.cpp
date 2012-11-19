@@ -24,49 +24,49 @@
 namespace fs = boost::filesystem;
 /*
 XnStatus loadFiles (int argc, char ** argv) {
-	XnStatus rc = XN_STATUS_OK;
-	// iterates through the given directory, extracts the file and class and loads the files for training
-	fs::directory_iterator end_iter;
-	for (fs::directory_iterator dir_itr( argv[2] ); dir_itr != end_iter; ++dir_itr ) {
-		try {
-			if (fs::is_regular_file(dir_itr->status()) 
-				&& !strcmp(dir_itr->path().extension().string().c_str(), ".oni"))
-			{
-				std::cout << "Loading file: " << dir_itr->path() << std::endl;
-				std::string filename = dir_itr->path().filename().string();
+XnStatus rc = XN_STATUS_OK;
+// iterates through the given directory, extracts the file and class and loads the files for training
+fs::directory_iterator end_iter;
+for (fs::directory_iterator dir_itr( argv[2] ); dir_itr != end_iter; ++dir_itr ) {
+try {
+if (fs::is_regular_file(dir_itr->status()) 
+&& !strcmp(dir_itr->path().extension().string().c_str(), ".oni"))
+{
+std::cout << "Loading file: " << dir_itr->path() << std::endl;
+std::string filename = dir_itr->path().filename().string();
 
-				trainingClass = atoi(&filename.at(filename.length() - 5));
-				std::cout << "Training class: " << trainingClass << std::endl;
+trainingClass = atoi(&filename.at(filename.length() - 5));
+std::cout << "Training class: " << trainingClass << std::endl;
 
-				// opens the oni file
-				rc = openDeviceFile(dir_itr->path().string().c_str());
-				CHECK_RC(rc, "OpenDeviceFile");
-				std::cout << "File loaded..." << std::endl;
-				std::cout << "Start learning..." << std::endl;
-				g_HandsGenerator.Create(g_Context);
-				g_GestureGenerator.Create(g_Context);
-				initializeNiteKomponents();
+// opens the oni file
+rc = openDeviceFile(dir_itr->path().string().c_str());
+CHECK_RC(rc, "OpenDeviceFile");
+std::cout << "File loaded..." << std::endl;
+std::cout << "Start learning..." << std::endl;
+g_HandsGenerator.Create(g_Context);
+g_GestureGenerator.Create(g_Context);
+initializeNiteKomponents();
 
-				Player p;
-				rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p);
-				CHECK_RC(rc, "Get Player");
+Player p;
+rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p);
+CHECK_RC(rc, "Get Player");
 
-				// play file and generate feature vectors, train svm
-				while(!p.IsEOF()) {
-					XnMapOutputMode mode;
-					g_DepthGenerator.GetMapOutputMode(mode);
+// play file and generate feature vectors, train svm
+while(!p.IsEOF()) {
+XnMapOutputMode mode;
+g_DepthGenerator.GetMapOutputMode(mode);
 
-					// Read next available data
-					g_Context.WaitOneUpdateAll(g_DepthGenerator);
-					// Update NITE tree
-					g_pSessionManager->Update(&g_Context);
-					PrintSessionState(g_SessionState);
-				}
-			}
-		} catch (const std::exception & ex)	{
-			std::cout << dir_itr->path() << " " << ex.what() << std::endl;
-		}
-	}
+// Read next available data
+g_Context.WaitOneUpdateAll(g_DepthGenerator);
+// Update NITE tree
+g_pSessionManager->Update(&g_Context);
+PrintSessionState(g_SessionState);
+}
+}
+} catch (const std::exception & ex)	{
+std::cout << dir_itr->path() << " " << ex.what() << std::endl;
+}
+}
 }*/
 
 
@@ -88,14 +88,16 @@ int main(int argc, char ** argv)
 			exit(0);
 
 		}
-
 		//detection mode 
 		else if (argc > 1 && !strcmp(argv[1], "-d")) {
-			
+
 			//live stream
 			std::cout << "Starting Detectionmode" << std::endl;
 			g_gestureSVM.loadModel(SVM_MODEL_FILE);
 			g_PreGestureSVM.loadModel(SVM_PRE_MODEL_FILE);
+
+			
+			XnPoint3D p = {192.159859,66.734047,0};
 
 			// 
 			if (argc > 2 && fs::exists(argv[2])) {
@@ -103,16 +105,27 @@ int main(int argc, char ** argv)
 				rc = openDeviceFile(argv[2]);
 				CHECK_RC(rc, "OpenDeviceFile");
 				printf("File loaded.\n");
+
+				
 				g_HandsGenerator.Create(g_Context);
 				g_GestureGenerator.Create(g_Context);
-				Player p;
-				rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p);
-				CHECK_RC(rc, "Get Player");
 
+				// rc = initializeNiteSession();
+				// CHECK_RC(rc, "initializeNiteSession");
+				
+				// g_pSessionManager->ForceSession(p);
+				// g_HandsGenerator.StartTracking(p);
+				// g_pSessionManager->TrackPoint(p);
+				// g_pSessionManager->SetTracker(g_HandsGenerator);
+				// g_GestureGenerator.RemoveGesture("MovingHand");
 			}
 
 			rc = initializeNiteKomponents();
 			CHECK_RC(rc, "initializeNiteKomponents");
+
+			// g_pSessionManager->ForceSession(p);
+			// g_pSessionManager->TrackPoint(p);
+			// g_HandsGenerator.StartTracking(p);
 
 			// Mainloop
 			glInit(&argc, argv);

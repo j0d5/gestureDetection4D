@@ -72,7 +72,7 @@ void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const
 }
 
 void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
-	// printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
+	printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
 	
 	if(g_IsTrainMode) {
 		//if list is full: resize list to double the size
@@ -109,8 +109,8 @@ XnStatus initializeNiteKomponents () {
 	CHECK_RC(rc, "Find gesture generator");
 
 	XnCallbackHandle h;
-	if (g_HandsGenerator.IsCapabilitySupported(XN_CAPABILITY_HAND_TOUCHING_FOV_EDGE))
-	{
+
+	if (g_HandsGenerator.IsCapabilitySupported(XN_CAPABILITY_HAND_TOUCHING_FOV_EDGE)) {
 		g_HandsGenerator.GetHandTouchingFOVEdgeCap().RegisterToHandTouchingFOVEdge(TouchingCallback, NULL, h);
 	}
 
@@ -119,12 +119,12 @@ XnStatus initializeNiteKomponents () {
 	g_GestureGenerator.RegisterToGestureReadyForNextIntermediateStage(GestureReadyForNextIntermediateStageHandler, NULL, hGestureReadyForNextIntermediateStage);
 	g_GestureGenerator.RegisterGestureCallbacks(NULL, GestureProgressHandler, NULL, hGestureProgress);
 
-	// register handupdate callback for getting the point
+	// register handupdate callbacks
 	g_HandsGenerator.RegisterHandCallbacks(HandCreate, HandUpdate, HandDestroy, NULL, h);
 
 	// Create NITE objects
 	g_pSessionManager = new XnVSessionManager;
-	rc = g_pSessionManager->Initialize(&g_Context, "RaiseHand", "RaiseHand");
+	rc = g_pSessionManager->Initialize(&g_Context, "RaiseHand", "RaiseHand, MovingHand");
 	CHECK_RC(rc, "SessionManager::Initialize");
 	g_pSessionManager->RegisterSession(NULL, SessionStarting, SessionEnding, FocusProgress);
 
@@ -140,6 +140,7 @@ XnStatus initializeNiteKomponents () {
 	// Initialization done. Start generating
 	rc = g_Context.StartGeneratingAll();
 	CHECK_RC(rc, "StartGenerating");
+
 	return XN_STATUS_OK;
 }
 

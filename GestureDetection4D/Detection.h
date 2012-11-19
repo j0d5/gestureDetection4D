@@ -159,7 +159,7 @@ void doQuery()
     PredictionResult result;
     int numberWindows = sizeof(BUFFER_WINDOWS) / sizeof(double);
     float maxProb = 0.0;
-    float maxClass;
+    int maxClass = 0;
     for(int i = 0; i < numberWindows;i++)
 	{
 		std::vector<float> feature  = extractWindowedFeatureVectorFromBuffer(BUFFER_SIZE * BUFFER_WINDOWS[i]);
@@ -181,7 +181,7 @@ void doQuery()
                 maxProb = result.probabilitie;
                 maxClass = result.classID;
             }
-            printf("Predicted as Class(buffer_window:%f) : %d with probabilitie: %f\n",BUFFER_WINDOWS[i],result.classID,result.probabilitie);
+            printf("Predicted as Class(buffer_window:%f) : %d with probability: %f\n",BUFFER_WINDOWS[i],result.classID,result.probabilitie);
 
 		}
 	}

@@ -46,13 +46,23 @@ std::vector<float> extractFeatureVectorFromBuffer() {
 	printf("Getting FeatureVector...\n");
 	std::vector<Point3D> pVector;
 
-	//detection Mode
+	
 	if(g_IsTrainMode) {
 		for(list<XnPoint3D>::iterator it = g_pointList4Training.begin(); it != g_pointList4Training.end(); ++it) {
 			pVector.push_back(convertPoint(&(*it)));
 		}
+	#ifdef DEBUG_FLAG
+	std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
+
+	for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
+		printf("Training FeatureVector X: %.2f, Y: %.2f, Z: %.2f\n",*iter,*(iter+1),*(iter+2));
+	}
+#endif
 		printf("Training Data Size: %d",pVector.size());
-	}else
+	}
+	//detection Mode
+	/*
+	else
 	{
 		if(!g_pointBuffer.isFull())
 		{
@@ -71,7 +81,7 @@ std::vector<float> extractFeatureVectorFromBuffer() {
 		}
 	#endif
 
-	}
+	}*/
 	
 
 	return g_featureExtractor.getFeatureVector(pVector);

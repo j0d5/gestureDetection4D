@@ -72,7 +72,7 @@ void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const
 }
 
 void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
-	printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
+	//printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
 	
 	if(g_IsTrainMode) {
 		//if list is full: resize list to double the size

@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "SimpleFeatureExtractor.h"
 
-#define FEATURE_VECTOR_SIZE 50
+#define FEATURE_VECTOR_SIZE 25
 
 SimpleFeatureExtractor::SimpleFeatureExtractor(void)
 {
@@ -16,7 +16,7 @@ SimpleFeatureExtractor::~SimpleFeatureExtractor(void)
 /	This method normalizes a vector 
 /
 */
-std::vector<Point3D> normalizeVector(std::vector<Point3D> points) 
+std::vector<Point3D> SimpleFeatureExtractor::normalizeVector(std::vector<Point3D> points) 
 {
 	std::vector<Point3D> normalizedPoints(FEATURE_VECTOR_SIZE);
 	

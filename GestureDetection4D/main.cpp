@@ -100,14 +100,11 @@ int main(int argc, char ** argv)
 				std::cout << "...with file: " << argv[2] << std::endl;
 				rc = openDeviceFile(argv[2]);
 				CHECK_RC(rc, "OpenDeviceFile");
-				printf("File loaded.\n");
-	
-				g_HandsGenerator.Create(g_Context);
-				g_GestureGenerator.Create(g_Context);
+				std::cout << "File loaded." << std::endl;
 			}
 
-			rc = initializeNiteKomponents();
-			CHECK_RC(rc, "initializeNiteKomponents");
+			// rc = initializeNiteKomponents();
+			// CHECK_RC(rc, "initializeNiteKomponents");
 
 			// Mainloop
 			glInit(&argc, argv);
@@ -117,7 +114,7 @@ int main(int argc, char ** argv)
 		} else if (fs::exists(argv[1])) {
 			rc = openDeviceFile(argv[1]);
 			CHECK_RC(rc, "OpenDeviceFile");
-			printf("File loaded.\n");
+			std::cout << "File loaded." << std::endl;
 			g_HandsGenerator.Create(g_Context);
 			g_GestureGenerator.Create(g_Context);
 		} else {

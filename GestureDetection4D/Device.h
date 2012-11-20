@@ -7,6 +7,7 @@
 #include <XnCppWrapper.h>
 #include <XnTypes.h>
 
+#include "Constants.h"
 #include "Callbacks.h"
 
 #define CHECK_RC(rc, what)											\
@@ -65,11 +66,25 @@ XnStatus openDeviceFile(const char* csFile)
 	CHECK_RC(rc, "Context.Init()");
 	rc = g_Context.OpenFileRecording(csFile);
 	CHECK_RC(rc, "OpenOpenFileRecording");
+	
+	rc = g_HandsGenerator.Create(g_Context);
+	CHECK_RC(rc, "g_HandsGenerator.Create");
+	rc = g_GestureGenerator.Create(g_Context);
+	CHECK_RC(rc, "g_GestureGenerator.Create");
+
+	initializeNiteKomponents();
+
 	Player g_Player;
 	rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, g_Player);
-	CHECK_RC(rc, "Find Playernode");
+	CHECK_RC(rc, "g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p)");
 	g_Player.SetRepeat(false);
+	
+	// rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
+	// CHECK_RC(rc, "g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator)");
 
+	rc = g_Player.SeekToFrame(g_DepthGenerator.GetName(), USED_PRE_FRAMES, XN_PLAYER_SEEK_SET);
+	CHECK_RC(rc, "SeekToFrame(g_DepthGenerator.GetName(), USED_PRE_FRAMES, XN_PLAYER_SEEK_SET)");
+	
 	return XN_STATUS_OK;
 }
 
@@ -83,16 +98,25 @@ XnStatus playFileSilent(char* file) {
 	CHECK_RC(rc, "OpenDeviceFile");
 	std::cout << "File loaded..." << std::endl;
 	std::cout << "Start learning..." << std::endl;
-	g_HandsGenerator.Create(g_Context);
-	g_GestureGenerator.Create(g_Context);
+	rc = g_HandsGenerator.Create(g_Context);
+	CHECK_RC(rc, "g_HandsGenerator.Create");
+	rc = g_GestureGenerator.Create(g_Context);
+	CHECK_RC(rc, "g_GestureGenerator.Create");
+	
 	initializeNiteKomponents();
 
-	Player p;
-	rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p);
-	CHECK_RC(rc, "Get Player");
+	Player g_Player;
+	rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, g_Player);
+	CHECK_RC(rc, "g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p)");
 
+	// rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
+	// CHECK_RC(rc, "g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator)");
+
+	rc = g_Player.SeekToFrame(g_DepthGenerator.GetName(), USED_PRE_FRAMES, XN_PLAYER_SEEK_SET);
+	CHECK_RC(rc, "SeekToFrame(g_DepthGenerator.GetName(), USED_PRE_FRAMES, XN_PLAYER_SEEK_SET)");
+	
 	// play file and generate feature vectors, train svm
-	while(!p.IsEOF()) {
+	while(!g_Player.IsEOF()) {
 		XnMapOutputMode mode;
 		g_DepthGenerator.GetMapOutputMode(mode);
 

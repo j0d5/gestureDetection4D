@@ -235,8 +235,6 @@ void OniFileDataSet::insertHandPoints3D(std::vector<XnPoint3D>& handPoints,Conne
 		}
 	}
 	query.append(";");
-	
-	printf((char*)query.c_str());
 	conn->mysql_perform_query((char*)query.c_str());
 }
 

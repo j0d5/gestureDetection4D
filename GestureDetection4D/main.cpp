@@ -83,7 +83,7 @@ int main(int argc, char ** argv)
 	//trainig mode
 	if (argc > 1) {
 		if (!strcmp(argv[1], "-t")) {
-			std::cout << "Starting Trainingmode..." << std::endl;
+			std::cout << "Starting Trainingmode...\n" << std::endl;
 			doTraining();
 			exit(0);
 		}

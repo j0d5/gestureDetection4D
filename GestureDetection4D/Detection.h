@@ -10,7 +10,7 @@
 
 // Header for NITE
 #include "XnVNite.h"
-#include <list>
+#include <vector>
 
 bool g_IsTrainMode = false;
 int g_CurrentTrainClassID = -1;
@@ -18,7 +18,7 @@ int g_CurrentTrainClassID = -1;
 int g_predictedClass = -1;
 
 //global list for training
-list<XnPoint3D> g_pointList4Training;
+vector<XnPoint3D> g_pointList4Training;
 
 // global cyclic buffer
 CyclicBuffer<XnPoint3D> g_pointBuffer(BUFFER_SIZE);
@@ -38,52 +38,29 @@ Point3D convertPoint(XnPoint3D* xnPoint) {
 }
 
 /**
-* creates a vector from buffer, converts it to an Point3D Vector
+* creates a trainings vectorm from the train points list, converts it to an Point3D Vector
 * calls the getFeatureVector Method on featureExtractor and returns the FeatureVector
 *
 */
-std::vector<float> extractFeatureVectorFromBuffer() {
-	printf("Getting FeatureVector...\n");
+std::vector<float> extractTrainingFeatureVector() 
+{
+	printf("***Getting TrainingFeatureVector...:\n");
 	std::vector<Point3D> pVector;
-
-
-	if(g_IsTrainMode) {
-		for(list<XnPoint3D>::iterator it = g_pointList4Training.begin(); it != g_pointList4Training.end(); ++it) {
+		for(vector<XnPoint3D>::iterator it = g_pointList4Training.begin(); it != g_pointList4Training.end(); ++it) {
 			pVector.push_back(convertPoint(&(*it)));
 		}
-#ifdef DEBUG_FLAG
-		std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
 
-		for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
-			printf("Training FeatureVector X: %.2f, Y: %.2f, Z: %.2f\n",*iter,*(iter+1),*(iter+2));
-		}
-#endif
-		printf("Training Data Size: %d",pVector.size());
-	}
-	//detection Mode
-	/*
-	else
-	{
-	if(!g_pointBuffer.isFull())
-	{
-		printf("Error: Buffer not full!!!\n");
-		return std::vector<float>();
-	}
-	for (int i = 0; i < BUFFER_SIZE; i++) {
-		pVector.push_back(convertPoint(g_pointBuffer.next()));
-	}
+				#ifdef DEBUG_FLAG
+						std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
 
-	#ifdef DEBUG_FLAG
-	std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
-
-	for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
-		printf("FeatureVector X: %.2f, Y: %.2f, Z: %.2f\n",*iter,*(iter+1),*(iter+2));
-	}
-	#endif
-
-	}*/
-
-
+						int i = 0;
+						for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
+							
+							printf("\t\t %d \t X: %.2f, Y: %.2f, Z: %.2f\n",i,*iter,*(iter+1),*(iter+2));
+							i++;
+						}
+				#endif
+				
 	return g_featureExtractor.getFeatureVector(pVector);
 }
 
@@ -134,29 +111,34 @@ void doTraining()
 		std::cout << "DB-Filename: " << (*iter)->getFilepath() << std::endl;
 		std::cout << "GestureID: " << (*iter)->getGestureId() << std::endl;
 		std::cout << "GestureName: " << (*iter)->getGestureName() << std::endl;
+		std::cout << "oniFileID: " << (*iter)->getFileId() << std::endl;
 
 		g_CurrentTrainClassID = (*iter)->getGestureId();  
 
-		// replays the current ONI File in trainig mode. 
-		playFileSilent((*iter)->getFilepath());
-
-		std::cout << "Training class: " << g_CurrentTrainClassID << std::endl;
-		std::cout << "Extract feature Vector from buffer..." << std::endl;
-		std::vector<float> feature  = extractFeatureVectorFromBuffer();
-
+		//clear current training list (buffer)
+		g_pointList4Training.clear();
+		if(USE_HAND_POINTS_FROM_DB)
+		{
+			g_pointList4Training = (*iter)->getHandPoints();
+		}
+		//replay oni file and re-detect hand points..
+		else 
+		{
+			// replays the current ONI File in trainig mode. 
+			playFileSilent((*iter)->getFilepath());	
+		}
+		std::cout << "Training class: \n" << g_CurrentTrainClassID << std::endl;
+		printf("Amount of Training Hand Points: %d\n",g_pointList4Training.size());
+		std::vector<float> feature  = extractTrainingFeatureVector();
 		// train one class svm 
 		g_PreGestureSVM.train(feature,1);
 
 		// train gesture svm
 		g_gestureSVM.train(feature, g_CurrentTrainClassID);
+		
 	}
 
-	std::cout << "Training class: " << g_CurrentTrainClassID << std::endl;
-	std::cout << "Extract feature Vector from buffer..." << std::endl;
-	std::vector<float> feature  = extractFeatureVectorFromBuffer();
-	g_gestureSVM.train(feature, g_CurrentTrainClassID);
-
-	//generate and save svm model after after training all oni files
+	//generate and save svm model after after training all oni file data sets
 	g_gestureSVM.generateModel(); // this has to be done after collecting feature vectors
 	g_gestureSVM.saveModel(SVM_MODEL_FILE);
 	g_PreGestureSVM.generateModel();

@@ -10,5 +10,6 @@
 #define DEBUG_FLAG
 #define USE_PRE_SVM 0
 #define USED_PRE_FRAMES 30
+#define USE_HAND_POINTS_FROM_DB 1
 
 const double BUFFER_WINDOWS[] = {0.5,1.};

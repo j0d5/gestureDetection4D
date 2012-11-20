@@ -17,6 +17,8 @@
 // local header
 #include "PointDrawer.h"
 
+#include <vector>
+
 
 
 #define CHECK_RC(rc, what)											\
@@ -98,6 +100,8 @@ XnBool g_bQuit = false;
 
 SessionState g_SessionState = NOT_IN_SESSION;
 
+std::vector<XnPoint3D> g_handPoints;
+
 void CleanupExit()
 {
 	g_ScriptNode.Release();
@@ -141,6 +145,9 @@ void XN_CALLBACK_TYPE NoHands(void* UserCxt)
 void XN_CALLBACK_TYPE Hand_Update(xn::HandsGenerator& generator, XnUserID nId, const XnPoint3D* pPosition, 
 								  XnFloat fTime, void* pCookie) 
 {
+	if(recording)
+		g_handPoints.push_back(*pPosition);
+
 	pointCounter++;
 }
 

@@ -12,7 +12,7 @@
 * 
 */
 
-#define LOCAL_SAVEDIR "..\\..\\..\\OniFiles"
+#define LOCAL_SAVEDIR "C:/Users/latadmin/Documents/gesturedetection4d/oniFiles"
 
 class Datasource
 {
@@ -28,7 +28,8 @@ public:
   OniFileDataSet* getOniFileDataSetByName(char* name);
 
   // Creates a new OniFileDataSet and stores it in the DB.
-  void createNewFileEntry(char* name,XnPoint3D* start, char* gesture);
+  void createNewFileEntry(char* name,XnPoint3D* start, char* gesture, std::vector<XnPoint3D>& handPoints);
+
 
   ~Datasource(void);
 };

@@ -7,6 +7,9 @@
     <Filter Include="Res">
       <UniqueIdentifier>{658d93f9-b8a8-4cd7-864a-ffd19095b1a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{f3a12e0f-492e-4a3a-a8b1-d4f6e58b3414}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -29,23 +32,23 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PointDrawer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OniFileDataSet.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Datasource.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Connection.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="resource2.h" />
     <ClInclude Include="..\..\..\..\..\..\Program Files (x86)\PrimeSense\NITE\Samples\Res\Resource-NITE.h">
       <Filter>Res</Filter>
+    </ClInclude>
+    <ClInclude Include="Connection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Datasource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OniFileDataSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PointDrawer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

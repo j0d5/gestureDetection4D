@@ -177,6 +177,18 @@ void OniFileDataSet::readFromDB(char* name, Connection* conn){
 		}
 	}
 
+	//get hand points for this gesture
+	m_handPoints.clear();
+	sprintf(query,"SELECT X,Y,Z FROM points3d WHERE (points3d.FK_idOniFile = %d) ORDER by ID ASC",this->fileId);
+	res= conn->mysql_perform_query(query);
+	while ((dbRow = mysql_fetch_row(res))) {
+		XnPoint3D point;
+		point.X = char2int(dbRow[0]);
+		point.Y = char2int(dbRow[1]);
+		point.Z = char2int(dbRow[2]);
+		m_handPoints.push_back(point);
+	}
+
 }
 
 /**
@@ -223,9 +235,12 @@ void OniFileDataSet::insertHandPoints3D(std::vector<XnPoint3D>& handPoints,Conne
 		}
 	}
 	query.append(";");
-	
-	printf((char*)query.c_str());
 	conn->mysql_perform_query((char*)query.c_str());
+}
+
+std::vector<XnPoint3D> OniFileDataSet::getHandPoints()
+{
+	return this->m_handPoints;
 }
 
 OniFileDataSet::~OniFileDataSet(void)

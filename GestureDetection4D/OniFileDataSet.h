@@ -10,6 +10,7 @@
 #include <winsock2.h>
 #include <mysql.h>
 #include "Connection.h"
+#include <vector>
 
 // Helper function
 struct spl
@@ -44,6 +45,7 @@ private:
 	int getOniFileIdByName(char* fileName, Connection* conn);
 	// fills all attribute from this class with values from the db
 	void readFromDB(char* name, Connection* conn);
+	std::vector<XnPoint3D> m_handPoints;
 
 public:
 	struct spl split (char *in, char delim);
@@ -60,6 +62,7 @@ public:
 	int getGestureId();
 	void setGestureName(char* name);
 	char* getGestureName();
+	std::vector<XnPoint3D> getHandPoints();
 	// Creates a new DataSet with all infos from the db
 	OniFileDataSet(char* fileName, Connection* conn);
 	// Creates a DataSet and stores the information to the db

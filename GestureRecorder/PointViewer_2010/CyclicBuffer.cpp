@@ -64,6 +64,7 @@ struct RecConfiguration
 // The cyclic buffer, to which frames will be added and from where they will be dumped to files
 class CyclicBuffer
 {
+
 public:
   // Creation - set the OpenNI objects
   CyclicBuffer(xn::Context& context, xn::DepthGenerator& depthGenerator, xn::ImageGenerator& imageGenerator, const RecConfiguration& config) :
@@ -86,6 +87,7 @@ public:
 		m_nBufferSize = nSeconds*30;
         m_pFrames = XN_NEW_ARR(SingleFrame, m_nBufferSize);
       }
+
       // Save new data from OpenNI
       void Update(const xn::DepthGenerator& depthGenerator, const xn::ImageGenerator& imageGenerator)
       {
@@ -167,12 +169,14 @@ public:
           rc = m_recorder.AddNodeToRecording(mockImage, XN_CODEC_JPEG);
           CHECK_RC(rc, "Add image node");
         }
-
+		
         // Write frames from next index (which will be next to be written, and so the first available)
         // this is only if a full loop was done, and this frame has meaningful data
         if (m_nNextWrite < m_nBufferCount)
         {
           // Not first loop, right till end
+			// if (expandFrames(m_nNextWrite, m_nBufferCount))
+
           for (XnUInt32 i = m_nNextWrite; i < m_nBufferSize; ++i)
           {
             if (m_bDepth)
@@ -188,7 +192,9 @@ public:
           }
         }
         // Write frames from the beginning of the buffer to the last on written
-        for (XnUInt32 i = 0; i < m_nNextWrite; ++i)
+		// if (expandFrames(0, m_nNextWrite))
+		 
+		for (XnUInt32 i = 0; i < m_nNextWrite + 30; ++i)
         {
           if (m_bDepth)
           {
@@ -219,7 +225,6 @@ public:
 	  
       }
 
-
 protected:
   struct SingleFrame
   {
@@ -240,5 +245,29 @@ protected:
   xn::Recorder m_recorder;
   Datasource* datasource;
   XnChar strFileName[XN_FILE_MAX_PATH];
+
+ private:
+	 /*
+  	bool expandFrames(XnUInt32 begin, XnUInt32 end) {
+		XnUInt32 preFrames = 30; // TODO CONSTANT!
+		SingleFrame* m_pPreFrames = new SingleFrame[end + preFrames];
+		
+		for (XnUInt32 i = begin; i < preFrames; i++) {
+			m_pPreFrames[i].depthFrame.CopyFrom(m_pFrames[preFrames - i].depthFrame);
+			m_pPreFrames[i].imageFrame.CopyFrom(m_pFrames[preFrames - i].imageFrame);
+		}
+
+		for (XnUInt32 i = begin; i < end; i++) {
+			m_pPreFrames[i + preFrames].depthFrame.CopyFrom(m_pFrames[i].depthFrame);
+			m_pPreFrames[i + preFrames].imageFrame.CopyFrom(m_pFrames[i].imageFrame);
+		}
+		
+		delete[] m_pFrames;
+		m_pFrames = m_pPreFrames;
+		// m_nBufferSize += preFrames;
+		
+		return (m_pFrames != NULL);
+	}
+	*/
 
 };

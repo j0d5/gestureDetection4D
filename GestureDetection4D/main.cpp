@@ -86,18 +86,14 @@ int main(int argc, char ** argv)
 			std::cout << "Starting Trainingmode..." << std::endl;
 			doTraining();
 			exit(0);
-
 		}
-		//detection mode 
+		// detection mode 
 		else if (argc > 1 && !strcmp(argv[1], "-d")) {
 
-			//live stream
+			// live stream
 			std::cout << "Starting Detectionmode" << std::endl;
 			g_gestureSVM.loadModel(SVM_MODEL_FILE);
 			g_PreGestureSVM.loadModel(SVM_PRE_MODEL_FILE);
-
-			
-			XnPoint3D p = {192.159859,66.734047,0};
 
 			// 
 			if (argc > 2 && fs::exists(argv[2])) {
@@ -105,27 +101,13 @@ int main(int argc, char ** argv)
 				rc = openDeviceFile(argv[2]);
 				CHECK_RC(rc, "OpenDeviceFile");
 				printf("File loaded.\n");
-
-				
+	
 				g_HandsGenerator.Create(g_Context);
 				g_GestureGenerator.Create(g_Context);
-
-				// rc = initializeNiteSession();
-				// CHECK_RC(rc, "initializeNiteSession");
-				
-				// g_pSessionManager->ForceSession(p);
-				// g_HandsGenerator.StartTracking(p);
-				// g_pSessionManager->TrackPoint(p);
-				// g_pSessionManager->SetTracker(g_HandsGenerator);
-				// g_GestureGenerator.RemoveGesture("MovingHand");
 			}
 
 			rc = initializeNiteKomponents();
 			CHECK_RC(rc, "initializeNiteKomponents");
-
-			// g_pSessionManager->ForceSession(p);
-			// g_pSessionManager->TrackPoint(p);
-			// g_HandsGenerator.StartTracking(p);
 
 			// Mainloop
 			glInit(&argc, argv);

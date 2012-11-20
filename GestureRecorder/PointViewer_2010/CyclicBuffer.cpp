@@ -64,6 +64,7 @@ struct RecConfiguration
 // The cyclic buffer, to which frames will be added and from where they will be dumped to files
 class CyclicBuffer
 {
+
 public:
   // Creation - set the OpenNI objects
   CyclicBuffer(xn::Context& context, xn::DepthGenerator& depthGenerator, xn::ImageGenerator& imageGenerator, const RecConfiguration& config) :
@@ -86,6 +87,7 @@ public:
 		m_nBufferSize = nSeconds*30;
         m_pFrames = XN_NEW_ARR(SingleFrame, m_nBufferSize);
       }
+
       // Save new data from OpenNI
       void Update(const xn::DepthGenerator& depthGenerator, const xn::ImageGenerator& imageGenerator)
       {
@@ -218,7 +220,6 @@ public:
 	  
       }
 
-
 protected:
   struct SingleFrame
   {
@@ -239,5 +240,24 @@ protected:
   xn::Recorder m_recorder;
   Datasource* datasource;
   XnChar strFileName[XN_FILE_MAX_PATH];
+
+ private:
+  	bool expandFrames() {
+		XnUInt32 preFrames = 30; // TODO CONSTANT!
+		SingleFrame* m_pPreFrames = XN_NEW_ARR(SingleFrame, m_nBufferSize + preFrames);
+		
+		for (XnUInt32 i = 0; i < preFrames; i++) {
+			m_pPreFrames[i].depthFrame.CopyFrom(m_pFrames[preFrames - i].depthFrame);
+			m_pPreFrames[i].imageFrame.CopyFrom(m_pFrames[preFrames - i].imageFrame);
+		}
+		for (XnUInt32 i = 0; i < m_nBufferSize; i++) {
+			m_pPreFrames[i + preFrames].depthFrame.CopyFrom(m_pFrames[i].depthFrame);
+			m_pPreFrames[i + preFrames].imageFrame.CopyFrom(m_pFrames[i].imageFrame);
+		}
+		delete[] m_pFrames;
+		m_pFrames = m_pPreFrames;
+		
+		return (m_pFrames != NULL);
+	}
 
 };

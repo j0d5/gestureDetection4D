@@ -3,8 +3,8 @@
 #include <XnLog.h>
 #include <XnCodecIDs.h>
 #include <XnCppWrapper.h>
-#include "Datasource.h"
-#include "Datasource.h"
+#include "../../GestureDetection4D/Datasource.h"
+#include <vector>
 using namespace xn;
 
 #define CHECK_RC(rc, what)											\
@@ -25,7 +25,7 @@ using namespace xn;
   CHECK_RC(rc, what)							\
 }
 
-
+extern std::vector<XnPoint3D> g_handPoints;
 struct RecConfiguration
 {
   RecConfiguration()
@@ -214,9 +214,10 @@ public:
 	
       // Creates a new DatabaseEntry of the OniFile
       void writeDumpToDB(XnPoint3D* start,char* gesture){
-      this->datasource->createNewFileEntry(this->strFileName, start,gesture);
+	  this->datasource->createNewFileEntry(this->strFileName, start,gesture,g_handPoints);
+	  g_handPoints.clear();
       //############################Testcode to verify the functionality#######################
-      vector <OniFileDataSet*> oniFileDataSets = this->datasource->getOniFileDatasetsByGesture(gesture);
+		//  vector <OniFileDataSet*> oniFileDataSets = this->datasource->getOniFileDatasetsByGesture(gesture);
 	  
       }
 

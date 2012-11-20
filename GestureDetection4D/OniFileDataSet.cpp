@@ -30,7 +30,7 @@ OniFileDataSet::OniFileDataSet(char* fileName,XnPoint3D* start, Connection *conn
 	// Extract filename and filepath from given filestring
 
 	spl s=this->split(tmp,'/');
-	this->filename=s.pointers[2];
+	this->filename=s.pointers[s.count -1];
 
 	this->save(conn);
 }
@@ -101,20 +101,20 @@ char* OniFileDataSet::getGestureName() {
 
 void OniFileDataSet::save(Connection *conn){
 	char *query;
-	int gestureID;
-	int oniId;
+	
+	
 	query= new char[256];
 	// write Metadata of the oni file
 	sprintf(query , "INSERT INTO onifile (name, size,filePath) VALUES ('%s', %d, '%s')", this->getFileName(), this->getSize(), this->getFilepath()); 
 	conn->mysql_perform_query(query);
 	// get the new oniId
-	oniId=this->getOniFileIdByName(this->getFileName(), conn);
+	this->fileId = this->getOniFileIdByName(this->getFileName(), conn);
 
 	// get gesture id
-	gestureID= this->getGestureIdFromDB(gesture, conn);
+	this->gestureId = this->getGestureIdFromDB(gesture, conn);
 	try{
 		// Write gesture2oni
-		sprintf(query,  "INSERT INTO gesture2oni ( gesture_idGesture,  oniFile_idOniFile ,startPoint_X,startPoint_Y,startPoint_Z ) VALUES ('%d','%d','%f','%f','%f' )", gestureID, oniId,this->start->X,this->start->Y,this->start->Z);
+		sprintf(query,  "INSERT INTO gesture2oni ( gesture_idGesture,  oniFile_idOniFile ,startPoint_X,startPoint_Y,startPoint_Z ) VALUES ('%d','%d','%f','%f','%f' )", this->gestureId, this->fileId,this->start->X,this->start->Y,this->start->Z);
 		conn->mysql_perform_query(query);
 	} catch(exception e){
 
@@ -201,6 +201,31 @@ int OniFileDataSet::getOniFileIdByName(char* fileName, Connection* conn){
 		}
 	}
 	return fileId;
+}
+
+
+void OniFileDataSet::insertHandPoints3D(std::vector<XnPoint3D>& handPoints,Connection *conn)
+{
+	//char *query;
+	std::string query;
+	query = "INSERT INTO points3d (X,Y,Z,FK_idOniFile) VALUES ";
+
+	std::vector<XnPoint3D>::iterator iter;
+	for(iter = handPoints.begin(); iter != handPoints.end();++iter)
+	{
+		char values[256];
+		sprintf(values,"('%f','%f','%f','%d')", iter->X,iter->Y,iter->Z,this->fileId);
+		query.append(values);
+
+		if(iter != handPoints.end()-1)
+		{
+			query.append(",");
+		}
+	}
+	query.append(";");
+	
+	printf((char*)query.c_str());
+	conn->mysql_perform_query((char*)query.c_str());
 }
 
 OniFileDataSet::~OniFileDataSet(void)

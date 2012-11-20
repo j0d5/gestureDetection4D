@@ -50,9 +50,11 @@ OniFileDataSet* Datasource::getOniFileDataSetByName(char* name){
   OniFileDataSet* oni=new OniFileDataSet(name, this->conn);
   return oni;
 }
-void Datasource::createNewFileEntry(char* name,XnPoint3D* start, char* gesture){
+void Datasource::createNewFileEntry(char* name,XnPoint3D* start, char* gesture, std::vector<XnPoint3D>& handPoints){
 
-  OniFileDataSet* dataset= new OniFileDataSet(name,  start, this->conn, gesture);
+  OniFileDataSet dataset(name, start, this->conn, gesture);
+  dataset.insertHandPoints3D(handPoints,this->conn);
+
 }
 
 Datasource::~Datasource(void)

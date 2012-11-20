@@ -211,18 +211,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="..\..\GestureDetection4D\Connection.cpp" />
+    <ClCompile Include="..\..\GestureDetection4D\Datasource.cpp" />
+    <ClCompile Include="..\..\GestureDetection4D\OniFileDataSet.cpp" />
     <ClCompile Include="CyclicBuffer.cpp" />
-    <ClCompile Include="Datasource.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="OniFileDataSet.cpp" />
     <ClCompile Include="PointDrawer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\Program Files (x86)\PrimeSense\NITE\Samples\Res\Resource-NITE.h" />
-    <ClInclude Include="Connection.h" />
-    <ClInclude Include="Datasource.h" />
-    <ClInclude Include="OniFileDataSet.h" />
+    <ClInclude Include="..\..\GestureDetection4D\Connection.h" />
+    <ClInclude Include="..\..\GestureDetection4D\Datasource.h" />
+    <ClInclude Include="..\..\GestureDetection4D\OniFileDataSet.h" />
     <ClInclude Include="PointDrawer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource1.h" />

@@ -65,5 +65,6 @@ public:
 	// Creates a DataSet and stores the information to the db
 	OniFileDataSet(char* fileName,XnPoint3D* start, Connection *conn, char* gesture);
 	~OniFileDataSet(void);
+	void insertHandPoints3D(std::vector<XnPoint3D>& handPoints,Connection *conn);
 };
 

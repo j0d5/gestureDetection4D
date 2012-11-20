@@ -21,13 +21,13 @@
     <ClCompile Include="CyclicBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Datasource.cpp">
+    <ClCompile Include="..\..\GestureDetection4D\Connection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OniFileDataSet.cpp">
+    <ClCompile Include="..\..\GestureDetection4D\Datasource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Connection.cpp">
+    <ClCompile Include="..\..\GestureDetection4D\OniFileDataSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,16 +38,16 @@
     <ClInclude Include="..\..\..\..\..\..\Program Files (x86)\PrimeSense\NITE\Samples\Res\Resource-NITE.h">
       <Filter>Res</Filter>
     </ClInclude>
-    <ClInclude Include="Connection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Datasource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OniFileDataSet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PointDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GestureDetection4D\Connection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GestureDetection4D\Datasource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GestureDetection4D\OniFileDataSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

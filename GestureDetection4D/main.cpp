@@ -103,8 +103,8 @@ int main(int argc, char ** argv)
 				std::cout << "File loaded." << std::endl;
 			}
 
-			// rc = initializeNiteKomponents();
-			// CHECK_RC(rc, "initializeNiteKomponents");
+			rc = initializeNiteKomponents();
+			CHECK_RC(rc, "initializeNiteKomponents");
 
 			// Mainloop
 			glInit(&argc, argv);

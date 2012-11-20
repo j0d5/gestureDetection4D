@@ -72,7 +72,7 @@ XnStatus openDeviceFile(const char* csFile)
 	rc = g_GestureGenerator.Create(g_Context);
 	CHECK_RC(rc, "g_GestureGenerator.Create");
 
-	initializeNiteKomponents();
+	// initializeNiteKomponents();
 
 	Player g_Player;
 	rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, g_Player);

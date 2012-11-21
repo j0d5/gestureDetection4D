@@ -6,6 +6,7 @@
 #include <XnTypes.h>
 // local header
 #include "Detection.h"
+#include "GlutRoutines.h"
 #include <list>
 
 using namespace std;
@@ -74,6 +75,8 @@ void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const
 void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
 	//printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
 	
+	sprintf(g_posString, "X %.2f Y %.2f Z %.2f", pPosition->X, pPosition->Y, pPosition->Z);
+
 	if(g_IsTrainMode) {
 		//if list is full: resize list to double the size
 		if(g_pointList4Training.size() == g_pointList4Training.max_size()) {

@@ -71,6 +71,7 @@ bool displayHelp = false;
 char* gesture = NULL;
 int pointCounter = 0;
 XnPoint3D* start = NULL;
+char g_posString[128];
 
 // To count missed frames
 XnUInt64 nLastDepthTime = 0;
@@ -145,6 +146,8 @@ void XN_CALLBACK_TYPE NoHands(void* UserCxt)
 void XN_CALLBACK_TYPE Hand_Update(xn::HandsGenerator& generator, XnUserID nId, const XnPoint3D* pPosition, 
 								  XnFloat fTime, void* pCookie) 
 {
+	sprintf(g_posString, "X %.2f Y %.2f Z %.2f", pPosition->X, pPosition->Y, pPosition->Z);
+	
 	if(recording)
 		g_handPoints.push_back(*pPosition);
 
@@ -222,6 +225,8 @@ void glutDisplay (void)
 		if(displayHelp) {
 			printHelp();
 		}
+
+		printText(g_posString,0,1,0,200,230);
 #endif
 	}
 

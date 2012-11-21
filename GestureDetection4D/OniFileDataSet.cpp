@@ -183,9 +183,9 @@ void OniFileDataSet::readFromDB(char* name, Connection* conn){
 	res= conn->mysql_perform_query(query);
 	while ((dbRow = mysql_fetch_row(res))) {
 		XnPoint3D point;
-		point.X = char2int(dbRow[0]);
-		point.Y = char2int(dbRow[1]);
-		point.Z = char2int(dbRow[2]);
+		point.X = atof(dbRow[0]);
+		point.Y = atof(dbRow[1]);
+		point.Z = atof(dbRow[2]);
 		m_handPoints.push_back(point);
 	}
 

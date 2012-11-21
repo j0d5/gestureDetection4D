@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "SimpleFeatureExtractor.h"
 
-#define FEATURE_VECTOR_SIZE 25
+#define FEATURE_VECTOR_SIZE 10
 
 SimpleFeatureExtractor::SimpleFeatureExtractor(void)
 {

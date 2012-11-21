@@ -13,6 +13,7 @@
 
 
 int displayTimeInFrames = DISPLAYTIME_IN_FRAMES;
+char g_posString[128] = "";
 
 void CleanupExit()
 {
@@ -71,6 +72,8 @@ void glutDisplay (void)
 			resetPredictedClass();
 		}
 	}
+
+	printText(g_posString,0, 1, 0, 200, 230);
 
 	glutSwapBuffers();
 

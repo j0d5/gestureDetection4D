@@ -56,7 +56,7 @@ std::vector<float> extractTrainingFeatureVector()
 						int i = 0;
 						for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
 							
-							printf("\t\t %d \t X: %.2f, Y: %.2f, Z: %.2f\n",i,*iter,*(iter+1),*(iter+2));
+							printf("\t\t %d \t X: %.5f, Y: %.5f, Z: %.5f\n",i,*iter,*(iter+1),*(iter+2));
 							i++;
 						}
 				#endif
@@ -87,7 +87,7 @@ std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
 	std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
 
 	for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
-		printf("FeatureVector X: %.2f, Y: %.2f, Z: %.2f\n",*iter,*(iter+1),*(iter+2));
+		printf("FeatureVector X: %.5f, Y: %.5f, Z: %.5f\n",*iter,*(iter+1),*(iter+2));
 	}
 #endif
 

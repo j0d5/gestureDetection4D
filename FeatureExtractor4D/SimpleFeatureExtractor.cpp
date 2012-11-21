@@ -61,23 +61,23 @@ std::vector<float> SimpleFeatureExtractor::getFeatureVector(std::vector<Point3D>
 	// summe der beträge der punkte
 	float SumAbsVec = 0.0;
 	//Point3D offsetOrigin = points.at(0);
-	std::vector<float> featureVec;
+	
+	std::vector<Point3D> differenceVectors;
 	for (itr = points.begin(); itr != points.end()-1; itr++ )
 	{
 		Point3D diffVec = (*(itr+1) - *itr);
-		featureVec.push_back(diffVec.X);
-		featureVec.push_back(diffVec.Y);
-		featureVec.push_back(diffVec.Z);
+		differenceVectors.push_back(diffVec);
 		SumAbsVec += diffVec.norm();
 	}
-	 
+
+	std::vector<float> featureVec; 
 	//normalisierung
-	for (itr = points.begin(); itr != points.end(); itr++)
+	for (itr = differenceVectors.begin(); itr != differenceVectors.end(); itr++)
 	{
 		float scale = (itr->norm() / SumAbsVec) * (1 / itr->norm());
-		itr->X = scale * itr->X;
-		itr->Y = scale * itr->Y;
-		itr->Z = scale * itr->Z;
+		featureVec.push_back(itr->X * scale);
+		featureVec.push_back(itr->Y * scale);
+		featureVec.push_back(itr->Z * scale);
 	}
 
 	return featureVec;

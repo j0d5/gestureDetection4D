@@ -82,8 +82,8 @@ XnStatus openDeviceFile(const char* csFile)
 	// rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
 	// CHECK_RC(rc, "g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator)");
 
-	rc = g_Player.SeekToFrame(g_DepthGenerator.GetName(), USED_PRE_FRAMES, XN_PLAYER_SEEK_SET);
-	CHECK_RC(rc, "SeekToFrame(g_DepthGenerator.GetName(), USED_PRE_FRAMES, XN_PLAYER_SEEK_SET)");
+	// rc = g_Player.SeekToFrame(g_DepthGenerator.GetName(), USED_PRE_FRAMES, XN_PLAYER_SEEK_SET);
+	// CHECK_RC(rc, "SeekToFrame(g_DepthGenerator.GetName(), USED_PRE_FRAMES, XN_PLAYER_SEEK_SET)");
 	
 	return XN_STATUS_OK;
 }
@@ -112,8 +112,8 @@ XnStatus playFileSilent(char* file) {
 	// rc = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
 	// CHECK_RC(rc, "g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator)");
 
-	rc = g_Player.SeekToFrame(g_DepthGenerator.GetName(), USED_PRE_FRAMES, XN_PLAYER_SEEK_SET);
-	CHECK_RC(rc, "SeekToFrame(g_DepthGenerator.GetName(), USED_PRE_FRAMES, XN_PLAYER_SEEK_SET)");
+	// rc = g_Player.SeekToFrame(g_DepthGenerator.GetName(), USED_PRE_FRAMES, XN_PLAYER_SEEK_SET);
+	// CHECK_RC(rc, "SeekToFrame(g_DepthGenerator.GetName(), USED_PRE_FRAMES, XN_PLAYER_SEEK_SET)");
 	
 	// play file and generate feature vectors, train svm
 	while(!g_Player.IsEOF()) {

@@ -18,6 +18,10 @@ struct Point3D
 		result.Z = this->Z - v2.Z;
 		return result;
 	};
+	float norm(){
+	return  sqrt(pow(this->X, 2) + pow(this->Y, 2) + pow(this->Z, 2));
+	};
+
 };
 
 class IFeatureExtractor4D

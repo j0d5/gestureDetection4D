@@ -1,6 +1,6 @@
 #pragma once
 
-#define BUFFER_SIZE 30
+#define BUFFER_SIZE 120
 
 //use every n-th hand update
 #define FEATURE_VECTOR_FREQUENCY 1
@@ -12,4 +12,8 @@
 #define USED_PRE_FRAMES 0
 #define USE_HAND_POINTS_FROM_DB 1
 
-const double BUFFER_WINDOWS[] = {0.5,1.};
+/*FeatureExtractor settings*/
+#define NORMALIZE_FEATURE_VECTOR 0
+#define FEATURE_VECTOR_SIZE 25
+
+const double BUFFER_WINDOWS[] = {0.2,0.4,0.6,1.};

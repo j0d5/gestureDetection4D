@@ -90,6 +90,7 @@ void GestureSVM::generateModel()
 		exit(1);
 	}
 	
+	printf("***GestureSVM: Training SVM... \n");
 	mModel = svm_train(&mProblem,&mParam);
     mIsModel = true;
 

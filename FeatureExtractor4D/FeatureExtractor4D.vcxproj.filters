@@ -30,6 +30,9 @@
     <ClInclude Include="SimpleFeatureExtractor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\GestureDetection4D\Constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

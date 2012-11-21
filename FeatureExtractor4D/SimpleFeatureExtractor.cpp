@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "SimpleFeatureExtractor.h"
 
-#define FEATURE_VECTOR_SIZE 10
+
 
 SimpleFeatureExtractor::SimpleFeatureExtractor(void)
 {
@@ -44,6 +44,7 @@ std::vector<Point3D> SimpleFeatureExtractor::normalizeVector(std::vector<Point3D
 
 		normalizedPoints[FEATURE_VECTOR_SIZE - 1] = points[points.size() - 1];
 	}
+	//todo: if points.size() <= FEATURE_VECTOR_SIZE extrapolate point data to get valid feature vector
 
 	return normalizedPoints;
 }
@@ -74,7 +75,12 @@ std::vector<float> SimpleFeatureExtractor::getFeatureVector(std::vector<Point3D>
 	//normalisierung
 	for (itr = differenceVectors.begin(); itr != differenceVectors.end(); itr++)
 	{
-		float scale = (itr->norm() / SumAbsVec) * (1 / itr->norm());
+		
+		float scale =1.0;
+		if(NORMALIZE_FEATURE_VECTOR)	
+		{
+			scale = (itr->norm() / SumAbsVec) * (1 / itr->norm());
+		}
 		featureVec.push_back(itr->X * scale);
 		featureVec.push_back(itr->Y * scale);
 		featureVec.push_back(itr->Z * scale);

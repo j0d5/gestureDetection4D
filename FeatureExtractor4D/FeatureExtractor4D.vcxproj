@@ -76,6 +76,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\GestureDetection4D\Constants.h" />
     <ClInclude Include="IFeatureExtractor4D.h" />
     <ClInclude Include="SimpleFeatureExtractor.h" />
     <ClInclude Include="stdafx.h" />

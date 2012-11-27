@@ -117,7 +117,15 @@ int main(int argc, char ** argv)
 			std::cout << "File loaded." << std::endl;
 			g_HandsGenerator.Create(g_Context);
 			g_GestureGenerator.Create(g_Context);
-		} else {
+		} 
+		else if(argc > 1 && !strcmp(argv[1], "-dt"))
+		{
+			std::cout << "Starting Detectionmode" << std::endl;
+			g_gestureSVM.loadModel(SVM_MODEL_FILE);
+			g_PreGestureSVM.loadModel(SVM_PRE_MODEL_FILE);
+			queryWithTrainingData();
+		}
+		else {
 			std::cout << "\n\n---- Something went wrong with the parameters..." << std::endl;
 			exit(-1);
 		}

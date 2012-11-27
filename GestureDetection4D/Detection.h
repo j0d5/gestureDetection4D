@@ -77,12 +77,22 @@ std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
 	{
 		printf("Error: Buffer not full!!!\n");
 		return std::vector<float>();
-	}
+	}			
+	
+				g_pointBuffer.resetIterator();
+				printf("***RAW Buffer Content***\n");
+				for (int i = 0; i < size; i++) {
+		
+					XnPoint3D* p = g_pointBuffer.next();
+					pVector.push_back(convertPoint(p));
+					
+					#ifdef DEBUG_FLAG					
+						printf("\t\t %d \t X: %.5f, Y: %.5f, Z: %.5f\n",i,p->X,p->Y,p->Z);
+					#endif
+				}
+				g_pointBuffer.resetIterator();
 
-	for (int i = 0; i < size; i++) {
-		pVector.push_back(convertPoint(g_pointBuffer.next()));
-	}
-			#ifdef DEBUG_FLAG
+				#ifdef DEBUG_FLAG
 						std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
 
 						int i = 0;
@@ -92,7 +102,7 @@ std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
 							i++;
 						}
 				#endif
-
+	
 	return g_featureExtractor.getFeatureVector(pVector);
 }
 
@@ -103,9 +113,21 @@ void doTraining()
 {
 	g_IsTrainMode = true;
 
+	std::vector<string> gestureToTrain;
+	gestureToTrain.push_back("Swipe");
+	gestureToTrain.push_back("Push");
+
 	Datasource d;
+
 	// maybe todo: add flag to oni entrys to mark training data!
-	std::vector<OniFileDataSet*> oniFiles = d.getOniFileDatasets();
+	
+	std::vector<OniFileDataSet*> oniFiles;
+	for(std::vector<string>::iterator iter = gestureToTrain.begin(); iter != gestureToTrain.end();++iter)
+	{
+		std::vector<OniFileDataSet*> oniFilesTemp = d.getOniFileDatasetsByGesture((char*)iter->c_str());
+		oniFiles.insert( oniFiles.end(), oniFilesTemp.begin(), oniFilesTemp.end());
+	}
+
 
 	std::vector<OniFileDataSet*>::iterator iter;
 
@@ -180,8 +202,7 @@ void doQuery()
 				maxProb = result.probabilitie;
 				maxClass = result.classID;
 			}
-			printf("Predicted as Class (buffer_window: %f) : %d with probability: %f\n", BUFFER_WINDOWS[i], result.classID, result.probabilitie);
-
+			printf("Predicted as Class (buffer_window: %f) : %d with probability: %f\n\n\n", BUFFER_WINDOWS[i], result.classID, result.probabilitie);
 		}
 	}
 	// set the class with the highes probabiltie as predictedClass

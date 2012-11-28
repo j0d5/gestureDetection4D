@@ -41,7 +41,9 @@ inline Point3D convertPoint(XnPoint3D* xnPoint) {
 */
 std::vector<float> extractTrainingFeatureVector() 
 {
+#ifdef DEBUG_FLAG
 	printf("***Getting TrainingFeatureVector...:\n");
+#endif
 	std::vector<Point3D> pVector;
 	for(vector<XnPoint3D>::iterator it = g_pointList4Training.begin(); it != g_pointList4Training.end(); ++it) {
 		pVector.push_back(convertPoint(&(*it)));
@@ -66,7 +68,9 @@ std::vector<float> extractTrainingFeatureVector()
 *
 */
 std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
+#ifdef DEBUG_FLAG
 	printf("Getting WindowedFeatureVector...size: %d \n",size);
+#endif
 	std::vector<Point3D> pVector;
 
 	if(!g_pointBuffer.isFull())
@@ -207,7 +211,9 @@ void doQuery()
 	int maxClass = 0;
 	for(int i = 0; i < numberWindows;i++)
 	{
+#ifdef DEBUG_FLAG
 		printf("**BufferWindows: %f\n",BUFFER_WINDOWS[i]);
+#endif
 		std::vector<float> feature  = extractWindowedFeatureVectorFromBuffer(BUFFER_SIZE * BUFFER_WINDOWS[i]);
 
 		// check if gesture is classified as class at all

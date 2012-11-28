@@ -32,7 +32,7 @@ std::vector<Point3D> SimpleFeatureExtractor::normalizeVector(std::vector<Point3D
 		std::vector<Point3D>::iterator iter = normalizedPoints.begin();
 		++iter;
 
-		for (int i = stepSize; i < points.size() - 1; i += stepSize) {
+		for (unsigned int i = stepSize; i < points.size() - 1; i += stepSize) {
 			++currentCut;
 			if(currentCut >= (numOfCuts - leftover - 1)) {
 				*iter++ = points[i++];

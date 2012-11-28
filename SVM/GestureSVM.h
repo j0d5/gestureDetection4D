@@ -7,7 +7,7 @@ struct PredictionResult
 {
     int classID;
 	int classIDWithoutProb;
-    float probabilitie;
+    double probabilitie;
 	PredictionResult(int classID = -42, int classIDWithoutProb = -42, float probabilitie = -1):
 	classID(classID),probabilitie(probabilitie),classIDWithoutProb(classIDWithoutProb) {}
 };

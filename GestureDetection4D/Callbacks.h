@@ -75,7 +75,7 @@ void XN_CALLBACK_TYPE HandCreate(HandsGenerator &generator, XnUserID user, const
 void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const XnPoint3D *pPosition, XnFloat fTime, void *pCookie) {
 	//printf("Position X: %.2f Y: %.2f Z: %.2f\n", pPosition->X, pPosition->Y, pPosition->Z);
 	
-	sprintf(g_posString, "X %.2f Y %.2f Z %.2f", pPosition->X, pPosition->Y, pPosition->Z);
+	sprintf_s(g_posString, "X %.2f Y %.2f Z %.2f", pPosition->X, pPosition->Y, pPosition->Z);
 
 	if(g_IsTrainMode) {
 		g_pointList4Training.push_back(*pPosition);

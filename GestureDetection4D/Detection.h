@@ -181,7 +181,7 @@ void doTraining()
 	//do retraining with same data for better prob values
 	for(int i = 0; i < TRAINING_LOOPS-1; i++)
 	{
-		for(int k = 0; k < allFeatures.size();k++)
+		for(unsigned int k = 0; k < allFeatures.size();k++)
 		{
 			g_gestureSVM.train(allFeatures.at(k), featureClassIdx.at(k));
 		}
@@ -203,7 +203,7 @@ void doQuery()
 {
 	PredictionResult result;
 	int numberWindows = sizeof(BUFFER_WINDOWS) / sizeof(double);
-	float maxProb = -2;
+	double maxProb = -2;
 	int maxClass = 0;
 	for(int i = 0; i < numberWindows;i++)
 	{

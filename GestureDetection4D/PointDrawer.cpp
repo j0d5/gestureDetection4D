@@ -270,13 +270,12 @@ void glPrintString(void *font, char *str)
 
 void printText(char* text, int colorRed, int colorGreen, int colorBlue, int xPos, int yPos)
 {
-	//printf("sogar das mach ich ");
 	glColor4f(colorRed,colorGreen,colorBlue,1);
 	glRasterPos2i(xPos,yPos);
 	
 	XnUInt32 nWritten = 0;
 	XnChar strLabel[XN_FILE_MAX_PATH];
-	sprintf(strLabel,text);
+	sprintf_s(strLabel,text);
 	xnOSStrFormat(strLabel, XN_FILE_MAX_PATH, &nWritten, text);
 	
 	glPrintString(GLUT_BITMAP_HELVETICA_18, strLabel);

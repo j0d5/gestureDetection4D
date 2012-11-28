@@ -83,11 +83,11 @@ void GestureSVM::initProblemAndParam()
 	mProblem.x = mFeatureSet.data();
 
     //set proble depending params
-    mParam.gamma = (mProblem.l > 0)?(1.0 / mProblem.l):0;	// 1/num_features if l >0
+    //mParam.gamma = (mProblem.l > 0)?(1.0 / mProblem.l):0;	// 1/num_features if l >0
 }
 void GestureSVM::generateModel()
 {
-	if(!mIsInit)
+	//if(!mIsInit)
 		this->initProblemAndParam();
 
 	const char* error_msg = svm_check_parameter(&mProblem,&mParam);

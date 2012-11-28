@@ -6,7 +6,7 @@
 #define SVM_PRE_MODEL_FILE "../../SVM_Pre_Model.txt"
 
 // general settings
-#define DEBUG_FLAG					// add debugging information
+//#define DEBUG_FLAG					// add debugging information
 #define USE_HAND_POINTS_FROM_DB 1	// use hand points from database
 
 // FeatureExtractor settings
@@ -19,7 +19,7 @@
 
 // SVM Settings
 #define USE_PRE_SVM 0				// use one class prediction for not a gesture class
-#define TRAINING_LOOPS 10			// how often the data from DB will be trained
+#define TRAINING_LOOPS 5			// how often the data from DB will be trained
 
 // Buffer Settings
 #define BUFFER_SIZE 120				// buffer size

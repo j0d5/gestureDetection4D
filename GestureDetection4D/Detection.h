@@ -3,7 +3,7 @@
 // local header
 #include "CyclicBuffer.h"
 #include "../FeatureExtractor4D/SecondSimpleFeatureExtractor.h"
-#include "../FeatureExtractor4D/SecondSimpleFeatureExtractor.h"
+#include "../FeatureExtractor4D/SimpleFeatureExtractor.h"
 #include "../SVM/GestureSVM.h"
 #include "Datasource.h"
 #include "Device.h"
@@ -118,8 +118,8 @@ void doTraining()
 	gestureToTrain.push_back(GESTURE_SWIPE);
 	gestureToTrain.push_back(GESTURE_PUSH);
 	gestureToTrain.push_back(GESTURE_L);
-	//gestureToTrain.push_back(GESTURE_Z);
-	//gestureToTrain.push_back(GESTURE_O);
+	gestureToTrain.push_back(GESTURE_Z);
+	gestureToTrain.push_back(GESTURE_O);
 
 	Datasource d;
 
@@ -133,6 +133,8 @@ void doTraining()
 
 	std::vector<OniFileDataSet*>::iterator iter;
 
+	std::vector<std::vector<float> > allFeatures;
+	std::vector<int> featureClassIdx;
 	for(iter = oniFiles.begin(); iter != oniFiles.end(); iter++)	{
 #ifdef DEBUG_FLAG
 		std::cout << "DB-Filename: " << (*iter)->getFilepath() << std::endl;
@@ -166,14 +168,25 @@ void doTraining()
 				g_PreGestureSVM.train(feature,1);
 		}
 		// train gesture svm 
+		allFeatures.push_back(feature);
+		featureClassIdx.push_back(g_CurrentTrainClassID);
 		
-		//for(int i = 0; i < 10; i++)
-			g_gestureSVM.train(feature, g_CurrentTrainClassID);
+		g_gestureSVM.train(feature, g_CurrentTrainClassID);
 	}
 	
 	//do parameter search via cross validation
 	g_gestureSVM.doParameterSearch(-5,  15, 2,	-15, 3, 2, 5);
 	
+	
+	//do retraining with same data for better prob values
+	for(int i = 0; i < TRAINING_LOOPS-1; i++)
+	{
+		for(int k = 0; k < allFeatures.size();k++)
+		{
+			g_gestureSVM.train(allFeatures.at(k), featureClassIdx.at(k));
+		}
+	}
+
 	//generate model with optimized gamma and C
 	g_gestureSVM.generateModel(); 
 

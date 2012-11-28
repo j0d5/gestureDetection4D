@@ -157,10 +157,15 @@ void doTraining()
 		if(USE_PRE_SVM)
 		{
 			// train one class svm 
-			g_PreGestureSVM.train(feature,1);
+			for(int i = 0; i < 10; i++)
+			{
+				g_PreGestureSVM.train(feature,1);
+			}
 		}
 		// train gesture svm
-		g_gestureSVM.train(feature, g_CurrentTrainClassID);
+		// train one class svm 
+		for(int i = 0; i < 10; i++)
+			g_gestureSVM.train(feature, g_CurrentTrainClassID);
 		
 	}
 

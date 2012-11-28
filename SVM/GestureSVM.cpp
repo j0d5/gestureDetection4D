@@ -37,7 +37,7 @@ PredictionResult GestureSVM::predictGesture(const std::vector<float>& feature)
     {
         double* probs = new double[mModel->nr_class];
         result.classID = (int) svm_predict_probability(mModel,preVec,probs);
-
+		printf("Without prob model preticted as class: %d\n", (int) svm_predict(mModel,preVec));
         for(int i = 0; i < mModel->nr_class;i++)
         {
             if(result.classID == mModel->label[i])

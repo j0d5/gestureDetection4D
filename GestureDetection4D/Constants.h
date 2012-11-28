@@ -17,3 +17,11 @@
 #define FEATURE_VECTOR_SIZE 25
 
 const double BUFFER_WINDOWS[] = {0.2,0.4,0.6,1.};
+
+// Gestures used for training mode
+#define GESTURE_SWIPE "Swipe"
+#define GESTURE_PUSH "Push"
+#define GESTURE_L "Letter L"
+#define GESTURE_Z "Letter Z"
+#define GESTURE_O "Letter O"
+#define GESTURE_NO "NO_GESTURE"

@@ -1,7 +1,8 @@
 #include "GestureSVM.h"
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <math.h>
+#define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 void convertToSVMVec(const std::vector<float>& vec, svm_node* destination)
 {
@@ -37,7 +38,8 @@ PredictionResult GestureSVM::predictGesture(const std::vector<float>& feature)
     {
         double* probs = new double[mModel->nr_class];
         result.classID = (int) svm_predict_probability(mModel,preVec,probs);
-		printf("Without prob model preticted as class: %d\n", (int) svm_predict(mModel,preVec));
+		result.classIDWithoutProb = (int) svm_predict(mModel,preVec);
+		printf("Without prob model preticted as class: %d\n",result.classIDWithoutProb);
         for(int i = 0; i < mModel->nr_class;i++)
         {
             if(result.classID == mModel->label[i])
@@ -71,9 +73,9 @@ void GestureSVM::loadModel(std::string filePath)
     mModel = svm_load_model(filePath.data());
     mIsModel = true;
 }
-void GestureSVM::generateModel()
+void GestureSVM::initProblemAndParam()
 {
-    //set libsm problem structure
+	   //set libsm problem structure
     mProblem.l = mFeatureSet.size();		//number of trainings data
 	mProblem.y = mClassIdx.data();		
 
@@ -82,6 +84,11 @@ void GestureSVM::generateModel()
 
     //set proble depending params
     mParam.gamma = (mProblem.l > 0)?(1.0 / mProblem.l):0;	// 1/num_features if l >0
+}
+void GestureSVM::generateModel()
+{
+	if(!mIsInit)
+		this->initProblemAndParam();
 
 	const char* error_msg = svm_check_parameter(&mProblem,&mParam);
 	if(error_msg)
@@ -99,6 +106,7 @@ GestureSVM::GestureSVM(bool isOneClassSVM)
 {
     mIsModel = false;
     mModel = NULL;
+	mIsInit	= false;
 
     //set default param values
     
@@ -121,6 +129,57 @@ GestureSVM::GestureSVM(bool isOneClassSVM)
     mParam.weight = NULL;
 }
 
+
+void GestureSVM::doParameterSearch(int c_begin, int c_end, int c_step,\
+	int g_begin, int g_end, int g_step, int folds)
+{
+	this->initProblemAndParam();
+	double maxAcc = 0.0;
+	double currentAcc = 0.0;
+	double bestC;
+	double bestG;
+	for(int c = c_begin; c <= c_end;c+= c_step)
+	{
+		for(int g = g_begin; g <= g_end; g+=g_step)
+		{
+			mParam.C = pow(2.,c);
+			mParam.gamma = pow(2.,g);
+			currentAcc = this->doCrossValidation(folds);
+			if(currentAcc > maxAcc)
+			{
+				maxAcc = currentAcc;
+				bestC = mParam.C;
+				bestG = mParam.gamma;
+			}
+		}
+	}
+	printf("**Best Result with Accuracy %f : c=%f gamma=%f\n",maxAcc,bestC,bestG);
+	mParam.C = bestC;
+	mParam.gamma = bestG;
+	mIsInit = true;
+}
+
+double GestureSVM::doCrossValidation(int nr_fold)
+{
+	mParam.probability = 0;
+	int i;
+	int total_correct = 0;
+	double total_error = 0;
+	double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
+	double *target = Malloc(double,mProblem.l);
+
+	svm_cross_validation(&mProblem,&mParam,nr_fold,target);
+	
+		for(i=0;i<mProblem.l;i++)
+			if(target[i] == mProblem.y[i])
+				++total_correct;
+	double accuracy = 100.0*total_correct/mProblem.l;		
+	printf("Cross Validation Accuracy with c=%f, gamma=%f: %g%%\n",mParam.C,mParam.gamma,accuracy);
+	
+	free(target);
+	mParam.probability = 1;
+	return accuracy;
+}
 
 GestureSVM::~GestureSVM(void)
 {

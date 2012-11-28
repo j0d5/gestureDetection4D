@@ -114,12 +114,10 @@ public:
     
 	/// flushing the complete buffer
 	void flush() {
-		free(startInMemoryElement);
-		allocateBuffer();
         firstElement = startInMemoryElement;
         lastElement = firstElement; //buffer is empty
-        endInMemoryElement = startInMemoryElement + size-1;
         iterator = startInMemoryElement;
+		isBufferFull = false;
 	}
 };
 

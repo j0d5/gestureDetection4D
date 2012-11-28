@@ -2,8 +2,6 @@
 #include "SecondSimpleFeatureExtractor.h"
 
 
-#define NUMBER_OF_PARTS 3
-
 
 std::vector<float> SecondSimpleFeatureExtractor::getFeatureVector(std::vector<Point3D> points) {
 

@@ -2,7 +2,7 @@
 
 // local header
 #include "CyclicBuffer.h"
-#include "../FeatureExtractor4D/SimpleFeatureExtractor.h"
+#include "../FeatureExtractor4D/SecondSimpleFeatureExtractor.h"
 #include "../SVM/GestureSVM.h"
 #include "Datasource.h"
 #include "Device.h"
@@ -22,7 +22,7 @@ vector<XnPoint3D> g_pointList4Training;
 
 // global cyclic buffer
 CyclicBuffer<XnPoint3D> g_pointBuffer(BUFFER_SIZE);
-SimpleFeatureExtractor g_featureExtractor;
+SecondSimpleFeatureExtractor g_featureExtractor;
 GestureSVM g_gestureSVM;
 //one class svm to decide if a feature vector is a gesture or not
 GestureSVM g_PreGestureSVM(true);
@@ -164,13 +164,17 @@ void doTraining()
 		}
 		// train gesture svm
 		// train one class svm 
+		/*
 		for(int i = 0; i < 10; i++)
 			g_gestureSVM.train(feature, g_CurrentTrainClassID);
-		
+		*/
+		g_gestureSVM.train(feature, g_CurrentTrainClassID);
 	}
-
+	
+	g_gestureSVM.doParameterSearch(-5,  15, 2,	-15, 3, 2, 5);
+	g_gestureSVM.generateModel(); 
 	//generate and save svm model after after training all oni file data sets
-	g_gestureSVM.generateModel(); // this has to be done after collecting feature vectors
+	// this has to be done after collecting feature vectors
 	g_gestureSVM.saveModel(SVM_MODEL_FILE);
 	if(USE_PRE_SVM)
 	{
@@ -248,3 +252,4 @@ void queryWithTrainingData()
 		printf("Predicted as Class : %d with probability: %f\n\n",result.classID, result.probabilitie);
 	}
 }
+

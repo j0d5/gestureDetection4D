@@ -16,6 +16,7 @@
 bool g_IsTrainMode = false;
 int g_CurrentTrainClassID = -1;
 int g_predictedClass = -1;
+std::map<int, char*> gestureNames;
 
 //global list for training
 vector<XnPoint3D> g_pointList4Training;

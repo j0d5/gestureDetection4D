@@ -15,8 +15,6 @@ int char2int(char* c){
 	return i;
 }
 
-
-
 OniFileDataSet::OniFileDataSet(char* fileName,XnPoint3D* start, Connection *conn, char* gesture){
 	this->start=start;
 	this->gesture=gesture;

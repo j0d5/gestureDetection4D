@@ -118,8 +118,8 @@ void doTraining()
 	gestureToTrain.push_back(GESTURE_SWIPE);
 	gestureToTrain.push_back(GESTURE_PUSH);
 	gestureToTrain.push_back(GESTURE_L);
-	gestureToTrain.push_back(GESTURE_Z);
-	gestureToTrain.push_back(GESTURE_O);
+	//gestureToTrain.push_back(GESTURE_Z);
+	//gestureToTrain.push_back(GESTURE_O);
 
 	Datasource d;
 
@@ -166,16 +166,19 @@ void doTraining()
 				g_PreGestureSVM.train(feature,1);
 		}
 		// train gesture svm 
-		/*
-		for(int i = 0; i < 10; i++)
+		
+		//for(int i = 0; i < 10; i++)
 			g_gestureSVM.train(feature, g_CurrentTrainClassID);
 	}
 	
+	//do parameter search via cross validation
 	g_gestureSVM.doParameterSearch(-5,  15, 2,	-15, 3, 2, 5);
+	
+	//generate model with optimized gamma and C
 	g_gestureSVM.generateModel(); 
-	//generate and save svm model after after training all oni file data sets
-	// this has to be done after collecting feature vectors
+
 	g_gestureSVM.saveModel(SVM_MODEL_FILE);
+	
 	if(USE_PRE_SVM)
 	{
 		g_PreGestureSVM.generateModel();

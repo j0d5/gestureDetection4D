@@ -11,8 +11,11 @@
 
 // FeatureExtractor settings
 #define NORMALIZE_FEATURE_VECTOR 0	// normalize featureVector data
-#define FEATURE_VECTOR_SIZE 25		// simpleFeatureVector size
+#define FEATURE_VECTOR_SIZE 5		// simpleFeatureVector size
 #define FEATURE_VECTOR_FREQUENCY 1	// vector generation frequency
+
+/*SecondSimpleFeatureExtractor settings*/
+#define NUMBER_OF_PARTS 4
 
 // SVM Settings
 #define USE_PRE_SVM 0				// use one class prediction for not a gesture class
@@ -20,7 +23,7 @@
 
 // Buffer Settings
 #define BUFFER_SIZE 120				// buffer size
-const double BUFFER_WINDOWS[] = {0.2,0.4,0.6,1.}; // extraction windows 0.1 - 1.0
+const double BUFFER_WINDOWS[] = {0.3,0.4,0.5,0.6,0.8,1.}; // extraction windows 0.1 - 1.0
 
 // Gestures used for training mode
 #define GESTURE_SWIPE "Swipe"

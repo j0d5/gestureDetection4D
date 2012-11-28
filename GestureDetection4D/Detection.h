@@ -3,6 +3,7 @@
 // local header
 #include "CyclicBuffer.h"
 #include "../FeatureExtractor4D/SimpleFeatureExtractor.h"
+#include "../FeatureExtractor4D/SecondSimpleFeatureExtractor.h"
 #include "../SVM/GestureSVM.h"
 #include "Datasource.h"
 #include "Device.h"
@@ -22,7 +23,8 @@ vector<XnPoint3D> g_pointList4Training;
 
 // global cyclic buffer
 CyclicBuffer<XnPoint3D> g_pointBuffer(BUFFER_SIZE);
-SimpleFeatureExtractor g_featureExtractor;
+// SimpleFeatureExtractor g_featureExtractor;
+SecondSimpleFeatureExtractor g_featureExtractor;
 GestureSVM g_gestureSVM;
 //one class svm to decide if a feature vector is a gesture or not
 GestureSVM g_PreGestureSVM(true);
@@ -46,21 +48,21 @@ std::vector<float> extractTrainingFeatureVector()
 {
 	printf("***Getting TrainingFeatureVector...:\n");
 	std::vector<Point3D> pVector;
-		for(vector<XnPoint3D>::iterator it = g_pointList4Training.begin(); it != g_pointList4Training.end(); ++it) {
-			pVector.push_back(convertPoint(&(*it)));
-		}
+	for(vector<XnPoint3D>::iterator it = g_pointList4Training.begin(); it != g_pointList4Training.end(); ++it) {
+		pVector.push_back(convertPoint(&(*it)));
+	}
 
-				#ifdef DEBUG_FLAG
-						std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
+#ifdef DEBUG_FLAG
+	std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
 
-						int i = 0;
-						for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
-							
-							printf("\t\t %d \t X: %.5f, Y: %.5f, Z: %.5f\n",i,*iter,*(iter+1),*(iter+2));
-							i++;
-						}
-				#endif
-				
+	int i = 0;
+	for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
+
+		printf("\t\t %d \t X: %.5f, Y: %.5f, Z: %.5f\n",i,*iter,*(iter+1),*(iter+2));
+		i++;
+	}
+#endif
+
 	return g_featureExtractor.getFeatureVector(pVector);
 }
 
@@ -78,31 +80,36 @@ std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
 		printf("Error: Buffer not full!!!\n");
 		return std::vector<float>();
 	}			
-	
-				g_pointBuffer.resetIterator();
-				printf("***RAW Buffer Content***\n");
-				for (int i = 0; i < size; i++) {
-		
-					XnPoint3D* p = g_pointBuffer.next();
-					pVector.push_back(convertPoint(p));
-					
-					#ifdef DEBUG_FLAG					
-						printf("\t\t %d \t X: %.5f, Y: %.5f, Z: %.5f\n",i,p->X,p->Y,p->Z);
-					#endif
-				}
-				g_pointBuffer.resetIterator();
 
-				#ifdef DEBUG_FLAG
-						std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
+	// set iterator to actual element + pos
+	XnPoint3D* actPoint = g_pointBuffer.setIterator(BUFFER_SIZE - size);
 
-						int i = 0;
-						for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
-							
-							printf("\t\t %d \t X: %.5f, Y: %.5f, Z: %.5f\n",i,*iter,*(iter+1),*(iter+2));
-							i++;
-						}
-				#endif
-	
+#ifdef DEBUG_FLAG
+	printf("Setting Iterator to: X %.5f Y %.5f Z %.5f\n", actPoint->X, actPoint->Y, actPoint->Z);
+	printf("***RAW Buffer Content***\n");
+#endif
+
+	// push points from buffer to featureVector
+	// for (int i = 0; i < size; i++) {
+	for (int i = BUFFER_SIZE - size; i < BUFFER_SIZE; i++) {
+		XnPoint3D* p = g_pointBuffer.next();
+		pVector.push_back(convertPoint(p));
+
+#ifdef DEBUG_FLAG					
+		printf("\t\t %d \t X: %.5f, Y: %.5f, Z: %.5f\n", i, p->X, p->Y, p->Z);
+#endif
+	}
+
+#ifdef DEBUG_FLAG // print out feature vectors
+	printf("***FeatureVector Content***\n");
+	std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
+	int i = 0;
+	for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
+		printf("\t\t %d \t X: %.5f, Y: %.5f, Z: %.5f\n",i,*iter,*(iter+1),*(iter+2));
+		i++;
+	}
+#endif
+
 	return g_featureExtractor.getFeatureVector(pVector);
 }
 
@@ -120,7 +127,7 @@ void doTraining()
 
 	Datasource d;
 
-	
+
 	std::vector<OniFileDataSet*> oniFiles;
 	for(std::vector<string>::iterator iter = gestureToTrain.begin(); iter != gestureToTrain.end();++iter)
 	{
@@ -166,7 +173,7 @@ void doTraining()
 		// train one class svm 
 		for(int i = 0; i < 10; i++)
 			g_gestureSVM.train(feature, g_CurrentTrainClassID);
-		
+
 	}
 
 	//generate and save svm model after after training all oni file data sets

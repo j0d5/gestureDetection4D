@@ -83,7 +83,7 @@ void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const
 	//query mode
 	else {
 		g_pointBuffer.push(*pPosition);
-		if (g_pointBuffer.isFull() && !frequencyCounter--) {
+		if (g_pointBuffer.isFull() && !(--frequencyCounter)) {
 			doQuery();
 			frequencyCounter = FEATURE_VECTOR_FREQUENCY;
 		}

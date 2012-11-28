@@ -121,12 +121,13 @@ void doTraining()
 	g_IsTrainMode = true;
 
 	std::vector<string> gestureToTrain;
-	gestureToTrain.push_back("Swipe");
-	gestureToTrain.push_back("Push");
-	gestureToTrain.push_back("Letter L");
+	gestureToTrain.push_back(GESTURE_SWIPE);
+	gestureToTrain.push_back(GESTURE_PUSH);
+	gestureToTrain.push_back(GESTURE_L);
+	// gestureToTrain.push_back(GESTURE_Z);
+	// gestureToTrain.push_back(GESTURE_O);
 
 	Datasource d;
-
 
 	std::vector<OniFileDataSet*> oniFiles;
 	for(std::vector<string>::iterator iter = gestureToTrain.begin(); iter != gestureToTrain.end();++iter)

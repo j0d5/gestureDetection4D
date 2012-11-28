@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVM", "..\SVM\SVM.vcxproj",
 		{B8DEBF40-E0E5-41ED-84DD-3AA867F1FD8C} = {B8DEBF40-E0E5-41ED-84DD-3AA867F1FD8C}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CyclicBufferTest", "..\CyclicBufferTest\CyclicBufferTest.vcxproj", "{DEAC5848-663F-41FE-BBA5-9BC872CFD557}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -38,6 +40,12 @@ Global
 		{4AB5302E-66A1-4555-9D30-54F196E90D12}.Release|Win32.ActiveCfg = Release|Win32
 		{4AB5302E-66A1-4555-9D30-54F196E90D12}.Release|Win32.Build.0 = Release|Win32
 		{4AB5302E-66A1-4555-9D30-54F196E90D12}.Release|x64.ActiveCfg = Release|Win32
+		{DEAC5848-663F-41FE-BBA5-9BC872CFD557}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DEAC5848-663F-41FE-BBA5-9BC872CFD557}.Debug|Win32.Build.0 = Debug|Win32
+		{DEAC5848-663F-41FE-BBA5-9BC872CFD557}.Debug|x64.ActiveCfg = Debug|Win32
+		{DEAC5848-663F-41FE-BBA5-9BC872CFD557}.Release|Win32.ActiveCfg = Release|Win32
+		{DEAC5848-663F-41FE-BBA5-9BC872CFD557}.Release|Win32.Build.0 = Release|Win32
+		{DEAC5848-663F-41FE-BBA5-9BC872CFD557}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

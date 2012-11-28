@@ -47,7 +47,7 @@ public:
         endInMemoryElement = startInMemoryElement + size-1;
         iterator = startInMemoryElement;
     }
-
+    
     /// constructor
     CyclicBuffer(int size) {
 		this->size = size;
@@ -64,24 +64,29 @@ public:
     	free(startInMemoryElement);
     }
     
-    /// adds an new element to the buffer. If the buffer is full, the oldest will be replaced 
+    /// adds an new element to the buffer. If the buffer is full, the oldest will be replaced
     void push(T newElement) {
-        if(lastElement == endInMemoryElement) {
-            isBufferFull = true;
-            *lastElement = newElement;
-            lastElement = startInMemoryElement;
-
-        } else {
-            *lastElement++ = newElement;
-        }
         
-        if(firstElement == endInMemoryElement) { //start over if end in memory is reached
-            firstElement = startInMemoryElement;
-        } else if(isBufferFull) {
+        if(isBufferFull) {
             ++firstElement;
         }
+        
+        if(firstElement > endInMemoryElement) { //start over if end in memory is reached
+            firstElement = startInMemoryElement;
+        }
+        
+        if(lastElement > endInMemoryElement) {
+            lastElement = startInMemoryElement;
+        }
+        
+        if(lastElement == endInMemoryElement) {
+            isBufferFull = true;
+        }
+        
+        *lastElement++ = newElement;
+       
     }
-
+    
 	/// checks if the buffer is empty
     bool isEmpty(){
         return firstElement == lastElement;
@@ -106,7 +111,7 @@ public:
     void resetIterator() {
         iterator = firstElement;
     }
-
+    
 	/// flushing the complete buffer
 	void flush() {
 		free(startInMemoryElement);

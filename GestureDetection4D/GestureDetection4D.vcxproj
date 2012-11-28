@@ -124,6 +124,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalOptions>/D DEBUG_FLAG %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>OpenNI.lib;XnVNite_1_5_2.lib;SVM.lib;FeatureExtractor4D.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>

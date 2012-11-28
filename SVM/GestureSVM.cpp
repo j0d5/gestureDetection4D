@@ -114,8 +114,9 @@ GestureSVM::GestureSVM(bool isOneClassSVM)
     mParam.eps = 1e-3;
     mParam.p = 0.1;
     mParam.shrinking = 1;
-    mParam.probability = isOneClassSVM?0:1; //make probability output avaibilbe, if not one class svm
-    mParam.nr_weight = 0;
+    mParam.probability = isOneClassSVM?0:1; //make probability output avaibilbe, if not one class svm  
+	//mParam.probability = 0;
+	mParam.nr_weight = 0;
     mParam.weight_label = NULL;
     mParam.weight = NULL;
 }

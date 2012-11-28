@@ -95,6 +95,8 @@ int main(int argc, char ** argv)
 			g_gestureSVM.loadModel(SVM_MODEL_FILE);
 			g_PreGestureSVM.loadModel(SVM_PRE_MODEL_FILE);
 
+			gestureNames = Datasource().getGestureNames();
+
 			// 
 			if (argc > 2 && fs::exists(argv[2])) {
 				std::cout << "...with file: " << argv[2] << std::endl;

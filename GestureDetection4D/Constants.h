@@ -1,22 +1,31 @@
 #pragma once
 
-#define BUFFER_SIZE 120
-
-//use every n-th hand update
-#define FEATURE_VECTOR_FREQUENCY 1
+// paths
 #define WINDOW_NAME "GestureDetection4D"
 #define SVM_MODEL_FILE "../../SVM_Model.txt"
 #define SVM_PRE_MODEL_FILE "../../SVM_Pre_Model.txt"
-//#define DEBUG_FLAG
-#define USE_PRE_SVM 0
-#define USED_PRE_FRAMES 0
-#define USE_HAND_POINTS_FROM_DB 1
 
-/*FeatureExtractor settings*/
-#define NORMALIZE_FEATURE_VECTOR 0
-#define FEATURE_VECTOR_SIZE 5
+// general settings
+#define DEBUG_FLAG					// add debugging information
+#define USE_HAND_POINTS_FROM_DB 1	// use hand points from database
 
-/*SecondSimpleFeatureExtractor settings*/
-#define NUMBER_OF_PARTS 4
+// FeatureExtractor settings
+#define NORMALIZE_FEATURE_VECTOR 0	// normalize featureVector data
+#define FEATURE_VECTOR_SIZE 25		// simpleFeatureVector size
+#define FEATURE_VECTOR_FREQUENCY 1	// vector generation frequency
 
-const double BUFFER_WINDOWS[] = {0.3,0.4,0.5,0.6,0.8,1.};
+// SVM Settings
+#define USE_PRE_SVM 0				// use one class prediction for not a gesture class
+#define TRAINING_LOOPS 10			// how often the data from DB will be trained
+
+// Buffer Settings
+#define BUFFER_SIZE 120				// buffer size
+const double BUFFER_WINDOWS[] = {0.2,0.4,0.6,1.}; // extraction windows 0.1 - 1.0
+
+// Gestures used for training mode
+#define GESTURE_SWIPE "Swipe"
+#define GESTURE_PUSH "Push"
+#define GESTURE_L "Letter L"
+#define GESTURE_Z "Letter Z"
+#define GESTURE_O "Letter O"
+#define GESTURE_NO "NO_GESTURE"

@@ -11,21 +11,21 @@
 
 #include <iostream>
 /**
- * @class
- */
+* @class
+*/
 template <class T>
 class CyclicBuffer {
-    
+
 private:
-    
-    T* startInMemoryElement; // actual start in memory
-    T* endInMemoryElement;   // actual end in memory
-    T* firstElement; // first valid element
-    T* lastElement;  // last valid element
-    T* iterator;
-    bool isBufferFull; // is buffer completly full
+
+	T* startInMemoryElement; // actual start in memory
+	T* endInMemoryElement;   // actual end in memory
+	T* firstElement; // first valid element
+	T* lastElement;  // last valid element
+	T* iterator;
+	bool isBufferFull; // is buffer completly full
 	int size;
-	
+
 	/// allocating memory for buffer
 	void allocateBuffer() {
 		startInMemoryElement = (T*)(malloc(size * sizeof(T)));
@@ -34,90 +34,102 @@ private:
 			exit(-1);
 		}
 	}
-    
+
 public:
-    
+
 	/// default constructor
-    CyclicBuffer() {
+	CyclicBuffer() {
 		size = 200;
 		isBufferFull = false;
 		allocateBuffer();
-        firstElement = startInMemoryElement;
-        lastElement = firstElement; //buffer is empty
-        endInMemoryElement = startInMemoryElement + size-1;
-        iterator = startInMemoryElement;
-    }
-    
-    /// constructor
-    CyclicBuffer(int size) {
+		firstElement = startInMemoryElement;
+		lastElement = firstElement; //buffer is empty
+		endInMemoryElement = startInMemoryElement + size-1;
+		iterator = startInMemoryElement;
+	}
+
+	/// constructor
+	CyclicBuffer(int size) {
 		this->size = size;
 		isBufferFull = false;
-        allocateBuffer();
-        firstElement = startInMemoryElement;
-        lastElement = firstElement; //buffer is empty
-        endInMemoryElement = startInMemoryElement + size-1;
-        iterator = startInMemoryElement;
-    }
-    
-    /// destructor
-    ~CyclicBuffer(void) {
-    	free(startInMemoryElement);
-    }
-    
-    /// adds an new element to the buffer. If the buffer is full, the oldest will be replaced
-    void push(T newElement) {
-        
-        if(isBufferFull) {
-            ++firstElement;
-        }
-        
-        if(firstElement > endInMemoryElement) { //start over if end in memory is reached
-            firstElement = startInMemoryElement;
-        }
-        
-        if(lastElement > endInMemoryElement) {
-            lastElement = startInMemoryElement;
-        }
-        
-        if(lastElement == endInMemoryElement) {
-            isBufferFull = true;
-        }
-        
-        *lastElement++ = newElement;
-       
-    }
-    
+		allocateBuffer();
+		firstElement = startInMemoryElement;
+		lastElement = firstElement; //buffer is empty
+		endInMemoryElement = startInMemoryElement + size-1;
+		iterator = startInMemoryElement;
+	}
+
+	/// destructor
+	~CyclicBuffer(void) {
+		free(startInMemoryElement);
+	}
+
+	/// adds an new element to the buffer. If the buffer is full, the oldest will be replaced
+	void push(T newElement) {
+
+		if(isBufferFull) {
+			++firstElement;
+		}
+
+		if(firstElement > endInMemoryElement) { //start over if end in memory is reached
+			firstElement = startInMemoryElement;
+		}
+
+		if(lastElement > endInMemoryElement) {
+			lastElement = startInMemoryElement;
+		}
+
+		if(lastElement == endInMemoryElement) {
+			isBufferFull = true;
+		}
+
+		*lastElement++ = newElement;
+
+	}
+
 	/// checks if the buffer is empty
-    bool isEmpty(){
-        return firstElement == lastElement;
-    }
-    
-    /// checks if the buffer is full
-    bool isFull() {
-        return isBufferFull;
-    }
-    
-    /// gets the next element in the buffer
-    T* next() {
-        if(iterator == endInMemoryElement) {
-            iterator = startInMemoryElement;
-            return endInMemoryElement;
-        }
-        
-        return iterator++;
-    }
-    
-    /// resets the Iterator to the first element of the buffer
-    void resetIterator() {
-        iterator = firstElement;
-    }
-    
+	bool isEmpty(){
+		return firstElement == lastElement;
+	}
+
+	/// checks if the buffer is full
+	bool isFull() {
+		return isBufferFull;
+	}
+
+	/// gets the next element in the buffer
+	inline T* next() {
+		if(iterator == endInMemoryElement) {
+			iterator = startInMemoryElement;
+			return endInMemoryElement;
+		}
+
+		return iterator++;
+	}
+
+	T* setIterator(int pos) {
+		resetIterator();
+		if (iterator + pos > endInMemoryElement) {
+			iterator = startInMemoryElement + sizeof(endInMemoryElement - firstElement);
+		} else {
+			iterator += pos;
+		}
+		return iterator;
+	}
+
+	/// resets the Iterator to the first element of the buffer
+	void resetIterator() {
+		iterator = firstElement;
+	}
+
 	/// flushing the complete buffer
 	void flush() {
-        firstElement = startInMemoryElement;
-        lastElement = firstElement; //buffer is empty
-        iterator = startInMemoryElement;
-		isBufferFull = false;
+		free(startInMemoryElement);
+		allocateBuffer();
+		firstElement = startInMemoryElement;
+		lastElement = firstElement; //buffer is empty
+		endInMemoryElement = startInMemoryElement + size-1;
+		iterator = startInMemoryElement;
 	}
 };
 

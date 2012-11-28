@@ -62,7 +62,7 @@ void glutDisplay (void)
 	if(g_predictedClass > 0 && displayTimeInFrames > 0) {
 
 		char p_class[30];
-		sprintf_s(p_class, "Predicted Gesture: %.d", g_predictedClass);
+		sprintf_s(p_class, "Predicted Gesture: %s", gestureNames[g_predictedClass]);
 		printText(p_class,0, 1, 0, 30, 40);
 
 		--displayTimeInFrames;

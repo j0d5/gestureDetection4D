@@ -2,6 +2,8 @@
 
 #include "Connection.h"
 #include "OniFileDataSet.h"
+#include <map>
+
 /**
 *
 * This class keeps the Connection to the Database 
@@ -29,7 +31,7 @@ public:
 
   // Creates a new OniFileDataSet and stores it in the DB.
   void createNewFileEntry(char* name,XnPoint3D* start, char* gesture, std::vector<XnPoint3D>& handPoints);
-
+  std::map<int, char*> getGestureNames();
 
   ~Datasource(void);
 };

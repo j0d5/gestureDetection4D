@@ -180,7 +180,7 @@ void doTraining()
 	}
 	
 	//do parameter search via cross validation
-	g_gestureSVM.doParameterSearch(-5,  15, 2,	-15, 3, 2, 5);
+	g_gestureSVM.doParameterSearch(-5,  15, 2.,	-15, 3, 2., 5);
 	
 	
 	//do retraining with same data for better prob values
@@ -199,7 +199,15 @@ void doTraining()
 	
 	if(USE_PRE_SVM)
 	{
-		g_PreGestureSVM.doParameterSearch(-5,  15, 2,	-19, 3, 2, 5);
+		g_PreGestureSVM.doParameterSearch(-5,  15, 2.,25, 3, 2., 5);
+		for(int i = 0; i < TRAINING_LOOPS-1; i++)
+		{
+			for(unsigned int k = 0; k < allFeatures.size();k++)
+			{
+				g_PreGestureSVM.train(allFeatures.at(k), 1);
+			}
+		}
+
 		g_PreGestureSVM.generateModel();
 		g_PreGestureSVM.saveModel(SVM_PRE_MODEL_FILE);	
 	}
@@ -210,7 +218,7 @@ void doQuery()
 	PredictionResult result;
 	int numberWindows = sizeof(BUFFER_WINDOWS) / sizeof(double);
 	double maxProb = -2;
-	int maxClass = 0;
+	int maxClass = -1;
 	for(int i = 0; i < numberWindows;i++)
 	{
 #ifdef DEBUG_FLAG
@@ -226,7 +234,6 @@ void doQuery()
 #ifdef DEBUG_FLAG
 			printf("Pre-Predicted(buffer_window: %f) as: %d\n", BUFFER_WINDOWS[i], result.classID);
 #endif
-			maxClass = result.classID;
 		}
 		// if classID > 0 gesture passed pre svm classification, now predicted gesture in multi class svm
 		if(result.classID > 0)

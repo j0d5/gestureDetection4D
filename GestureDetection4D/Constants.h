@@ -18,7 +18,7 @@
 #define NUMBER_OF_PARTS 4
 
 // SVM Settings
-#define USE_PRE_SVM 1				// use one class prediction for not a gesture class
+#define USE_PRE_SVM 0				// use one class prediction for not a gesture class
 #define TRAINING_LOOPS 5			// how often the data from DB will be trained
 
 // Buffer Settings

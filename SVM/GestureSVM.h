@@ -26,7 +26,7 @@ private:
 
     bool mIsModel;
 	bool mIsInit;
-	void initProblemAndParam();
+	void initProblem();
 	
 
 

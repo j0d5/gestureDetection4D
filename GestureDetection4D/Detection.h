@@ -78,7 +78,7 @@ std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
 	// set iterator to actual element + pos
 	XnPoint3D* actPoint = g_pointBuffer.setIterator(BUFFER_SIZE - size);
 
-#ifdef DEBUG_FLAG
+#ifdef DEBUG_ALL
 	printf("Setting Iterator to: X %.5f Y %.5f Z %.5f\n", actPoint->X, actPoint->Y, actPoint->Z);
 	printf("***RAW Buffer Content***\n");
 #endif
@@ -89,7 +89,7 @@ std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
 		XnPoint3D* p = g_pointBuffer.next();
 		pVector.push_back(convertPoint(p));
 
-#ifdef DEBUG_FLAG					
+#ifdef DEBUG_ALL					
 		printf("\t\t %d \t X: %.5f, Y: %.5f, Z: %.5f\n", i, p->X, p->Y, p->Z);
 #endif
 	}
@@ -113,7 +113,10 @@ std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
 void doTraining()
 {
 	g_IsTrainMode = true;
-
+	/*
+		define the set of gestures to be trained. possible gestures are find by the makros starting with
+		'GESTURE_'. the value correspondes to the gesture name in the db.
+	*/
 	std::vector<string> gestureToTrain;
 	gestureToTrain.push_back(GESTURE_SWIPE);
 	gestureToTrain.push_back(GESTURE_PUSH);
@@ -161,17 +164,15 @@ void doTraining()
 		printf("Amount of Training Hand Points: %d\n",g_pointList4Training.size());
 #endif
 		std::vector<float> feature  = extractTrainingFeatureVector();
-		if(USE_PRE_SVM)
-		{
-			// train one class svm 
-			for(int i = 0; i < 10; i++)
-				g_PreGestureSVM.train(feature,1);
-		}
+		
 		// train gesture svm 
 		allFeatures.push_back(feature);
 		featureClassIdx.push_back(g_CurrentTrainClassID);
-		
 		g_gestureSVM.train(feature, g_CurrentTrainClassID);
+		if(USE_PRE_SVM)
+		{
+			g_PreGestureSVM.train(feature,1);
+		}
 	}
 	
 	//do parameter search via cross validation
@@ -194,8 +195,9 @@ void doTraining()
 	
 	if(USE_PRE_SVM)
 	{
+		g_PreGestureSVM.doParameterSearch(-5,  15, 2,	-19, 3, 2, 5);
 		g_PreGestureSVM.generateModel();
-		g_PreGestureSVM.saveModel(SVM_PRE_MODEL_FILE);
+		g_PreGestureSVM.saveModel(SVM_PRE_MODEL_FILE);	
 	}
 }
 
@@ -216,7 +218,7 @@ void doQuery()
 		{
 			result = g_PreGestureSVM.predictGesture(feature);
 #ifdef DEBUG_FLAG
-			printf("Pre-Predicted(buffer_window: %f) as: %f\n", BUFFER_WINDOWS[i], result.classID);
+			printf("Pre-Predicted(buffer_window: %f) as: %d\n", BUFFER_WINDOWS[i], result.classID);
 #endif
 			maxClass = result.classID;
 		}

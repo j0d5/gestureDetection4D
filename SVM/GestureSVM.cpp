@@ -73,7 +73,7 @@ void GestureSVM::loadModel(std::string filePath)
     mModel = svm_load_model(filePath.data());
     mIsModel = true;
 }
-void GestureSVM::initProblemAndParam()
+void GestureSVM::initProblem()
 {
 	   //set libsm problem structure
     mProblem.l = mFeatureSet.size();		//number of trainings data
@@ -82,14 +82,14 @@ void GestureSVM::initProblemAndParam()
     //fill svm structure with trainings data
 	mProblem.x = mFeatureSet.data();
 
-    //set proble depending params
-    //mParam.gamma = (mProblem.l > 0)?(1.0 / mProblem.l):0;	// 1/num_features if l >0
+    
 }
 void GestureSVM::generateModel()
 {
-	//if(!mIsInit)
-		this->initProblemAndParam();
-
+	this->initProblem();
+	//if not allready initilized set gamma to 1/num_features if num_features >0
+	if(!mIsInit)
+		mParam.gamma = (mProblem.l > 0)?(1.0 / mProblem.l):0;	
 	const char* error_msg = svm_check_parameter(&mProblem,&mParam);
 	if(error_msg)
 	{
@@ -123,7 +123,6 @@ GestureSVM::GestureSVM(bool isOneClassSVM)
     mParam.p = 0.1;
     mParam.shrinking = 1;
     mParam.probability = isOneClassSVM?0:1; //make probability output avaibilbe, if not one class svm  
-	//mParam.probability = 0;
 	mParam.nr_weight = 0;
     mParam.weight_label = NULL;
     mParam.weight = NULL;
@@ -133,7 +132,7 @@ GestureSVM::GestureSVM(bool isOneClassSVM)
 void GestureSVM::doParameterSearch(int c_begin, int c_end, int c_step,\
 	int g_begin, int g_end, int g_step, int folds)
 {
-	this->initProblemAndParam();
+	this->initProblem();
 	double maxAcc = 0.0;
 	double currentAcc = 0.0;
 	double bestC;
@@ -161,6 +160,7 @@ void GestureSVM::doParameterSearch(int c_begin, int c_end, int c_step,\
 
 double GestureSVM::doCrossValidation(int nr_fold)
 {
+	int probSettings = mParam.probability;
 	mParam.probability = 0;
 	int i;
 	int total_correct = 0;
@@ -177,7 +177,8 @@ double GestureSVM::doCrossValidation(int nr_fold)
 	printf("Cross Validation Accuracy with c=%f, gamma=%f: %g%%\n",mParam.C,mParam.gamma,accuracy);
 	
 	free(target);
-	mParam.probability = 1;
+	//reset probability settings to old ones
+	mParam.probability = probSettings;
 	return accuracy;
 }
 

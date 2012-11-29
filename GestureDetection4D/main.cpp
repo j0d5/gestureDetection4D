@@ -22,52 +22,6 @@
 // xml to initialize OpenNI
 #define SAMPLE_XML_PATH "../../Sample-Tracking.xml"
 namespace fs = boost::filesystem;
-/*
-XnStatus loadFiles (int argc, char ** argv) {
-XnStatus rc = XN_STATUS_OK;
-// iterates through the given directory, extracts the file and class and loads the files for training
-fs::directory_iterator end_iter;
-for (fs::directory_iterator dir_itr( argv[2] ); dir_itr != end_iter; ++dir_itr ) {
-try {
-if (fs::is_regular_file(dir_itr->status()) 
-&& !strcmp(dir_itr->path().extension().string().c_str(), ".oni"))
-{
-std::cout << "Loading file: " << dir_itr->path() << std::endl;
-std::string filename = dir_itr->path().filename().string();
-
-trainingClass = atoi(&filename.at(filename.length() - 5));
-std::cout << "Training class: " << trainingClass << std::endl;
-
-// opens the oni file
-rc = openDeviceFile(dir_itr->path().string().c_str());
-CHECK_RC(rc, "OpenDeviceFile");
-std::cout << "File loaded..." << std::endl;
-std::cout << "Start learning..." << std::endl;
-g_HandsGenerator.Create(g_Context);
-g_GestureGenerator.Create(g_Context);
-initializeNiteKomponents();
-
-Player p;
-rc = g_Context.FindExistingNode(XN_NODE_TYPE_PLAYER, p);
-CHECK_RC(rc, "Get Player");
-
-// play file and generate feature vectors, train svm
-while(!p.IsEOF()) {
-XnMapOutputMode mode;
-g_DepthGenerator.GetMapOutputMode(mode);
-
-// Read next available data
-g_Context.WaitOneUpdateAll(g_DepthGenerator);
-// Update NITE tree
-g_pSessionManager->Update(&g_Context);
-PrintSessionState(g_SessionState);
-}
-}
-} catch (const std::exception & ex)	{
-std::cout << dir_itr->path() << " " << ex.what() << std::endl;
-}
-}
-}*/
 
 
 
@@ -80,14 +34,14 @@ int main(int argc, char ** argv)
 	CHECK_ERRORS(rc, errors, "InitFromXmlFile");
 	CHECK_RC(rc, "InitFromXmlFile");
 
-	//trainig mode
+	//training mode
 	if (argc > 1) {
 		if (!strcmp(argv[1], "-t")) {
 			std::cout << "Starting Trainingmode...\n" << std::endl;
 			doTraining();
 			exit(0);
 		}
-		// detection mode 
+		//detection mode 
 		else if (argc > 1 && !strcmp(argv[1], "-d")) {
 
 			//live stream

@@ -34,7 +34,7 @@ public:
 	//adds one feature vector with given class id to svm model
 	void train(const std::vector<float>& feature,int classId);
 	
-	void doParameterSearch(int c_begin, int c_end, int c_step,int g_begin, int g_end, int g_step, int folds);
+	void doParameterSearch(int c_begin, int c_end, double c_step,int g_begin, int g_end, double g_step, int folds,bool doSecondIteration = true);
 	double doCrossValidation(int folds);
 	//finishes trainings mode an generates a svm model
 	void generateModel();

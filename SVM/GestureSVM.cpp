@@ -138,17 +138,17 @@ GestureSVM::GestureSVM(bool isOneClassSVM)
 }
 
 
-void GestureSVM::doParameterSearch(int c_begin, int c_end, int c_step,\
-	int g_begin, int g_end, int g_step, int folds)
+void GestureSVM::doParameterSearch(int c_begin, int c_end, double c_step,\
+	int g_begin, int g_end, double g_step, int folds, bool doSecondIteration)
 {
 	this->initProblem();
 	double maxAcc = 0.0;
 	double currentAcc = 0.0;
 	double bestC;
 	double bestG;
-	for(int c = c_begin; c <= c_end;c+= c_step)
+	for(double c = c_begin; c <= c_end;c+= c_step)
 	{
-		for(int g = g_begin; g <= g_end; g+=g_step)
+		for(double g = g_begin; g <= g_end; g+=g_step)
 		{
 			mParam.C = pow(2.,c);
 			mParam.gamma = pow(2.,g);
@@ -156,18 +156,20 @@ void GestureSVM::doParameterSearch(int c_begin, int c_end, int c_step,\
 			if(currentAcc > maxAcc)
 			{
 				maxAcc = currentAcc;
-				bestC = mParam.C;
-				bestG = mParam.gamma;
+				bestC = c;
+				bestG = g;
 			}
 		}
 	}
 
 #ifdef DEBUG_FLAG
-	printf("**Best Result with Accuracy %f : c=%f gamma=%f\n",maxAcc,bestC,bestG);
+	printf("**Best Result with Accuracy %f : c=%f gamma=%f\n",maxAcc,pow(2.,bestC),pow(2.,bestG));
 #endif
-
-	mParam.C = bestC;
-	mParam.gamma = bestG;
+	mParam.C = pow(2.,bestC);
+	mParam.gamma = pow(2.,bestG);
+	if(doSecondIteration)
+		this->doParameterSearch(bestC-c_step,bestC+c_step,c_step/8.,bestG -g_step,bestG+g_step,g_step/8.,folds,false);
+	
 	mIsInit = true;
 }
 

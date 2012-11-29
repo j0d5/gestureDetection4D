@@ -1,7 +1,4 @@
-#include "StdAfx.h"
 #include "SecondSimpleFeatureExtractor.h"
-
-
 
 std::vector<float> SecondSimpleFeatureExtractor::getFeatureVector(std::vector<Point3D> points) {
 

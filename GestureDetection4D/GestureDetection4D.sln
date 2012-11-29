@@ -2,13 +2,14 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GestureDetection4D", "GestureDetection4D.vcxproj", "{98122DD2-BFE1-4CA8-0147-E4168A7368C8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4AB5302E-66A1-4555-9D30-54F196E90D12} = {4AB5302E-66A1-4555-9D30-54F196E90D12}
+		{B8DEBF40-E0E5-41ED-84DD-3AA867F1FD8C} = {B8DEBF40-E0E5-41ED-84DD-3AA867F1FD8C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FeatureExtractor4D", "..\FeatureExtractor4D\FeatureExtractor4D.vcxproj", "{B8DEBF40-E0E5-41ED-84DD-3AA867F1FD8C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVM", "..\SVM\SVM.vcxproj", "{4AB5302E-66A1-4555-9D30-54F196E90D12}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B8DEBF40-E0E5-41ED-84DD-3AA867F1FD8C} = {B8DEBF40-E0E5-41ED-84DD-3AA867F1FD8C}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CyclicBufferTest", "..\CyclicBufferTest\CyclicBufferTest.vcxproj", "{DEAC5848-663F-41FE-BBA5-9BC872CFD557}"
 EndProject

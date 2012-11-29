@@ -2,8 +2,10 @@
 *.sdf
 ipch
 Debug
+Release
 *.ncb
 Win32Debug
+Win32Release
 GestureDetection4D.vcxproj.user
 *.suo
 *.opensdf

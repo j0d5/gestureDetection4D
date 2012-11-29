@@ -1,10 +1,8 @@
 // FeatureExtractor4D.cpp : Defines the entry point for the console application.
 //
-
-#include "stdafx.h"
 #include "SimpleFeatureExtractor.h"
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
 	std::vector<Point3D> input;
 	input.push_back(Point3D(1,1,1));

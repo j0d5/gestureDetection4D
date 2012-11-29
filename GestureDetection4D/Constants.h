@@ -4,6 +4,7 @@
 #define WINDOW_NAME "GestureDetection4D"
 #define SVM_MODEL_FILE "../../SVM_Model.txt"
 #define SVM_PRE_MODEL_FILE "../../SVM_Pre_Model.txt"
+#define SAMPLE_XML_PATH "../../Sample-Tracking.xml" // xml to initialize OpenNI
 
 // general settings
 #define DEBUG_FLAG					// add debugging information

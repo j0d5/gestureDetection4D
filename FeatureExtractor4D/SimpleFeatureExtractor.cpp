@@ -1,12 +1,8 @@
-#include "StdAfx.h"
 #include "SimpleFeatureExtractor.h"
-
-
 
 SimpleFeatureExtractor::SimpleFeatureExtractor(void)
 {
 }
-
 
 SimpleFeatureExtractor::~SimpleFeatureExtractor(void)
 {
@@ -32,7 +28,7 @@ std::vector<Point3D> SimpleFeatureExtractor::normalizeVector(std::vector<Point3D
 		std::vector<Point3D>::iterator iter = normalizedPoints.begin();
 		++iter;
 
-		for (int i = stepSize; i < points.size() - 1; i += stepSize) {
+		for (unsigned int i = stepSize; i < points.size() - 1; i += stepSize) {
 			++currentCut;
 			if(currentCut >= (numOfCuts - leftover - 1)) {
 				*iter++ = points[i++];
@@ -64,7 +60,7 @@ std::vector<float> SimpleFeatureExtractor::getFeatureVector(std::vector<Point3D>
 	//Point3D offsetOrigin = points.at(0);
 	
 	std::vector<Point3D> differenceVectors;
-	for (itr = points.begin(); itr != points.end()-1; itr++ )
+	for (itr = points.begin(); itr != points.end()-1; ++itr)
 	{
 		Point3D diffVec = (*(itr+1) - *itr);
 		differenceVectors.push_back(diffVec);
@@ -73,7 +69,7 @@ std::vector<float> SimpleFeatureExtractor::getFeatureVector(std::vector<Point3D>
 
 	std::vector<float> featureVec; 
 	//normalisierung
-	for (itr = differenceVectors.begin(); itr != differenceVectors.end(); itr++)
+	for (itr = differenceVectors.begin(); itr != differenceVectors.end(); ++itr)
 	{
 		
 		float scale =1.0;

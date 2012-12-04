@@ -15,11 +15,12 @@
 #define FEATURE_VECTOR_FREQUENCY 1	// vector generation frequency
 
 /*SecondSimpleFeatureExtractor settings*/
-#define NUMBER_OF_PARTS 4
+#define NUMBER_OF_PARTS 5
 
 // SVM Settings
 #define USE_PRE_SVM 0				// use one class prediction for not a gesture class
 #define TRAINING_LOOPS 5			// how often the data from DB will be trained
+#define DO_SVM_PARAM_SEARCH	1			// do svm parameter search
 
 // Buffer Settings
 #define BUFFER_SIZE 120				// buffer size

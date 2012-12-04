@@ -125,9 +125,8 @@ void doTraining()
 	gestureToTrain.push_back(GESTURE_SWIPE);
 	gestureToTrain.push_back(GESTURE_PUSH);
 	gestureToTrain.push_back(GESTURE_L);
-	gestureToTrain.push_back(GESTURE_Z);
 	gestureToTrain.push_back(GESTURE_O);
-
+	gestureToTrain.push_back(GESTURE_Z);
 	Datasource d;
 
 	std::vector<OniFileDataSet*> oniFiles;
@@ -180,7 +179,11 @@ void doTraining()
 	}
 	
 	//do parameter search via cross validation
-	g_gestureSVM.doParameterSearch(-5,  15, 2.,	-15, 3, 2., 5);
+	if(DO_SVM_PARAM_SEARCH)	
+	{	
+		g_gestureSVM.doParameterSearch(-5,  15, 2.,	-15, 3, 2., 5);
+	}
+
 	
 	
 	//do retraining with same data for better prob values

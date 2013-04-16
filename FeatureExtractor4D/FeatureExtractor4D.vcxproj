@@ -78,12 +78,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GestureDetection4D\Constants.h" />
+    <ClInclude Include="DTWFeatureExtractor.h" />
     <ClInclude Include="IFeatureExtractor4D.h" />
     <ClInclude Include="SecondSimpleFeatureExtractor.h" />
     <ClInclude Include="SimpleFeatureExtractor.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DTWFeatureExtractor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SecondSimpleFeatureExtractor.cpp" />
     <ClCompile Include="SimpleFeatureExtractor.cpp" />

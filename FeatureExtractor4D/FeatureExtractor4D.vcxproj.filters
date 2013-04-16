@@ -33,6 +33,9 @@
     <ClInclude Include="SecondSimpleFeatureExtractor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DTWFeatureExtractor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SimpleFeatureExtractor.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SecondSimpleFeatureExtractor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DTWFeatureExtractor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

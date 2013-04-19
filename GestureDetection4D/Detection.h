@@ -3,11 +3,12 @@
 // local header
 #include "CyclicBuffer.h"
 #include "../FeatureExtractor4D/SecondSimpleFeatureExtractor.h"
-#include "../FeatureExtractor4D/SimpleFeatureExtractor.h"
+#include "../FeatureExtractor4D/DTWFeatureExtractor.h"
 #include "../SVM/GestureSVM.h"
 #include "Datasource.h"
 #include "Device.h"
 #include "Constants.h"
+#include "../DTW/dtw.h"
 
 // Header for NITE
 #include "XnVNite.h"
@@ -23,8 +24,9 @@ vector<XnPoint3D> g_pointList4Training;
 
 // global cyclic buffer
 CyclicBuffer<XnPoint3D> g_pointBuffer(BUFFER_SIZE);
+
 // SimpleFeatureExtractor g_featureExtractor;
-SecondSimpleFeatureExtractor g_featureExtractor;
+DTWFeatureExtractor g_featureExtractor;
 GestureSVM g_gestureSVM;
 GestureSVM g_PreGestureSVM(true); // one class svm to decide if a feature vector is a gesture or not
 int frequencyCounter = FEATURE_VECTOR_FREQUENCY;
@@ -34,6 +36,7 @@ inline Point3D convertPoint(XnPoint3D* xnPoint) {
 	return Point3D(xnPoint->X, xnPoint->Y, xnPoint->Z);
 }
 
+DTW g_dtw;
 /**
 * creates a trainings vectorm from the train points list, converts it to an Point3D Vector
 * calls the getFeatureVector Method on featureExtractor and returns the FeatureVector
@@ -68,7 +71,7 @@ std::vector<float> extractTrainingFeatureVector()
 *
 */
 std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
-#ifdef DEBUG_FLAG
+#ifdef DEBUG_ALL
 	printf("Getting WindowedFeatureVector...size: %d \n",size);
 #endif
 	std::vector<Point3D> pVector;
@@ -98,7 +101,7 @@ std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
 #endif
 	}
 
-#ifdef DEBUG_FLAG // print out feature vectors
+#ifdef DEBUG_ALL // print out feature vectors
 	printf("***FeatureVector Content***\n");
 	std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
 	int i = 0;
@@ -110,6 +113,46 @@ std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
 
 	return g_featureExtractor.getFeatureVector(pVector);
 }
+
+void doDTWTraining()
+{
+	g_IsTrainMode = true;
+	/*
+		define the set of gestures to be trained. possible gestures are find by the makros starting with
+		'GESTURE_'. the value correspondes to the gesture name in the db.
+	*/
+	std::vector<string> gestureToTrain;
+	gestureToTrain.push_back(GESTURE_SWIPE);
+	gestureToTrain.push_back(GESTURE_PUSH);
+	gestureToTrain.push_back(GESTURE_L);
+	gestureToTrain.push_back(GESTURE_O);
+	gestureToTrain.push_back(GESTURE_Z);
+	Datasource d;
+
+	std::vector<OniFileDataSet*> oniFiles;
+	for(std::vector<string>::iterator iter = gestureToTrain.begin(); iter != gestureToTrain.end();++iter)
+	{
+		std::vector<OniFileDataSet*> oniFilesTemp = d.getOniFileDatasetsByGesture((char*)iter->c_str());
+		oniFiles.insert( oniFiles.end(), oniFilesTemp.begin(), oniFilesTemp.end());
+	}
+
+
+	std::vector<OniFileDataSet*>::iterator iter;
+	for(iter = oniFiles.begin(); iter != oniFiles.end(); iter++)	{
+
+		g_CurrentTrainClassID = (*iter)->getGestureId();  
+
+		//clear current training list (buffer)
+		g_pointList4Training.clear();
+		g_pointList4Training = (*iter)->getHandPoints();
+		
+		std::vector<float> feature  = extractTrainingFeatureVector();
+		
+		g_dtw.addTrainingFeatureFromRawData(feature,g_CurrentTrainClassID);
+	}
+	g_IsTrainMode = false;
+}
+
 
 /**
 * sets the training mode
@@ -183,9 +226,7 @@ void doTraining()
 	{	
 		g_gestureSVM.doParameterSearch(-5,  15, 2.,	-15, 3, 2., 5);
 	}
-
-	
-	
+		
 	//do retraining with same data for better prob values
 	for(int i = 0; i < TRAINING_LOOPS-1; i++)
 	{
@@ -222,6 +263,7 @@ void doQuery()
 	int numberWindows = sizeof(BUFFER_WINDOWS) / sizeof(double);
 	double maxProb = -2;
 	int maxClass = -1;
+	float minDistance = 100000;
 	for(int i = 0; i < numberWindows;i++)
 	{
 #ifdef DEBUG_FLAG
@@ -229,27 +271,40 @@ void doQuery()
 #endif
 		std::vector<float> feature  = extractWindowedFeatureVectorFromBuffer(BUFFER_SIZE * BUFFER_WINDOWS[i]);
 
-		// check if gesture is classified as class at all
-		result.classID = 1;
-		if(USE_PRE_SVM)
+		if(USE_DTW_NN)
 		{
-			result = g_PreGestureSVM.predictGesture(feature);
-#ifdef DEBUG_FLAG
-			printf("Pre-Predicted(buffer_window: %f) as: %d\n", BUFFER_WINDOWS[i], result.classID);
-#endif
-		}
-		// if classID > 0 gesture passed pre svm classification, now predicted gesture in multi class svm
-		if(result.classID > 0)
-		{
-			result = g_gestureSVM.predictGesture(feature);
-			if(result.probabilitie > maxProb)
+			GlobalFeature* resultFeature = g_dtw.getNextNeighbour(feature);
+			if(resultFeature != 0 && resultFeature->distance < minDistance)
 			{
-				maxProb = result.probabilitie;
-				maxClass = result.classID;
+				minDistance = resultFeature->distance;
+				maxClass = resultFeature->classLabel;
 			}
-#ifdef DEBUG_FLAG
-			printf("Predicted as Class (buffer_window: %f) : %d with probability: %f\n\n\n", BUFFER_WINDOWS[i], result.classID, result.probabilitie);
-#endif
+		}
+		else
+		{
+
+					// check if gesture is classified as class at all
+					result.classID = 1;
+					if(USE_PRE_SVM)
+					{
+						result = g_PreGestureSVM.predictGesture(feature);
+			#ifdef DEBUG_FLAG
+						printf("Pre-Predicted(buffer_window: %f) as: %d\n", BUFFER_WINDOWS[i], result.classID);
+			#endif
+					}
+					// if classID > 0 gesture passed pre svm classification, now predicted gesture in multi class svm
+					if(result.classID > 0)
+					{
+						result = g_gestureSVM.predictGesture(feature);
+						if(result.probabilitie > maxProb)
+						{
+							maxProb = result.probabilitie;
+							maxClass = result.classID;
+						}
+			#ifdef DEBUG_FLAG
+						printf("Predicted as Class (buffer_window: %f) : %d with probability: %f\n\n\n", BUFFER_WINDOWS[i], result.classID, result.probabilitie);
+			#endif
+					}
 		}
 	}
 	// set the class with the highes probabiltie as predictedClass
@@ -296,4 +351,3 @@ void queryWithTrainingData()
 #endif
 	}
 }
-

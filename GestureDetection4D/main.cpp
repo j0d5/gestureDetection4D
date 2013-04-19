@@ -72,6 +72,32 @@ int main(int argc, char ** argv)
 			g_PreGestureSVM.loadModel(SVM_PRE_MODEL_FILE);
 			queryWithTrainingData();
 		}
+		// start DTW detection with trainingdata from DB
+		else if(argc > 1 && !strcmp(argv[1], "-dtw")) 
+		{
+			std::cout << "Starting DTW Detectionmode" << std::endl;	
+			doDTWTraining();	
+			
+			gestureNames = Datasource().getGestureNames(); // get gesture names from DB
+
+			// start detection with given onifile else live detection
+			if (argc > 2 && fs::exists(argv[2])) {
+				std::cout << "...with file: " << argv[2] << std::endl;
+				rc = openDeviceFile(argv[2]);
+				CHECK_RC(rc, "OpenDeviceFile");
+				std::cout << "File loaded." << std::endl;
+			}
+
+			rc = initializeNiteKomponents();
+			CHECK_RC(rc, "initializeNiteKomponents");
+
+			// Mainloop
+			glInit(&argc, argv);
+			glutMainLoop();
+			exit(0);
+
+		}
+
 		else {
 			std::cout << "\n\n---- Something went wrong with the parameters..." << std::endl;
 			exit(-1);

@@ -5,14 +5,17 @@ Datasource::Datasource(void)
 	this->conn=new Connection();
 }
 
-/// get onifile datasets by gesture name
-std::vector <OniFileDataSet*> Datasource::getOniFileDatasetsByGesture(char* gesture){
+/// get onifile datasets by gesture name, optional start and end idx can be set to get only a subsetz of entrys!
+std::vector <OniFileDataSet*> Datasource::getOniFileDatasetsByGesture(char* gesture, int startIdx, int endIdx){
 	MYSQL_RES *res;	// the results
 	MYSQL_ROW dbRow;	// the results row (line by line)
-	char query[512];
+	char query[1024];
 	vector <OniFileDataSet*> dataSets;
 
-	sprintf_s(query,"SELECT DISTINCT(of.name ) FROM (oniFile AS of INNER JOIN gesture2oni AS g2o	ON of.idOniFile = g2o.oniFile_idOniFile) INNER JOIN gesture g	ON g2o.gesture_idGesture=g.idGesture WHERE g.name='%s'",gesture);
+	
+	sprintf(query,"SELECT DISTINCT(of.name ) FROM (oniFile AS of INNER JOIN gesture2oni AS g2o	ON of.idOniFile = g2o.oniFile_idOniFile) INNER JOIN gesture g	ON g2o.gesture_idGesture=g.idGesture WHERE g.name='%s'",gesture);
+	if(startIdx >= 0 && endIdx >= 1)
+		sprintf(query + strlen(query),"LIMIT %d , %d",startIdx,endIdx);
 	res= this->conn->mysql_perform_query(query);
 	if (res==0) {
 		std::cerr << "There are no oniFile with gesture:  "<< gesture << std::endl;

@@ -14,6 +14,7 @@
 #include "XnVNite.h"
 #include <vector>
 
+bool g_UseDTW_NN = false;
 bool g_IsTrainMode = false;
 int g_CurrentTrainClassID = -1;
 int g_predictedClass = -1;
@@ -25,8 +26,7 @@ vector<XnPoint3D> g_pointList4Training;
 // global cyclic buffer
 CyclicBuffer<XnPoint3D> g_pointBuffer(BUFFER_SIZE);
 
-// SimpleFeatureExtractor g_featureExtractor;
-DTWFeatureExtractor g_featureExtractor;
+IFeatureExtractor4D* g_featureExtractor;
 GestureSVM g_gestureSVM;
 GestureSVM g_PreGestureSVM(true); // one class svm to decide if a feature vector is a gesture or not
 int frequencyCounter = FEATURE_VECTOR_FREQUENCY;
@@ -53,7 +53,7 @@ std::vector<float> extractTrainingFeatureVector()
 	}
 
 #ifdef DEBUG_FLAG
-	std::vector<float> fVector = g_featureExtractor.getFeatureVector(pVector);
+	std::vector<float> fVector = g_featureExtractor->getFeatureVector(pVector);
 
 	int i = 0;
 	for(std::vector<float>::iterator iter = fVector.begin(); iter != fVector.end();iter+=3) {
@@ -62,7 +62,7 @@ std::vector<float> extractTrainingFeatureVector()
 	}
 #endif
 
-	return g_featureExtractor.getFeatureVector(pVector);
+	return g_featureExtractor->getFeatureVector(pVector);
 }
 
 /**
@@ -111,7 +111,7 @@ std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
 	}
 #endif
 
-	return g_featureExtractor.getFeatureVector(pVector);
+	return g_featureExtractor->getFeatureVector(pVector);
 }
 
 void doDTWTraining()
@@ -132,7 +132,7 @@ void doDTWTraining()
 	std::vector<OniFileDataSet*> oniFiles;
 	for(std::vector<string>::iterator iter = gestureToTrain.begin(); iter != gestureToTrain.end();++iter)
 	{
-		std::vector<OniFileDataSet*> oniFilesTemp = d.getOniFileDatasetsByGesture((char*)iter->c_str());
+		std::vector<OniFileDataSet*> oniFilesTemp = d.getOniFileDatasetsByGesture((char*)iter->c_str(),0,10);
 		oniFiles.insert( oniFiles.end(), oniFilesTemp.begin(), oniFilesTemp.end());
 	}
 
@@ -150,6 +150,10 @@ void doDTWTraining()
 		
 		g_dtw.addTrainingFeatureFromRawData(feature,g_CurrentTrainClassID);
 	}
+	cout << "Finished DTW NN Training  with " << oniFiles.size() << "Features" << endl;
+	
+	g_dtw.doCrossValidation(5);
+	
 	g_IsTrainMode = false;
 }
 
@@ -271,7 +275,7 @@ void doQuery()
 #endif
 		std::vector<float> feature  = extractWindowedFeatureVectorFromBuffer(BUFFER_SIZE * BUFFER_WINDOWS[i]);
 
-		if(USE_DTW_NN)
+		if(g_UseDTW_NN)
 		{
 			GlobalFeature* resultFeature = g_dtw.getNextNeighbour(feature);
 			if(resultFeature != 0 && resultFeature->distance < minDistance)
@@ -282,7 +286,6 @@ void doQuery()
 		}
 		else
 		{
-
 					// check if gesture is classified as class at all
 					result.classID = 1;
 					if(USE_PRE_SVM)

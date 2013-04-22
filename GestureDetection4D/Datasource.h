@@ -23,7 +23,7 @@ private:
 public:
   Datasource(void);
   // Returns all the oniFiles which contains the gesture.
-  std::vector <OniFileDataSet*> getOniFileDatasetsByGesture(char* gesture);
+  std::vector <OniFileDataSet*> getOniFileDatasetsByGesture(char* gesture, int startIdx = -1, int endIdx = -1);
   // Returns all the oniFiles in the DB
   std::vector <OniFileDataSet*> getOniFileDatasets();
   // Looks up a special oniFIle by Name in the DB

@@ -6,8 +6,6 @@
 #define SVM_PRE_MODEL_FILE "../../SVM_Pre_Model.txt"
 #define SAMPLE_XML_PATH "../../Sample-Tracking.xml" // xml to initialize OpenNI
 
-#define USE_DTW_NN 1
-
 #define USE_HAND_POINTS_FROM_DB 1	// use hand points from database
 
 // FeatureExtractor settings
@@ -26,7 +24,7 @@
 // Buffer Settings
 #define BUFFER_SIZE 120				// buffer size
 //const double BUFFER_WINDOWS[] = {0.3,0.4,0.5,0.6,0.8,1.}; // extraction windows 0.1 - 1.0
-const double BUFFER_WINDOWS[] = {0.5,1.}; // extraction windows 0.1 - 1.0
+const double BUFFER_WINDOWS[] = {0.2,0.4,0.8,1.}; // extraction windows 0.1 - 1.0
 
 // Gestures used for training mode
 #define GESTURE_SWIPE "Swipe"

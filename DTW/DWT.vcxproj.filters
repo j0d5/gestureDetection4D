@@ -35,5 +35,8 @@
     <ClCompile Include="DtwTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dtw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

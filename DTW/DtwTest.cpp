@@ -28,12 +28,12 @@ int _tmain(int argc, _TCHAR* argv[])
            testVec.push_back(p4);
 
            GlobalFeature global(1,mainVec);
-           dtw.addTrainingFeature(global);
+           dtw.addTrainingFeature(&global);
 
-           GlobalFeature result = dtw.getNextNeighbour(testVec);
+           GlobalFeature* result = dtw.getNextNeighbour(testVec);
 
-           cout << "Distance: " << result.distance << endl;
-           cout << "Label: " << result.classLabel << endl;
+           cout << "Distance: " << result->distance << endl;
+           cout << "Label: " << result->classLabel << endl;
 
            system("PAUSE");
 	return 0;

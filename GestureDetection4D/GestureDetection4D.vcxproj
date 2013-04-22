@@ -183,7 +183,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>OpenNI.lib;XnVNite_1_5_2.lib;libboost_system-vc100-mt-1_51.lib;FeatureExtractor4D.lib;SVM.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenNI.lib;XnVNite_1_5_2.lib;libboost_system-vc100-mt-1_51.lib;FeatureExtractor4D.lib;SVM.lib;DTW.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>C:\Users\latadmin\Documents\GestureDetection4D\libs;$(OPEN_NI_LIB);C:\Users\latadmin\Documents\GestureDetection4D\libs\$(Configuration)\;C:\Program Files\MySQL\MySQL Server 5.5\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>

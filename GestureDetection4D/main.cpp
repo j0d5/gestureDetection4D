@@ -38,7 +38,7 @@ int main(int argc, char ** argv)
 			std::cout << "Starting Detectionmode" << std::endl;
 			g_gestureSVM.loadModel(SVM_MODEL_FILE);
 			g_PreGestureSVM.loadModel(SVM_PRE_MODEL_FILE);
-
+			g_featureExtractor = new SecondSimpleFeatureExtractor();
 			gestureNames = Datasource().getGestureNames(); // get gesture names from DB
 
 			// start detection with given onifile else live detection
@@ -70,14 +70,16 @@ int main(int argc, char ** argv)
 			std::cout << "Starting Detectionmode" << std::endl;
 			g_gestureSVM.loadModel(SVM_MODEL_FILE);
 			g_PreGestureSVM.loadModel(SVM_PRE_MODEL_FILE);
+			g_featureExtractor = new SecondSimpleFeatureExtractor();
 			queryWithTrainingData();
 		}
 		// start DTW detection with trainingdata from DB
 		else if(argc > 1 && !strcmp(argv[1], "-dtw")) 
 		{
 			std::cout << "Starting DTW Detectionmode" << std::endl;	
-			doDTWTraining();	
-			
+			g_featureExtractor = new DTWFeatureExtractor();
+			doDTWTraining();
+			g_UseDTW_NN = true;
 			gestureNames = Datasource().getGestureNames(); // get gesture names from DB
 
 			// start detection with given onifile else live detection

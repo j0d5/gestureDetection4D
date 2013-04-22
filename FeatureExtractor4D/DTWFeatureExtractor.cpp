@@ -49,7 +49,5 @@ std::vector<float> DTWFeatureExtractor::getFeatureVector(std::vector<Point3D> po
 		featureVector.push_back(z);
 	}
 
-
-
 	return featureVector;
 }

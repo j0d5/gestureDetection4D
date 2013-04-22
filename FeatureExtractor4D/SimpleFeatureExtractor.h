@@ -9,8 +9,8 @@ class SimpleFeatureExtractor :
 {
 public:
 	std::vector<float> getFeatureVector(std::vector<Point3D> points);
-	SimpleFeatureExtractor(void);
-	virtual ~SimpleFeatureExtractor(void);
+	SimpleFeatureExtractor();
+	virtual ~SimpleFeatureExtractor();
 
 private:
 	std::vector<Point3D> normalizeVector(std::vector<Point3D> points);

@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVM", "..\SVM\SVM.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CyclicBufferTest", "..\CyclicBufferTest\CyclicBufferTest.vcxproj", "{DEAC5848-663F-41FE-BBA5-9BC872CFD557}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DWT", "..\DWT\DWT.vcxproj", "{59D2D9B6-A6C6-412E-9359-45D32A8B0A11}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DTW", "..\DTW\DWT.vcxproj", "{59D2D9B6-A6C6-412E-9359-45D32A8B0A11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

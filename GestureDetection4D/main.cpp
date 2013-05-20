@@ -7,6 +7,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
+#include <time.h>
 
 // local header
 #include "PointDrawer.h"
@@ -30,15 +31,16 @@ int main(int argc, char ** argv)
 	if (argc > 1) {
 		if (!strcmp(argv[1], "-t")) {
 			std::cout << "Starting Trainingmode...\n" << std::endl;
+			g_featureExtractor = new DTWFeatureExtractor();
 			doTraining();
 			exit(0);
 		}
-		// detection mode 
+		// detection mode with SVM GDTW 
 		else if (argc > 1 && !strcmp(argv[1], "-d")) {
-			std::cout << "Starting Detectionmode" << std::endl;
+			std::cout << "Starting SVM GDTW Detectionmode" << std::endl;
 			g_gestureSVM.loadModel(SVM_MODEL_FILE);
-			g_PreGestureSVM.loadModel(SVM_PRE_MODEL_FILE);
-			g_featureExtractor = new SecondSimpleFeatureExtractor();
+			//g_PreGestureSVM.loadModel(SVM_PRE_MODEL_FILE);
+			g_featureExtractor = new DTWFeatureExtractor();
 			gestureNames = Datasource().getGestureNames(); // get gesture names from DB
 
 			// start detection with given onifile else live detection
@@ -73,7 +75,7 @@ int main(int argc, char ** argv)
 			g_featureExtractor = new SecondSimpleFeatureExtractor();
 			queryWithTrainingData();
 		}
-		// start DTW detection with trainingdata from DB
+		// start DTW NN detection with trainingdata from DB
 		else if(argc > 1 && !strcmp(argv[1], "-dtw")) 
 		{
 			std::cout << "Starting DTW Detectionmode" << std::endl;	
@@ -98,6 +100,15 @@ int main(int argc, char ** argv)
 			glutMainLoop();
 			exit(0);
 
+		}
+		//test mode..can be used for evaluation/Debugging reasons etc.
+		else if(argc > 1 && !strcmp(argv[1], "-test")) 
+		{
+			std::cout << "Starting Testmode" << std::endl;	
+			g_featureExtractor = new DTWFeatureExtractor();
+			runTest();
+			system("PAUSE");
+			exit(0);
 		}
 
 		else {

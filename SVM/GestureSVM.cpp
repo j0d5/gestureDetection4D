@@ -27,6 +27,7 @@ void GestureSVM::train(const std::vector<float>& feature,int classId)
 }
 PredictionResult GestureSVM::predictGesture(const std::vector<float>& feature)
 {
+
 	PredictionResult result;
 	if(!mIsModel)
 	{
@@ -38,9 +39,8 @@ PredictionResult GestureSVM::predictGesture(const std::vector<float>& feature)
 
 	if(svm_check_probability_model(mModel))
 	{
-		double* probs = new double[mModel->nr_class];
 		result.classID = (int) svm_predict_probability(mModel,preVec,probs);
-		result.classIDWithoutProb = (int) svm_predict(mModel,preVec);
+		//result.classIDWithoutProb = (int) svm_predict(mModel,preVec);
 #ifdef DEBUG_FLAG
 		printf("Without prob model predicted as class: %d\n",result.classIDWithoutProb);
 #endif
@@ -78,6 +78,7 @@ void GestureSVM::loadModel(std::string filePath)
 	}
 	mModel = svm_load_model(filePath.data());
 	mIsModel = true;
+    probs = new double[mModel->nr_class];
 }
 void GestureSVM::initProblem()
 {
@@ -109,6 +110,7 @@ void GestureSVM::generateModel()
 
 	mModel = svm_train(&mProblem,&mParam);
 	mIsModel = true;
+	probs = new double[mModel->nr_class];
 
 }
 GestureSVM::GestureSVM(bool isOneClassSVM)
@@ -121,7 +123,7 @@ GestureSVM::GestureSVM(bool isOneClassSVM)
 
 	mParam.svm_type = isOneClassSVM?ONE_CLASS:C_SVC;
 
-	mParam.kernel_type = RBF;
+	mParam.kernel_type = GDTW;
 	mParam.degree = 3;
 	mParam.gamma = 0;	// 1/num_features if l >0
 	mParam.coef0 = 0;
@@ -173,8 +175,21 @@ void GestureSVM::doParameterSearch(int c_begin, int c_end, double c_step,\
 	mIsInit = true;
 }
 
-double GestureSVM::doCrossValidation(int nr_fold)
+double GestureSVM::doCrossValidation(int nr_fold, bool initProblem)
 {
+	if(initProblem)
+	{
+			this->initProblem();
+			//if not allready initilized set gamma to 1/num_features if num_features >0
+			if(!mIsInit)
+				mParam.gamma = (mProblem.l > 0)?(1.0 / mProblem.l):0;	
+			const char* error_msg = svm_check_parameter(&mProblem,&mParam);
+			if(error_msg)
+			{
+				printf("ERROR svm params: %s\n",error_msg);
+				exit(1);
+			}
+	}
 	int probSettings = mParam.probability;
 	mParam.probability = 0;
 	int i;
@@ -190,9 +205,7 @@ double GestureSVM::doCrossValidation(int nr_fold)
 			++total_correct;
 	double accuracy = 100.0*total_correct/mProblem.l;	
 
-#ifdef DEBUG_FLAG
 	printf("Cross Validation Accuracy with c=%f, gamma=%f: %g%%\n",mParam.C,mParam.gamma,accuracy);
-#endif
 
 	free(target);
 	//reset probability settings to old ones
@@ -211,4 +224,5 @@ GestureSVM::~GestureSVM(void)
 	{
 		delete[] *iter;
 	}
+	delete[] probs;
 }

@@ -5,6 +5,8 @@
 #include <math.h>
 #include <assert.h>
 #include <algorithm>
+#include <ctime>
+#include <cstdlib>
 
 static const int INIT_SIZE_OF_D = 1000;
 static const float INF = 1000000;
@@ -60,6 +62,7 @@ private:
    std::vector<GlobalFeature*> trainingSet;
 
    inline float minOf3 (float x, float y , float z);
+   inline int getPathLength(int startI, int startJ);
 
 public:
    DTW ();
@@ -70,6 +73,8 @@ public:
       */
     inline float getDTWDistance(std::vector<LocalFeature>& t, std::vector<LocalFeature>& r);
    
+	//not implemented yet..
+	inline float getFastDTWDistance(std::vector<LocalFeature>& t, std::vector<LocalFeature>& r);
 	GlobalFeature* getNextNeighbour(std::vector<float>& feature);
     GlobalFeature* getNextNeighbour(std::vector<LocalFeature>& test);
 

@@ -131,6 +131,10 @@ public:
 		endInMemoryElement = startInMemoryElement + size-1;
 		iterator = startInMemoryElement;
 	}
+	int getSize()
+	{
+		return size;
+	}
 };
 
 #endif /* defined(__CyclicBuffer__CyclicBuffer__) */

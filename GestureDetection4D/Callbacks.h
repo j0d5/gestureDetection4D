@@ -88,8 +88,6 @@ void XN_CALLBACK_TYPE HandUpdate(HandsGenerator &generator, XnUserID user, const
 			frequencyCounter = FEATURE_VECTOR_FREQUENCY;
 		}
 	}
-
-	
 }
 
 void XN_CALLBACK_TYPE HandDestroy(HandsGenerator &generator, XnUserID user, XnFloat fTime, void *pCookie) {

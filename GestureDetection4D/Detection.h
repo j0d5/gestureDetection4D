@@ -10,6 +10,7 @@
 #include "Constants.h"
 #include "../DTW/dtw.h"
 
+
 // Header for NITE
 #include "XnVNite.h"
 #include <vector>
@@ -25,6 +26,7 @@ vector<XnPoint3D> g_pointList4Training;
 
 // global cyclic buffer
 CyclicBuffer<XnPoint3D> g_pointBuffer(BUFFER_SIZE);
+CyclicBuffer<int> g_lastPredictedGestures(LAST_PREDICTED_GESTURE_BUFFER_SIZE);
 
 IFeatureExtractor4D* g_featureExtractor;
 GestureSVM g_gestureSVM;
@@ -113,7 +115,9 @@ std::vector<float> extractWindowedFeatureVectorFromBuffer(int size) {
 
 	return g_featureExtractor->getFeatureVector(pVector);
 }
-
+/*
+   does dtw next neighbour training
+*/
 void doDTWTraining()
 {
 	g_IsTrainMode = true;
@@ -132,7 +136,7 @@ void doDTWTraining()
 	std::vector<OniFileDataSet*> oniFiles;
 	for(std::vector<string>::iterator iter = gestureToTrain.begin(); iter != gestureToTrain.end();++iter)
 	{
-		std::vector<OniFileDataSet*> oniFilesTemp = d.getOniFileDatasetsByGesture((char*)iter->c_str(),0,10);
+		std::vector<OniFileDataSet*> oniFilesTemp = d.getOniFileDatasetsByGesture((char*)iter->c_str(),0,20);
 		oniFiles.insert( oniFiles.end(), oniFilesTemp.begin(), oniFilesTemp.end());
 	}
 
@@ -152,9 +156,14 @@ void doDTWTraining()
 	}
 	cout << "Finished DTW NN Training  with " << oniFiles.size() << "Features" << endl;
 	
-	g_dtw.doCrossValidation(5);
 	
+	double totalCvAcc = 0.0;
+	for(int i = 0; i < 1;i++)
+	{
+		totalCvAcc+= g_dtw.doCrossValidation(5);
+	}
 	g_IsTrainMode = false;
+	cout << "Total dwt-nn cross validation acc = " << totalCvAcc / 10 << endl;
 }
 
 
@@ -228,7 +237,7 @@ void doTraining()
 	//do parameter search via cross validation
 	if(DO_SVM_PARAM_SEARCH)	
 	{	
-		g_gestureSVM.doParameterSearch(-5,  15, 2.,	-15, 3, 2., 5);
+	   g_gestureSVM.doParameterSearch(-5,  15, 2.,	-15, 3, 2., 5);
 	}
 		
 	//do retraining with same data for better prob values
@@ -240,6 +249,7 @@ void doTraining()
 		}
 	}
 
+	g_gestureSVM.doCrossValidation(5,true);
 	//generate model with optimized gamma and C
 	g_gestureSVM.generateModel(); 
 
@@ -247,7 +257,7 @@ void doTraining()
 	
 	if(USE_PRE_SVM)
 	{
-		g_PreGestureSVM.doParameterSearch(-5,  15, 2.,25, 3, 2., 5);
+		g_PreGestureSVM.doParameterSearch(-5,  15, 2.,-15, 3, 2., 5);
 		for(int i = 0; i < TRAINING_LOOPS-1; i++)
 		{
 			for(unsigned int k = 0; k < allFeatures.size();k++)
@@ -255,7 +265,6 @@ void doTraining()
 				g_PreGestureSVM.train(allFeatures.at(k), 1);
 			}
 		}
-
 		g_PreGestureSVM.generateModel();
 		g_PreGestureSVM.saveModel(SVM_PRE_MODEL_FILE);	
 	}
@@ -263,6 +272,8 @@ void doTraining()
 
 void doQuery()
 {
+	//clock_t tQ;
+	//tQ = clock();
 	PredictionResult result;
 	int numberWindows = sizeof(BUFFER_WINDOWS) / sizeof(double);
 	double maxProb = -2;
@@ -298,8 +309,8 @@ void doQuery()
 					// if classID > 0 gesture passed pre svm classification, now predicted gesture in multi class svm
 					if(result.classID > 0)
 					{
-						result = g_gestureSVM.predictGesture(feature);
-						if(result.probabilitie > maxProb)
+						result = g_gestureSVM.predictGesture(feature);	
+						if(result.probabilitie >= maxProb)
 						{
 							maxProb = result.probabilitie;
 							maxClass = result.classID;
@@ -311,7 +322,84 @@ void doQuery()
 		}
 	}
 	// set the class with the highes probabiltie as predictedClass
+	g_lastPredictedGestures.push(maxClass);
+	
+	if(USE_LAST_PREDICTED_GESTURE_HEURISTIC)
+	{
+		if(g_lastPredictedGestures.isFull())
+		{
+			std::vector<int> histo (gestureNames.size(),0);
+			int maxCount = 0;
+			g_lastPredictedGestures.resetIterator();
+			for (int i = 0; i < g_lastPredictedGestures.getSize(); i++) {
+				int c = *g_lastPredictedGestures.next();
+				histo[c] = histo[c] +1;
+			}
+			for (int i = 1; i < gestureNames.size();i++)
+			{
+				if(histo[i] > maxCount)
+				{	
+					maxCount = histo[i];
+					maxClass = i;
+				}
+			}
+		}
+	}
+#ifdef DEBUG_ALL					
+		printf("\t\t %d \t X: %.5f, Y: %.5f, Z: %.5f\n", i, p->X, p->Y, p->Z);
+#endif
+	
 	g_predictedClass = maxClass;
+	
+	//tQ = clock() - tQ;
+	//printf ("*** SVM Querry neeeds %d clicks (%f seconds).\n",tQ,((float)tQ)/CLOCKS_PER_SEC);
+}
+
+//method is used to to evaluation/debug tests..gets called with the argument -test
+void runTest()
+{
+		g_IsTrainMode = true;
+	/*
+		define the set of gestures to be trained. possible gestures are find by the makros starting with
+		'GESTURE_'. the value correspondes to the gesture name in the db.
+	*/
+	std::vector<string> gestureToTrain;
+	gestureToTrain.push_back(GESTURE_SWIPE);
+	gestureToTrain.push_back(GESTURE_PUSH);
+	gestureToTrain.push_back(GESTURE_L);
+	gestureToTrain.push_back(GESTURE_O);
+	gestureToTrain.push_back(GESTURE_Z);
+	Datasource d;
+
+	std::vector<OniFileDataSet*> oniFiles;
+	for(std::vector<string>::iterator iter = gestureToTrain.begin(); iter != gestureToTrain.end();++iter)
+	{
+		std::vector<OniFileDataSet*> oniFilesTemp = d.getOniFileDatasetsByGesture((char*)iter->c_str());
+		oniFiles.insert( oniFiles.end(), oniFilesTemp.begin(), oniFilesTemp.end());
+	}
+
+
+	std::vector<OniFileDataSet*>::iterator iter;
+
+	std::vector<std::vector<float> > allFeatures;
+	std::vector<int> featureClassIdx;
+	for(iter = oniFiles.begin(); iter != oniFiles.end(); iter++)	{
+
+		g_CurrentTrainClassID = (*iter)->getGestureId();  
+
+		//clear current training list (buffer)
+		g_pointList4Training.clear();
+		g_pointList4Training = (*iter)->getHandPoints();
+		std::vector<float> feature  = extractTrainingFeatureVector();
+		
+		// train gesture svm 
+		allFeatures.push_back(feature);
+		featureClassIdx.push_back(g_CurrentTrainClassID);
+		g_gestureSVM.train(feature, g_CurrentTrainClassID);
+	}
+	
+	g_gestureSVM.doCrossValidation(5,true);
+
 }
 
 // detection query from DB

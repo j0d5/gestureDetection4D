@@ -26,16 +26,21 @@ private:
 
     bool mIsModel;
 	bool mIsInit;
-	void initProblem();
+
+	double* probs;
 	
+	void initProblem();
 
 
 public:
+	
+
 	//adds one feature vector with given class id to svm model
 	void train(const std::vector<float>& feature,int classId);
 	
 	void doParameterSearch(int c_begin, int c_end, double c_step,int g_begin, int g_end, double g_step, int folds,bool doSecondIteration = true);
-	double doCrossValidation(int folds);
+	//runs a cross validation on the trained data set...if called from extern without generating model before use initProblem = true
+    double doCrossValidation(int folds, bool initProblem = false);
 	//finishes trainings mode an generates a svm model
 	void generateModel();
 

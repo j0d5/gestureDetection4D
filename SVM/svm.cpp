@@ -8,6 +8,8 @@
 #include <limits.h>
 #include <locale.h>
 #include "svm.h"
+#include "../DTW/dtw.h"
+
 int libsvm_version = LIBSVM_VERSION;
 typedef float Qfloat;
 typedef signed char schar;
@@ -57,6 +59,8 @@ static void info(const char *fmt,...)
 #else
 static void info(const char *fmt,...) {}
 #endif
+
+static DTW dtw;
 
 //
 // Kernel Cache
@@ -199,6 +203,14 @@ public:
 	virtual ~QMatrix() {}
 };
 
+void convertNodesToVec(const svm_node* node, std::vector<LocalFeature>& destination)
+{
+	while(node->index != -1)
+	{
+		destination.push_back(LocalFeature(node->value,(node+1)->value,(node+2)->value));
+		node+=3;
+	}
+}
 class Kernel: public QMatrix {
 public:
 	Kernel(int l, svm_node * const * x, const svm_parameter& param);
@@ -218,6 +230,7 @@ protected:
 	double (Kernel::*kernel_function)(int i, int j) const;
 
 private:
+
 	const svm_node **x;
 	double *x_square;
 
@@ -248,6 +261,15 @@ private:
 	{
 		return x[i][(int)(x[j][0].value)].value;
 	}
+	double kernel_gdtw(int i, int j) const
+	{
+		std::vector<LocalFeature> vI;
+		std::vector<LocalFeature> vJ;
+		convertNodesToVec(x[i],vI);
+		convertNodesToVec(x[j],vJ);
+
+		return exp(-gamma*dtw.getDTWDistance(vI,vJ));
+	}
 };
 
 Kernel::Kernel(int l, svm_node * const * x_, const svm_parameter& param)
@@ -264,6 +286,9 @@ Kernel::Kernel(int l, svm_node * const * x_, const svm_parameter& param)
 			break;
 		case RBF:
 			kernel_function = &Kernel::kernel_rbf;
+			break;
+		case GDTW:
+			kernel_function = &Kernel::kernel_gdtw;
 			break;
 		case SIGMOID:
 			kernel_function = &Kernel::kernel_sigmoid;
@@ -362,6 +387,16 @@ double Kernel::k_function(const svm_node *x, const svm_node *y,
 			}
 			
 			return exp(-param.gamma*sum);
+		}
+		case GDTW:
+		{
+			std::vector<LocalFeature> vI;
+			std::vector<LocalFeature> vJ;
+			convertNodesToVec(x,vI);
+			convertNodesToVec(y,vJ);
+
+			return exp(-param.gamma*dtw.getDTWDistance(vI,vJ));
+
 		}
 		case SIGMOID:
 			return tanh(param.gamma*dot(x,y)+param.coef0);
@@ -2593,7 +2628,7 @@ static const char *svm_type_table[] =
 
 static const char *kernel_type_table[]=
 {
-	"linear","polynomial","rbf","sigmoid","precomputed",NULL
+	"linear","polynomial","rbf","sigmoid","precomputed","gdtw",NULL
 };
 
 int svm_save_model(const char *model_file_name, const svm_model *model)
@@ -2612,7 +2647,7 @@ int svm_save_model(const char *model_file_name, const svm_model *model)
 	if(param.kernel_type == POLY)
 		fprintf(fp,"degree %d\n", param.degree);
 
-	if(param.kernel_type == POLY || param.kernel_type == RBF || param.kernel_type == SIGMOID)
+	if(param.kernel_type == POLY || param.kernel_type == RBF || param.kernel_type == SIGMOID || param.kernel_type == GDTW)
 		fprintf(fp,"gamma %g\n", param.gamma);
 
 	if(param.kernel_type == POLY || param.kernel_type == SIGMOID)
@@ -2993,7 +3028,8 @@ const char *svm_check_parameter(const svm_problem *prob, const svm_parameter *pa
 	   kernel_type != POLY &&
 	   kernel_type != RBF &&
 	   kernel_type != SIGMOID &&
-	   kernel_type != PRECOMPUTED)
+	   kernel_type != PRECOMPUTED &&
+	   kernel_type != GDTW)
 		return "unknown kernel type";
 
 	if(param->gamma < 0)
